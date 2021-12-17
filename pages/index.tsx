@@ -1,16 +1,27 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import classes from "../lib/classes";
 
-export default function Home() {
+export const getStaticProps = async (_ctx: GetStaticPropsContext) => {
+  return {
+      props: {
+        
+      },
+      revalidate: 10,
+  };
+};
+
+const indexPage = ({  }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-      </Head>
+      <div className={classes(["container"])}>
+          <Head>
+              <title>제목</title>
+          </Head>
+          <article>
+            <h1>This is Main Page.</h1>
+          </article>
+      </div>
+  );
+};
 
-      <main className="main">
-        This is Main Pages.
-      </main>
-    </div>
-  )
-}
+export default indexPage;
