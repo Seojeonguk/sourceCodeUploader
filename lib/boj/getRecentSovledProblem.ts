@@ -5,17 +5,17 @@ interface submitData {
   problemNum?:string
 };
 
-const getRecentCorrectProblem = async(Id:string) => {
-  const userInfo = await axiosInstance.get(`status?user_id=${Id}&result_id=4`);
-  const trrgx = new RegExp("<\s*tr[^>]*><td>(.*?)</td><\s*/\s*tr>","g");
+const getRecentSovledProblem = async(Id:string) => {
+  const solvedProblemPage = await axiosInstance.get(`status?user_id=${Id}&result_id=4`);
+  const trRgx = new RegExp("<\s*tr[^>]*><td>(.*?)</td><\s*/\s*tr>","g");
   
   const solution = "solution-";
   const problem = "/problem/";
   
-  let submitDatas:Array<submitData>=[];
+  let submitInfo:Array<submitData>=[];
   
   let tr;
-  while((tr = trrgx.exec(userInfo.data))!==null) {
+  while((tr = trRgx.exec(solvedProblemPage.data))!==null) {
     const solutionTr = tr[0].match(`${solution}[0-9]*`) as RegExpMatchArray;
     const submitNumber = solutionTr[0].replace(solution,"");
     
@@ -27,10 +27,10 @@ const getRecentCorrectProblem = async(Id:string) => {
       problemNum : problemNumber
     };
     
-    submitDatas.push(submitdata);
+    submitInfo.push(submitdata);
   }
   
-  return submitDatas;
+  return submitInfo;
 }
 
-export default getRecentCorrectProblem;
+export default getRecentSovledProblem;
