@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import classes from "../lib/classes";
+import { getContent } from '../lib/text';
 
 export const getStaticProps = async (_ctx: GetStaticPropsContext) => {
+  const savedsolvedProblems = await getContent();
   return {
       props: {
         
