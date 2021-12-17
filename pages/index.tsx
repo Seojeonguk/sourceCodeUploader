@@ -2,9 +2,11 @@ import Head from 'next/head'
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import classes from "../lib/classes";
 import { getContent } from '../lib/text';
+import { getRecentSovledProblem } from '../lib/boj';
 
 export const getStaticProps = async (_ctx: GetStaticPropsContext) => {
-  const savedsolvedProblems = await getContent();
+  const savedSolvedProblems = await getContent();
+  const recentSolvedProblems = await getRecentSovledProblem(process.env.USER_ID);
   return {
       props: {
         
