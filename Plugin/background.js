@@ -9,7 +9,7 @@ async function dataload() {
     document.querySelectorAll("tbody tr").forEach((tr) => {
         if (tr.childNodes[3].firstChild.innerText === "맞았습니다!!") {
             let newTd = document.createElement("td");
-            let newBtn = doucment.createElement("button");
+            let newBtn = document.createElement("button");
             newBtn.innerText = "Upload";
             newBtn.setAttribute("submissionNum", tr.firstChild.innerText);
             newBtn.setAttribute("problemNum", tr.childNodes[2].lastChild.innerText);
@@ -22,7 +22,12 @@ async function dataload() {
                 sourcecodeConn.open("GET", url, false);
                 sourcecodeConn.onreadystatechange = function () {
                     if (sourcecodeConn.readyState == 4 && sourcecodeConn.status == 200) {
-                        sourcecode = sourcecodeConn.responseText.split("readonly>")[1].split("</textarea>")[0];
+                        let responseText = sourcecodeConn.responseText;
+
+                        let openTextarea = new RegExp("(<textarea[^>]*>)", "g");
+                        let closeTextarea = new RegExp("(</textarea>)", "g");
+                        
+                        sourcecode = responseText.split(openTextarea)[2].split(closeTextarea)[0];
                         sourcecode = sourcecode.replace(/&lt;/gi, "<");
                         sourcecode = sourcecode.replace(/&gt;/gi, ">");
                         sourcecode = sourcecode.replace(/&quot;/gi, '"');
@@ -30,7 +35,7 @@ async function dataload() {
                     }
                 };
                 sourcecodeConn.send();
-                
+
                 // TODO Add more
             };
             newTd.appendChild(newBtn);
