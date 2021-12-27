@@ -15,6 +15,8 @@ async function dataload() {
             newBtn.setAttribute("problemNum", tr.childNodes[2].lastChild.innerText);
             newBtn.onclick = function () {
                 var sourcecode;
+                var title;
+                var tags = [];
 
                 var sourcecodeConn = new XMLHttpRequest();
                 var url = `https://www.acmicpc.net/source/${this.getAttribute("submissionNum")}`;
@@ -35,6 +37,29 @@ async function dataload() {
                     }
                 };
                 sourcecodeConn.send();
+
+                const problemConn = new XMLHttpRequest();
+                problemConn.withCredentials = true;
+
+                problemConn.addEventListener("readystatechange", function () {
+                    if (this.readyState === this.DONE) {
+                        let problemInfo = JSON.parse(this.response);
+
+                        title = problemInfo.titleKo;
+
+                        problemInfo.tags.forEach((tag) => {
+                            tags.push(tag.displayNames[1].name);
+                        });
+                    }
+                });
+
+                problemConn.open(
+                    "GET",
+                    `https://solved.ac/api/v3/problem/show?problemId=${this.getAttribute("problemNum")}`
+                );
+                problemConn.setRequestHeader("Content-Type", "application/json");
+
+                problemConn.send();
 
                 // TODO Add more
             };
