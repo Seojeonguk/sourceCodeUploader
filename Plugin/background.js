@@ -22,11 +22,16 @@ async function dataload() {
                 sourcecodeConn.open("GET", url, false);
                 sourcecodeConn.onreadystatechange = function () {
                     if (sourcecodeConn.readyState == 4 && sourcecodeConn.status == 200) {
-                        sourcecode = sourcecodeConn.responseText.split("readonly>")[1].split("</textarea>")[0];
-                        sourcecode = sourcecode.replace(/&lt;/gi, "<");
-                        sourcecode = sourcecode.replace(/&gt;/gi, ">");
-                        sourcecode = sourcecode.replace(/&quot;/gi, '"');
-                        sourcecode = sourcecode.replace(/&amp;/gi, "&");
+                      let responseText = sourcecodeConn.responseText;
+
+                      let openTextarea = new RegExp("(<textarea[^>]*>)", "g");
+                      let closeTextarea = new RegExp("(</textarea>)", "g");
+                      
+                      sourcecode = responseText.split(openTextarea)[2].split(closeTextarea)[0];
+                      sourcecode = sourcecode.replace(/&lt;/gi, "<");
+                      sourcecode = sourcecode.replace(/&gt;/gi, ">");
+                      sourcecode = sourcecode.replace(/&quot;/gi, '"');
+                      sourcecode = sourcecode.replace(/&amp;/gi, "&");
                     }
                 };
                 sourcecodeConn.send();
