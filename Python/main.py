@@ -3,7 +3,9 @@ import time
 import logging
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from mynotion import Notion
 from fileload import File
+from solvedac import Solvedac
 
 class Target:
   watchDir = "../"
@@ -25,6 +27,11 @@ class Target:
       self.observer.join()
       
 class Handler(FileSystemEventHandler):
+  def __init__(self) -> None:
+      super().__init__()
+      self.notion = Notion()
+      self.file = File()
+      self.solvedac = Solvedac()
   def on_moved(self, event):
     pass
         # print(event)
@@ -42,12 +49,18 @@ class Handler(FileSystemEventHandler):
       
       if "BOJ" in event.src_path:
         problemNum = event.src_path[7:-4]
+
         
-        file = File()
-        file.checkproblem(problemNum)
-      # if "BOJ" in event.src_path:
-        # file = File()
-        # file.savedproblem(event.src_path[7:-4])
+        
+        if self.file.checkproblem(problemNum):
+          print(f"{problemNum} 파일을 맞춘 목록에 추가합니다.")
+          
+          title, level, tags = self.solvedac.problemInfo(problemNum)
+          sourcecode = self.file.getsourcecode(event.src_path)
+
+          self.file.savedproblem(problemNum)
+
+          self.notion.addrow(problemNum,title,level,tags,sourcecode)
 
 if __name__ == "__main__":
   w = Target()
