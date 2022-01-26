@@ -33,3 +33,7 @@ class File:
             with open("./problem.txt", "a") as file:
                 file.write(f"{problemNum} ")
                 file.close()
+
+    def removefile(self, file_url):
+        if os.path.exists(file_url):
+            os.remove(file_url)

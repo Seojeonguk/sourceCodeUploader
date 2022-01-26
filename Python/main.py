@@ -55,7 +55,7 @@ class Handler(FileSystemEventHandler):
                                         level, tags, sourcecode)
 
                     self.file.savedproblem(problemNum)
-                    # Todo Add More
+                    self.file.removefile(event.src_path)
 
 
 if __name__ == "__main__":
