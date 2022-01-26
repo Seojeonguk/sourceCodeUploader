@@ -17,3 +17,13 @@ class File:
             existing = False
 
         return existing
+
+    def getsourcecode(self, file_path):
+        sourcecode = ''
+        if(os.path.exists(file_path)):
+            with open(file_path, 'r') as file:
+                sourcecode = file.readlines()
+                sourcecode = "\t".join(sourcecode)
+                file.close()
+
+        return sourcecode
