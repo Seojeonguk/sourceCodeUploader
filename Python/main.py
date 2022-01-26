@@ -50,6 +50,9 @@ class Handler(FileSystemEventHandler):
                 if self.file.checkproblem(problemNum):
                     sourcecode = self.file.getsourcecode(event.src_path)
                     title, level, tags = self.solvedac.problemInfo(problemNum)
+
+                    self.notion.addrow(problemNum, title,
+                                       level, tags, sourcecode)
                     # Todo Add More
 
 
