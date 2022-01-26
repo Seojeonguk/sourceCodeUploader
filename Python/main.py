@@ -3,6 +3,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from file import File
 from solvedac import Solvedac
+from mynotion import Notion
 
 
 class Target:
@@ -30,6 +31,7 @@ class Handler(FileSystemEventHandler):
         super().__init__()
         self.file = File()
         self.solvedac = Solvedac()
+        self.notion = Notion()
 
     def on_moved(self, event):
         pass
