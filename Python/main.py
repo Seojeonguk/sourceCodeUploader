@@ -43,8 +43,8 @@ class Handler(FileSystemEventHandler):
             problemNum = event.src_path[7:-4]
 
             if 4 <= len(problemNum) <= 5:
-                pass
-                # Todo Add More
+                if self.file.checkproblem(problemNum):
+                    pass  # Todo Add More
 
 
 if __name__ == "__main__":
