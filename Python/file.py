@@ -27,3 +27,9 @@ class File:
                 file.close()
 
         return sourcecode
+
+    def savedproblem(self, problemNum):
+        if os.path.exists("./problem.txt"):
+            with open("./problem.txt", "a") as file:
+                file.write(f"{problemNum} ")
+                file.close()

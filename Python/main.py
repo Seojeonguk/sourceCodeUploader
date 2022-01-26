@@ -53,6 +53,8 @@ class Handler(FileSystemEventHandler):
 
                     self.notion.addpage(problemNum, title,
                                         level, tags, sourcecode)
+
+                    self.file.savedproblem(problemNum)
                     # Todo Add More
 
 
