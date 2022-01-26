@@ -44,7 +44,8 @@ class Handler(FileSystemEventHandler):
 
             if 4 <= len(problemNum) <= 5:
                 if self.file.checkproblem(problemNum):
-                    pass  # Todo Add More
+                    sourcecode = self.file.getsourcecode(event.src_path)
+                    # Todo Add More
 
 
 if __name__ == "__main__":
