@@ -1,6 +1,7 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from file import File
 
 
 class Target:
@@ -26,6 +27,7 @@ class Target:
 class Handler(FileSystemEventHandler):
     def __init__(self) -> None:
         super().__init__()
+        self.file = File()
 
     def on_moved(self, event):
         pass
