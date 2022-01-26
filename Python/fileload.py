@@ -1,3 +1,5 @@
+import os
+
 class File:
   def __init__(self):
     pass
@@ -6,10 +8,7 @@ class File:
   def getsourcecode(self,file_url):
     with open(file_url,'r') as file:
       sourcecode = file.readlines()
-      # sourcecode = """{}""".format("".join(sourcecode[1:]))
-      # print("""{}
-      # """.format("".join(sourcecode[1:])))
-      sourcecode = "".join(sourcecode).replace("    ","\t")
+      sourcecode = "\t".join(sourcecode)
       file.close()
     
     return sourcecode
@@ -27,9 +26,12 @@ class File:
       file.close()
 
       ret = True
-      res = "문제 목록에 존재하지 않습니다."
       if problemNum in problems:
         ret = False
-        res = "문제 목록에 존재합니다."
 
       return ret
+
+  def removesourcecode(self, file_url):
+    if os.path.exists(file_url):
+      os.remove(file_url)
+      print(f"{file_url} 파일을 삭제하였습니다.")

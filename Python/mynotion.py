@@ -1,12 +1,8 @@
 import datetime
-from email.header import Header
-from typing import Text
 from notion.client import NotionClient
 from dotenv import load_dotenv
 from notion.block import TextBlock, CodeBlock, HeaderBlock
 import os
-
-from numpy import source
 
 class Notion:
     def __init__(self):
@@ -40,7 +36,6 @@ class Notion:
 
         code = page.children.add_new(CodeBlock)
         code.language="C++"
-        print(sourcecode)
         code.title = sourcecode
         
 

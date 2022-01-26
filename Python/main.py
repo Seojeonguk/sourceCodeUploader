@@ -62,6 +62,8 @@ class Handler(FileSystemEventHandler):
 
           self.notion.addrow(problemNum,title,level,tags,sourcecode)
 
+          self.file.removesourcecode(event.src_path)
+
 if __name__ == "__main__":
   w = Target()
   w.run()
