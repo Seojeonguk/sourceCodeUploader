@@ -1,5 +1,6 @@
 from notion.client import NotionClient
 from dotenv import load_dotenv
+from notion.block import TextBlock, CodeBlock, HeaderBlock
 import os
 import datetime
 
@@ -22,3 +23,18 @@ class Notion:
         if "bits/stdc++.h" not in sourcecode:
             language = "Java"
         newPage.set_property('풀이', language)
+
+        self.addcontent(newPage, sourcecode)
+
+    def addcontent(self, page, sourcecode):
+        explanationHeader = page.children.add_new(HeaderBlock)
+        explanationHeader.title = "풀이"
+
+        emptyspace = page.children.add_new(TextBlock)
+
+        codeHeader = page.children.add_new(HeaderBlock)
+        codeHeader.title = "소스 코드"
+
+        code = page.children.add_new(CodeBlock)
+        code.language = "C++"
+        code.title = sourcecode
