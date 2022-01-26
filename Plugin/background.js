@@ -39,9 +39,27 @@ async function dataload() {
             sourcecode = sourcecode.replace(/    /gi, "\t");
           }
         };
+        74;
+
         sourcecodeConn.send();
 
-        // TODO Add more
+        var pom = document.createElement("a");
+        pom.setAttribute(
+          "href",
+          "data:text/plain;charset=utf-8," + encodeURIComponent(sourcecode)
+        );
+        pom.setAttribute(
+          "download",
+          `BOJ_${this.getAttribute("problemNum")}.txt`
+        );
+
+        if (document.createEvent) {
+          var event = document.createEvent("MouseEvents");
+          event.initEvent("click", true, true);
+          pom.dispatchEvent(event);
+        } else {
+          pom.click();
+        }
       };
       newTd.appendChild(newBtn);
       tr.appendChild(newTd);
