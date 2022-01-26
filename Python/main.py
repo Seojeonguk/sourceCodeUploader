@@ -2,6 +2,7 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from file import File
+from solvedac import Solvedac
 
 
 class Target:
@@ -28,6 +29,7 @@ class Handler(FileSystemEventHandler):
     def __init__(self) -> None:
         super().__init__()
         self.file = File()
+        self.solvedac = Solvedac()
 
     def on_moved(self, event):
         pass
@@ -45,6 +47,7 @@ class Handler(FileSystemEventHandler):
             if 4 <= len(problemNum) <= 5:
                 if self.file.checkproblem(problemNum):
                     sourcecode = self.file.getsourcecode(event.src_path)
+                    title, level, tags = self.solvedac.problemInfo(problemNum)
                     # Todo Add More
 
 
