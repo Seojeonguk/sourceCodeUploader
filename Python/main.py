@@ -39,7 +39,12 @@ class Handler(FileSystemEventHandler):
         pass
 
     def on_modified(self, event):  # 파일, 디렉터리가 수정되면 실행
-        pass
+        if "BOJ" in event.src_path:
+            problemNum = event.src_path[7:-4]
+
+            if 4 <= len(problemNum) <= 5:
+                pass
+                # Todo Add More
 
 
 if __name__ == "__main__":
