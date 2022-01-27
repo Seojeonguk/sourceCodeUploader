@@ -5,6 +5,10 @@ class File:
     def __init__(self):
         self.problempath = "./problem.txt"
 
+        if not os.path.exists(self.problempath):
+            f = open(self.problempath, 'w')
+            f.close()
+
     def checkproblem(self, problemNum):
         existing = True
 
