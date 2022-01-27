@@ -3,13 +3,13 @@ import os
 
 class File:
     def __init__(self):
-        pass
+        self.problempath = "./problem.txt"
 
     def checkproblem(self, problemNum):
         existing = True
 
-        if os.path.exists("./problem.txt"):
-            with open("./problem.txt", "r") as file:
+        if os.path.exists(self.problempath):
+            with open(self.problempath, "r") as file:
                 problems = file.readline().split(' ')
                 file.close()
 
@@ -29,8 +29,8 @@ class File:
         return sourcecode
 
     def savedproblem(self, problemNum):
-        if os.path.exists("./problem.txt"):
-            with open("./problem.txt", "a") as file:
+        if os.path.exists(self.problempath):
+            with open(self.problempath, "a") as file:
                 file.write(f"{problemNum} ")
                 file.close()
 
