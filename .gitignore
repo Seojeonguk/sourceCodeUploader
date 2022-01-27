@@ -3,3 +3,4 @@ node_modules/**
 package-lock.json
 .env
 Python/.env
+__pycache__/**
