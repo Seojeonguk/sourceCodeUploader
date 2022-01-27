@@ -4,3 +4,5 @@ package-lock.json
 .env
 Python/.env
 __pycache__/**
+Python/__pycache__/**
+problem.txt
