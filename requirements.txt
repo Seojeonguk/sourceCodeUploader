@@ -1,3 +1,3 @@
 notion
 watchdog
-dotenv
+python-dotenv
