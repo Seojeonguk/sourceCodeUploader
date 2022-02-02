@@ -24,9 +24,9 @@ class Notion:
             language = "Java"
         newPage.set_property('풀이', language)
 
-        self.addcontent(newPage, sourcecode)
+        self.addcontent(newPage, sourcecode, language)
 
-    def addcontent(self, page, sourcecode):
+    def addcontent(self, page, sourcecode, language):
         explanationHeader = page.children.add_new(HeaderBlock)
         explanationHeader.title = "풀이"
 
@@ -36,5 +36,5 @@ class Notion:
         codeHeader.title = "소스 코드"
 
         code = page.children.add_new(CodeBlock)
-        code.language = "C++"
+        code.language = language
         code.title = sourcecode
