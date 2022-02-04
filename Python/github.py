@@ -18,7 +18,7 @@ class Github:
             'Accept': 'application/vnd.github.v3+json'
         }
 
-    def create_file_contents(self, problemNum, language, problemTitle, sourcecode):
+    def addProblem(self, problemNum, language, problemTitle, sourcecode):
         ext = "cpp"
         if language == 'Java':
             ext = "java"
