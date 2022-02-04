@@ -15,6 +15,10 @@ You have to create a .env file in the Python folder.
 ```
 notion_token=your_notion_token_v2
 notion_url=your_notion_url
+github_token=your_github_api_token
+github_owner=your_github_name
+github_repo=your_github_repository
+github_folder_path=your_folder_path_in_repo
 ```
 
 ## Installing Python
