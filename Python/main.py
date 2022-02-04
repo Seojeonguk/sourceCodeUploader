@@ -64,9 +64,17 @@ class Handler(FileSystemEventHandler):
             return
 
         sourcecode = self.file.getsourcecode(event.src_path)
+        if "bits/stdc++.h" in sourcecode:
+            language = "C++"
+        elif "public class Main" in sourcecode:
+            language = "Java"
+        else:
+            language = "Python"
+
         title, level, tags = self.solvedac.problemInfo(problemNum)
 
-        self.notion.addpage(problemNum, title, level, tags, sourcecode)
+        self.notion.addpage(problemNum, title, level,
+                            tags, sourcecode, language)
 
         self.file.savedproblem(problemNum)
         self.file.removefile(event.src_path)
