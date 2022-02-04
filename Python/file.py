@@ -9,7 +9,7 @@ class File:
             f = open(self.problempath, 'w')
             f.close()
 
-    def checkproblem(self, problemNum):
+    def checkProblem(self, problemNum):
         existing = True
 
         if os.path.exists(self.problempath):
@@ -22,7 +22,7 @@ class File:
 
         return existing
 
-    def getsourcecode(self, file_path):
+    def getSourcecode(self, file_path):
         if(os.path.exists(file_path)):
             with open(file_path, 'r') as file:
                 sourcecode = file.readlines()
@@ -32,12 +32,12 @@ class File:
 
         return notion_sourcecode, github_sourcecode
 
-    def savedproblem(self, problemNum):
+    def savedProblem(self, problemNum):
         if os.path.exists(self.problempath):
             with open(self.problempath, "a") as file:
                 file.write(f"{problemNum} ")
                 file.close()
 
-    def removefile(self, file_url):
+    def removeFile(self, file_url):
         if os.path.exists(file_url):
             os.remove(file_url)

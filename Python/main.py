@@ -50,7 +50,7 @@ class Handler(FileSystemEventHandler):
             return
 
         if self.last_src == event.src_path:
-            self.file.removefile(event.src_path)
+            self.file.removeFile(event.src_path)
             self.last_src = None
             return
 
@@ -60,11 +60,11 @@ class Handler(FileSystemEventHandler):
             print(f'{problemNum} 파일명을 확인해주세요.')
             return
 
-        if not self.file.checkproblem(problemNum):
+        if not self.file.checkProblem(problemNum):
             print(f'{problemNum}이 이미 저장한 목록에 추가되어 있습니다.')
             return
 
-        notion_sourcecode, github_sourcecode = self.file.getsourcecode(
+        notion_sourcecode, github_sourcecode = self.file.getSourcecode(
             event.src_path)
         if "bits/stdc++.h" in notion_sourcecode:
             language = "C++"
@@ -75,13 +75,13 @@ class Handler(FileSystemEventHandler):
 
         title, level, tags = self.solvedac.problemInfo(problemNum)
 
-        self.notion.addpage(problemNum, title, level,
+        self.notion.addPage(problemNum, title, level,
                             tags, notion_sourcecode, language)
 
-        self.file.savedproblem(problemNum)
-        self.github.create_file_contents(
+        self.file.savedProblem(problemNum)
+        self.github.addProblem(
             problemNum, language, title, github_sourcecode)
-        self.file.removefile(event.src_path)
+        self.file.removeFile(event.src_path)
 
 
 if __name__ == "__main__":
