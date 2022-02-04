@@ -23,14 +23,14 @@ class File:
         return existing
 
     def getsourcecode(self, file_path):
-        sourcecode = ''
         if(os.path.exists(file_path)):
             with open(file_path, 'r') as file:
                 sourcecode = file.readlines()
-                sourcecode = "\t".join(sourcecode)
+                notion_sourcecode = "\t".join(sourcecode)
+                github_sourcecode = "".join(sourcecode)
                 file.close()
 
-        return sourcecode
+        return notion_sourcecode, github_sourcecode
 
     def savedproblem(self, problemNum):
         if os.path.exists(self.problempath):
