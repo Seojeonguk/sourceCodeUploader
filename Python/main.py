@@ -57,11 +57,9 @@ class Handler(FileSystemEventHandler):
         problemNum = event.src_path[7:-4]
 
         if not 4 <= len(problemNum) <= 5:
-            print(f'{problemNum} 파일명을 확인해주세요.')
             return
 
         if not self.file.checkProblem(problemNum):
-            print(f'{problemNum}이 이미 저장한 목록에 추가되어 있습니다.')
             return
 
         notion_sourcecode, github_sourcecode = self.file.getSourcecode(
