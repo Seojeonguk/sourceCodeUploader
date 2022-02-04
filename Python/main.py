@@ -32,6 +32,7 @@ class Handler(FileSystemEventHandler):
         self.file = File()
         self.solvedac = Solvedac()
         self.notion = Notion()
+        self.last_src = None
 
     def on_moved(self, event):
         pass
@@ -43,19 +44,32 @@ class Handler(FileSystemEventHandler):
         pass
 
     def on_modified(self, event):  # 파일, 디렉터리가 수정되면 실행
-        if "BOJ" in event.src_path:
-            problemNum = event.src_path[7:-4]
+        if "BOJ" not in event.src_path:
+            print(f'파일 이름에 BOJ이 포함되지 않습니다. (현재 파일명 : ${event.src_path})')
+            return
 
-            if 4 <= len(problemNum) <= 5:
-                if self.file.checkproblem(problemNum):
-                    sourcecode = self.file.getsourcecode(event.src_path)
-                    title, level, tags = self.solvedac.problemInfo(problemNum)
+        if self.last_src == event.src_path:
+            self.file.removefile(event.src_path)
+            self.last_src = None
+            return
 
-                    self.notion.addpage(problemNum, title,
-                                        level, tags, sourcecode)
+        problemNum = event.src_path[7:-4]
 
-                    self.file.savedproblem(problemNum)
-                    self.file.removefile(event.src_path)
+        if not 4 <= len(problemNum) <= 5:
+            print(f'${problemNum} 파일명을 확인해주세요.')
+            return
+
+        if not self.file.checkproblem(problemNum):
+            print(f'${problemNum}이 이미 저장한 목록에 추가되어 있습니다.')
+            return
+
+        sourcecode = self.file.getsourcecode(event.src_path)
+        title, level, tags = self.solvedac.problemInfo(problemNum)
+
+        self.notion.addpage(problemNum, title, level, tags, sourcecode)
+
+        self.file.savedproblem(problemNum)
+        self.file.removefile(event.src_path)
 
 
 if __name__ == "__main__":
