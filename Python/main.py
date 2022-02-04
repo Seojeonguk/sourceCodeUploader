@@ -1,6 +1,7 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from github import Github
 from file import File
 from solvedac import Solvedac
 from mynotion import Notion
@@ -32,6 +33,7 @@ class Handler(FileSystemEventHandler):
         self.file = File()
         self.solvedac = Solvedac()
         self.notion = Notion()
+        self.github = Github()
         self.last_src = None
 
     def on_moved(self, event):
@@ -76,6 +78,8 @@ class Handler(FileSystemEventHandler):
                             tags, sourcecode, language)
 
         self.file.savedproblem(problemNum)
+        self.github.create_file_contents(
+            problemNum, language, title, sourcecode)
         self.file.removefile(event.src_path)
 
 
