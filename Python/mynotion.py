@@ -8,8 +8,8 @@ import datetime
 class Notion:
     def __init__(self):
         load_dotenv()
-        client = NotionClient(token_v2=os.environ.get("token"))
-        self.page = client.get_collection_view(os.environ.get("url"))
+        client = NotionClient(token_v2=os.environ.get("notion_token"))
+        self.page = client.get_collection_view(os.environ.get("notion_url"))
 
     def addpage(self, problemNum, title, level, tags, sourcecode):
         newPage = self.page.collection.add_row()
