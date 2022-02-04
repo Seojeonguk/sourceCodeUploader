@@ -34,7 +34,6 @@ class Handler(FileSystemEventHandler):
         self.solvedac = Solvedac()
         self.notion = Notion()
         self.github = Github()
-        self.last_src = None
 
     def on_moved(self, event):
         pass
@@ -47,11 +46,6 @@ class Handler(FileSystemEventHandler):
 
     def on_modified(self, event):  # 파일, 디렉터리가 수정되면 실행
         if "BOJ" not in event.src_path:
-            return
-
-        if self.last_src == event.src_path:
-            self.file.removeFile(event.src_path)
-            self.last_src = None
             return
 
         problemNum = event.src_path[7:-4]
