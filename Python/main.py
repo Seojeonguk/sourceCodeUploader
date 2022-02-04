@@ -64,10 +64,11 @@ class Handler(FileSystemEventHandler):
             print(f'{problemNum}이 이미 저장한 목록에 추가되어 있습니다.')
             return
 
-        sourcecode = self.file.getsourcecode(event.src_path)
-        if "bits/stdc++.h" in sourcecode:
+        notion_sourcecode, github_sourcecode = self.file.getsourcecode(
+            event.src_path)
+        if "bits/stdc++.h" in notion_sourcecode:
             language = "C++"
-        elif "public class Main" in sourcecode:
+        elif "public class Main" in notion_sourcecode:
             language = "Java"
         else:
             language = "Python"
@@ -75,11 +76,11 @@ class Handler(FileSystemEventHandler):
         title, level, tags = self.solvedac.problemInfo(problemNum)
 
         self.notion.addpage(problemNum, title, level,
-                            tags, sourcecode, language)
+                            tags, notion_sourcecode, language)
 
         self.file.savedproblem(problemNum)
         self.github.create_file_contents(
-            problemNum, language, title, sourcecode)
+            problemNum, language, title, github_sourcecode)
         self.file.removefile(event.src_path)
 
 
