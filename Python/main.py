@@ -45,7 +45,6 @@ class Handler(FileSystemEventHandler):
 
     def on_modified(self, event):  # 파일, 디렉터리가 수정되면 실행
         if "BOJ" not in event.src_path:
-            print(f'파일 이름에 BOJ이 포함되지 않습니다. (현재 파일명 : {event.src_path})')
             return
 
         if self.last_src == event.src_path:
