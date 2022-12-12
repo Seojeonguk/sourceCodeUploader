@@ -1,13 +1,13 @@
 {
   "name": "Upload the source code",
-  "action": {},
+  "action": {
+    "default_title": "Auto Upload",
+    "default_popup": "popup.html"
+  },
   "manifest_version": 3,
   "version": "0.1",
   "description": "Upload the source code of the problem I got.",
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
+  "permissions": ["activeTab", "scripting"],
   "background": {
     "service_worker": "background.js"
   }
