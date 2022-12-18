@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Auto Upload</title>
+    <script src="library/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <div class="inputWrap">
+        <label for="notionToken">Notion Token</label>
+        <input
+          type="text"
+          name="notionToken"
+          id="notionToken"
+          placeholder="Notion Token"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="notionUrl">Notion Url</label>
+        <input
+          type="text"
+          name="notionUrl"
+          id="notionUrl"
+          placeholder="Notion Url"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="githubToken">Github Token</label>
+        <input
+          type="text"
+          name="githubToken"
+          id="githubToken"
+          placeholder="Github Token"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="githubUserName">Github Username</label>
+        <input
+          type="text"
+          name="githubUserName"
+          id="githubUserName"
+          placeholder="Github Username"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="githubRepository">Github Repository</label>
+        <input
+          type="text"
+          name="githubRepository"
+          id="githubRepository"
+          placeholder="Github Repository"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="githubFolder">Github Folder</label>
+        <input
+          type="text"
+          name="githubFolder"
+          id="githubFolder"
+          placeholder="Github Folder"
+        />
+      </div>
+
+      <div class="inputWrap">
+        <label for="requestUrl">Request Url</label>
+        <input
+          type="text"
+          name="requestUrl"
+          id="requestUrl"
+          placeholder="Request Url"
+        />
+      </div>
+
+      <div class="btnWrap">
+        <button id="saveBtn">Save</button>
+        <button id="init">Init</button>
+        <button id="confirm">Confirm</button>
+      </div>
+    </div>
+  </body>
 </html>
