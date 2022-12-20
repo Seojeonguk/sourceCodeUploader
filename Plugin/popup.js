@@ -14,4 +14,12 @@ $(function () {
         console.error(err);
       });
   });
+
+  $("#init").on("click", () => {
+    chrome.storage.local.clear();
+
+    $("input[type=text]").each(function () {
+      this.value = "";
+    });
+  });
 });
