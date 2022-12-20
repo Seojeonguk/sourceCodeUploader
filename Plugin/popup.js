@@ -22,4 +22,10 @@ $(function () {
       this.value = "";
     });
   });
+
+  $("#confirm").on("click", () => {
+    chrome.storage.local.get().then((value) => {
+      console.log(value);
+    });
+  });
 });
