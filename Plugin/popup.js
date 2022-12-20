@@ -1,4 +1,11 @@
 $(function () {
+  chrome.storage.local.get().then((value) => {
+    Object.keys(value).forEach((v) => {
+      const input = $(`input[name=${v}]`);
+      input[0].value = value[v];
+    });
+  });
+
   $("#saveBtn").on("click", () => {
     const setData = {};
     $("input[type=text]").each(function () {
