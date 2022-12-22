@@ -10,5 +10,11 @@
   "permissions": ["activeTab", "scripting", "storage"],
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.acmicpc.net/source/*"],
+      "js": ["boj-content-script.js"]
+    }
+  ]
 }
