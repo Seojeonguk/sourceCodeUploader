@@ -37,9 +37,13 @@ function createGithubBtn(btnWrap, isDarkmode) {
     githubURL = "icon/githubDarkIcon.png";
   }
 
-  githubBtn.innerHTML = `<img src="${chrome.runtime.getURL(
-    githubURL
-  )}" alt="github" style="width:32px; height:32px;" />`;
+  const githubImg = document.createElement("img");
+  githubImg.src = chrome.runtime.getURL(githubURL);
+  githubImg.alt = "github";
+  githubImg.style.width = "32px";
+  githubImg.style.height = "32px";
+
+  githubBtn.append(githubImg);
 
   btnWrap.append(githubBtn);
 }
