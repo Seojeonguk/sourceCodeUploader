@@ -11,6 +11,6 @@ def githubUpload(request):
     # Verify request
     # Apply try exception
     problemInfo = helpers.getProblemInfo(request.data["problemId"], request.data["mime"])
-    
-    return Response(problemInfo,status=status.HTTP_201_CREATED)
+    response = helpers.github(request.data["code"],problemInfo, request.data["githubToken"],request.data["githubUserName"],request.data["githubRepo"],request.data["githubFolderPath"])
+    return Response(response,status=status.HTTP_201_CREATED)
 

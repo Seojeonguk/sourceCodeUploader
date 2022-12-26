@@ -31,6 +31,31 @@ def getProblemInfo(problemId, mime):
     # #a, b, c = test2()
     return ret
 
+def github(sourceCode, problemInfo, token, userName, repo, folderPath):
+    # To check if a file exists before requesting
+    # Get sha value if file exists
+    headers = {
+        'Authorization': 'Bearer %s' % (token),
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    path = '%s%s.%s' % (folderPath,
+                        problemInfo['problemId'], problemInfo['ext'])
+    url = '%s/repos/%s/%s/contents/%s' % (constants.GITHUB_BASE_URL,
+                                          userName, repo, path)
+
+    requestData = {
+        "message": problemInfo['title'],
+        "content": base64.b64encode(sourceCode.encode('ascii')).decode('utf8')
+    }
+
+    res = requests.put(url=url, headers=headers, data=json.dumps(requestData))
+
+    if res.status_code==422:
+        return res.json().get('message')
+    if res.status_code==201 or res.status_code==200:
+        return res.json()['content']['html_url']
+
 def getEtx(ext):
     extension = {
         'text/x-csrc' : constants.FILE_EXTENSION_C,
