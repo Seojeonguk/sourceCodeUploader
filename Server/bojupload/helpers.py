@@ -65,4 +65,3 @@ def getEtx(ext):
         'text/plain' : constants.FILE_EXTENSION_TEXT
     }
     return extension.get(ext)
-    
