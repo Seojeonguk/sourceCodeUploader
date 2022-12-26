@@ -13,4 +13,3 @@ def githubUpload(request):
     problemInfo = helpers.getProblemInfo(request.data["problemId"], request.data["mime"])
     response = helpers.github(request.data["code"],problemInfo, request.data["githubToken"],request.data["githubUserName"],request.data["githubRepo"],request.data["githubFolderPath"])
     return Response(response,status=status.HTTP_201_CREATED)
-
