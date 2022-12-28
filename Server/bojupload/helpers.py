@@ -24,7 +24,7 @@ def verifyProblemInfo(requestData):
     if isEmpty(requestData.get('mime')):
         raise Exception('Does not exist mime!')
 
-    if isEmpty(requestData.get('code')):
+    if isEmpty(requestData.get('sourcecode')):
         raise Exception('Does not exist code!')
 
 def requestsolvedac(problemId):
