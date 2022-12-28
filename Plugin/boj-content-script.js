@@ -28,14 +28,33 @@ function createGithubBtn(btnWrap, isDarkmode) {
   githubBtn.href = "#";
   githubBtn.style.cursor = "pointer";
   githubBtn.onclick = function (e) {
-    // To do more..
-    // Request server
     const textarea = document.querySelector("[name='source']");
     const sourcecode = textarea.value;
     const mime = textarea.getAttribute("data-mime");
     const problemId = document
       .querySelector("table")
       .querySelector("a[href^='/problem/']").innerHTML;
+
+    chrome.storage.local.get().then((value) => {
+      const data = {
+        githubToken: value["githubToken"],
+        githubUserName: value["githubUserName"],
+        githubRepo: value["githubRepository"],
+        githubFolderPath: value["githubFolder"],
+        sourcecode: sourcecode,
+        mime: mime,
+        problemId: problemId,
+      };
+
+      const url = value["requestUrl"];
+      $.post(`${url}/bojupload/github`, data)
+        .done((v) => {
+          console.log("Success github upload!");
+        })
+        .fail((e) => {
+          console.log(e.responseText);
+        });
+    });
   };
 
   var githubURL = "icon/githubIcon.png";
