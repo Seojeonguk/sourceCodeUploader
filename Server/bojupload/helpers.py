@@ -36,6 +36,16 @@ def requestsolvedac(problemId):
 
     return response.json()
 
+def getGithubInfo(requestData):
+    githubInfo = {
+        'token' : requestData.get('githubToken'),
+        'userName' : requestData.get('githubUserName'),
+        'repo' : requestData.get('githubRepo'),
+        'folderPath' : requestData.get('githubFolderPath')
+    }
+
+    return githubInfo
+
 def getProblemInfo(problemId, mime):
     problemInfo = requestsolvedac(problemId)
 
@@ -54,18 +64,18 @@ def getProblemInfo(problemId, mime):
     # #a, b, c = test2()
     return ret
 
-def github(sourceCode, problemInfo, token, userName, repo, folderPath):
+def github(sourceCode, problemInfo, githubInfo):
     # To check if a file exists before requesting
     # Get sha value if file exists
     headers = {
-        'Authorization': 'Bearer %s' % (token),
+        'Authorization': 'Bearer %s' % (githubInfo.get('token')),
         'Accept': 'application/vnd.github.v3+json'
     }
 
-    path = '%s%s.%s' % (folderPath,
+    path = '%s%s.%s' % (githubInfo.get('folderPath'),
                         problemInfo['problemId'], problemInfo['ext'])
     url = '%s/repos/%s/%s/contents/%s' % (constants.GITHUB_BASE_URL,
-                                          userName, repo, path)
+                                          githubInfo.get('userName'), githubInfo.get('repo'), path)
 
     requestData = {
         "message": problemInfo['title'],
