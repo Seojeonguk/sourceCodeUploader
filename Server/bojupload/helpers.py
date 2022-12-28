@@ -43,9 +43,23 @@ def getProblemInfo(requestData):
     return problemInfo
 
 
-def github(problemInfo, githubInfo):
-    # To check if a file exists before requesting
-    # Get sha value if file exists
+def getSHA(problemInfo, githubInfo):
+    headers = {
+        'Authorization': 'Bearer %s' % (githubInfo.get('token')),
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    path = '%s%s.%s' % (githubInfo.get('folderPath'),
+                        problemInfo.get('problemId'), problemInfo.get('ext'))
+    url = '%s/repos/%s/%s/contents/%s' % (constants.GITHUB_BASE_URL,
+                                          githubInfo.get('userName'), githubInfo.get('repo'), path)
+
+    res = requests.get(url=url, headers=headers)
+
+    return res.json().get('sha')
+
+
+def github(problemInfo, githubInfo, sha):
     headers = {
         'Authorization': 'Bearer %s' % (githubInfo.get('token')),
         'Accept': 'application/vnd.github.v3+json'
@@ -60,6 +74,8 @@ def github(problemInfo, githubInfo):
         "message": problemInfo.get('title'),
         "content": base64.b64encode(problemInfo.get('sourcecode').encode('ascii')).decode('utf8')
     }
+    if not isEmpty(sha):
+        requestData['sha'] = sha
 
     res = requests.put(url=url, headers=headers, data=json.dumps(requestData))
 

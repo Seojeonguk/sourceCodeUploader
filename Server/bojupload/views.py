@@ -14,7 +14,8 @@ def githubUpload(request):
         helpers.verifyProblemInfo(request.data)
         githubInfo = helpers.getGithubInfo(request.data)
         problemInfo = helpers.getProblemInfo(request.data)
-        response = helpers.github(problemInfo, githubInfo)
+        sha = helpers.getSHA(problemInfo, githubInfo)
+        response = helpers.github(problemInfo, githubInfo, sha)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     return Response(response, status=status.HTTP_201_CREATED)
