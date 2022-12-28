@@ -17,6 +17,16 @@ def verifyGithubInfo(requestData):
     if isEmpty(requestData.get('githubFolderPath')):
         raise Exception('Does not exist github folder path!')
 
+def verifyProblemInfo(requestData):
+    if isEmpty(requestData.get('problemId')):
+        raise Exception('Does not exist problem ID!')
+
+    if isEmpty(requestData.get('mime')):
+        raise Exception('Does not exist mime!')
+
+    if isEmpty(requestData.get('code')):
+        raise Exception('Does not exist code!')
+
 def requestsolvedac(problemId):
     url = '%s/%s' % (constants.SOLVEDAC_BASE_URL, constants.GETTING_PROBLEM_WITH_ID_URL)
     headers = {"Content-Type" : "application/json"}

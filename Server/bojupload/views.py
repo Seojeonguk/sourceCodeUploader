@@ -10,6 +10,7 @@ from . import helpers
 def githubUpload(request):
     try:
         helpers.verifyGithubInfo(request.data)
+        helpers.verifyProblemInfo(request.data)
         problemInfo = helpers.getProblemInfo(request.data["problemId"], request.data["mime"])
         response = helpers.github(request.data["code"],problemInfo, request.data["githubToken"],request.data["githubUserName"],request.data["githubRepo"],request.data["githubFolderPath"])
     except Exception as e:
