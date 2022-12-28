@@ -46,25 +46,22 @@ def getGithubInfo(requestData):
 
     return githubInfo
 
-def getProblemInfo(problemId, mime):
-    problemInfo = requestsolvedac(problemId)
+def getProblemInfo(requestData):
+    problemId = requestData.get('problemId')
+    mime = requestData.get('mime')
 
-    title = problemInfo.get('titleKo')
-    ext = getEtx(mime)
+    problemFullInfo = requestsolvedac(problemId)
 
-    ret = {
+    problemInfo = {
         'problemId' : problemId,
-        'title' : title,
-        'ext' : ext
+        'title' : problemFullInfo.get('titleKo'),
+        'sourcecode' : requestData.get('sourcecode'),
+        'ext' : getEtx(mime)
     }
 
-    # Replace with the following form
-    # def test2():
-    # return 'abc', 100, [0, 1, 2]
-    # #a, b, c = test2()
-    return ret
+    return problemInfo
 
-def github(sourceCode, problemInfo, githubInfo):
+def github(problemInfo, githubInfo):
     # To check if a file exists before requesting
     # Get sha value if file exists
     headers = {
@@ -79,7 +76,7 @@ def github(sourceCode, problemInfo, githubInfo):
 
     requestData = {
         "message": problemInfo['title'],
-        "content": base64.b64encode(sourceCode.encode('ascii')).decode('utf8')
+        "content": base64.b64encode(problemInfo.get('sourcecode').encode('ascii')).decode('utf8')
     }
 
     res = requests.put(url=url, headers=headers, data=json.dumps(requestData))
