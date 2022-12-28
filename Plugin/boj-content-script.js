@@ -30,6 +30,12 @@ function createGithubBtn(btnWrap, isDarkmode) {
   githubBtn.onclick = function (e) {
     // To do more..
     // Request server
+    const textarea = document.querySelector("[name='source']");
+    const sourcecode = textarea.value;
+    const mime = textarea.getAttribute("data-mime");
+    const problemId = document
+      .querySelector("table")
+      .querySelector("a[href^='/problem/']").innerHTML;
   };
 
   var githubURL = "icon/githubIcon.png";
