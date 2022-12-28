@@ -8,8 +8,10 @@ from . import helpers
 
 @api_view(['POST'])
 def githubUpload(request):
-    # Verify request
-    # Apply try exception
-    problemInfo = helpers.getProblemInfo(request.data["problemId"], request.data["mime"])
-    response = helpers.github(request.data["code"],problemInfo, request.data["githubToken"],request.data["githubUserName"],request.data["githubRepo"],request.data["githubFolderPath"])
+    try:
+        helpers.verifyGithubInfo(request.data)
+        problemInfo = helpers.getProblemInfo(request.data["problemId"], request.data["mime"])
+        response = helpers.github(request.data["code"],problemInfo, request.data["githubToken"],request.data["githubUserName"],request.data["githubRepo"],request.data["githubFolderPath"])
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     return Response(response,status=status.HTTP_201_CREATED)

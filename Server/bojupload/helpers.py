@@ -4,6 +4,19 @@ import requests
 import json
 import base64
 
+def verifyGithubInfo(requestData):
+    if isEmpty(requestData.get('githubToken')):
+        raise Exception('Does not exist github token!')
+    
+    if isEmpty(requestData.get('githubUserName')):
+        raise Exception('Does not exist github username!')
+
+    if isEmpty(requestData.get('githubRepo')):
+        raise Exception('Does not exist github repository!')
+
+    if isEmpty(requestData.get('githubFolderPath')):
+        raise Exception('Does not exist github folder path!')
+
 def requestsolvedac(problemId):
     url = '%s/%s' % (constants.SOLVEDAC_BASE_URL, constants.GETTING_PROBLEM_WITH_ID_URL)
     headers = {"Content-Type" : "application/json"}
@@ -65,3 +78,7 @@ def getEtx(ext):
         'text/plain' : constants.FILE_EXTENSION_TEXT
     }
     return extension.get(ext)
+
+def isEmpty(o):
+    if o == None or o == '':
+        return True
