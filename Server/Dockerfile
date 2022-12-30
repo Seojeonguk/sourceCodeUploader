@@ -6,9 +6,6 @@ WORKDIR /autopload
 
 COPY . .
 
-RUN pip install --upgrade pip
-RUN python -m venv venv
-RUN source venv/Scripts/activate
 RUN pip install -r requirements.txt
 
 RUN python manage.py makemigrations
