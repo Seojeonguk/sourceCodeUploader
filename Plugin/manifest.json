@@ -14,7 +14,13 @@
   "content_scripts": [
     {
       "matches": ["https://www.acmicpc.net/source/*"],
-      "js": ["boj-content-script.js"]
+      "js": ["library/jquery-3.6.2.min.js", "boj-content-script.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icon/githubDarkIcon.png", "icon/githubIcon.png"],
+      "matches": ["https://www.acmicpc.net/*"]
     }
   ]
 }
