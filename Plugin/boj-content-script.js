@@ -49,10 +49,10 @@ function createGithubBtn(btnWrap, isDarkmode) {
       const url = value["requestUrl"];
       $.post(`${url}/bojupload/github`, data)
         .done((v) => {
-          console.log("Success github upload!");
+          alert("Success github upload!");
         })
         .fail((e) => {
-          console.log(e.responseText);
+          alert(e.responseText);
         });
     });
   };
