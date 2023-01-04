@@ -12,7 +12,7 @@ Unofficial automatic upload.
 ### Activate the chrome extension
 
 Enter `chrome://extensions` to access. Then, activate the developer mode in the upper right corner.
-![tkwls](https://user-images.githubusercontent.com/44386047/210470325-8fd32660-b398-42be-aacd-5685b3b8cf20.png)
+![image](https://user-images.githubusercontent.com/44386047/210470325-8fd32660-b398-42be-aacd-5685b3b8cf20.png)
 
 Load a plugin folder with `manifest.json` as root through the `Load uncompressed extension` button. (`AutoUpload\Plugin`)
 
