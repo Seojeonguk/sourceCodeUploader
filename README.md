@@ -20,9 +20,11 @@ Load a plugin folder with `manifest.json` as root through the `Load uncompressed
 
 Click autoupload through the extension button in the upper right corner of the chrome.
 (Press the pin button to secure it to the upper right without pressing the extension button.)
+
 ![image](https://user-images.githubusercontent.com/44386047/210471018-047984f9-3d06-4e90-ad33-5613c236998b.png)
 
 Then, when the following pop-up window appears, enter the information you need to upload.
+
 ![image](https://user-images.githubusercontent.com/44386047/210470972-15b4ee9c-31ae-4a2a-90a7-fe9b8fa4fbe3.png)
 
 - `notion token` : token required to upload notion
