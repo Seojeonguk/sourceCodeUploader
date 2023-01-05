@@ -4,6 +4,7 @@
 // 3. all upload button
 $(function () {
   const btnWrap = createBtnWrap();
+  const theme = getTheme();
   createGithubBtn(btnWrap, theme);
 });
 
@@ -71,6 +72,14 @@ function createGithubBtn(btnWrap, theme) {
   githubBtn.append(githubImg);
 
   btnWrap.append(githubBtn);
+}
+
+function getTheme() {
+  let theme = "cm-s-default";
+  document.querySelector(".CodeMirror")?.classList.forEach((className) => {
+    if (className.startsWith("cm-s")) theme = className;
+  });
+  return theme;
 }
 
 function isDarkmode(theme) {
