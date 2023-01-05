@@ -40,6 +40,14 @@ def getLevelKo(level):
     return tier[level]
 
 
+def getNotionInfo(requestData):
+    notionInfo = {
+        'token': requestData.get('notionToken'),
+        'url': requestData.get('notionUrl')
+    }
+    return notionInfo
+
+
 def getProblemInfo(requestData):
     problemId = requestData.get('problemId')
     mime = requestData.get('mime')
