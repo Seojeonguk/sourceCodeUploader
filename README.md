@@ -43,11 +43,12 @@ Then, when the following pop-up window appears, enter the information you need t
 
 ## Settings for django
 
-First, install the docker by referring to the following site.
+First, install the docker and certbot by referring to the following site.
 
-[Install Docker](https://docs.docker.com/engine/install/ubuntu/)
+- [Install Docker](https://docs.docker.com/engine/install/ubuntu/)
+- [Install the cerbot](https://certbot.eff.org/instructions)
 
-Then, The certificate is issued through the following command:
+Then, the certificate is issued through the following command:
 
 `sudo certbot --standalone -d [domain name] certonly`
 
