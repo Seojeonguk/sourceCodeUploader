@@ -16,6 +16,12 @@ Enter `chrome://extensions` to access. Then, activate the developer mode in the 
 
 Load a plugin folder with `manifest.json` as root through the `Load uncompressed extension` button. (`AutoUpload\Plugin`)
 
+### Get access token
+
+Get access token for github upload.
+
+[Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+
 ### Enter information required for upload
 
 Click autoupload through the extension button in the upper right corner of the chrome.
