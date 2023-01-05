@@ -19,3 +19,13 @@ def githubUpload(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     return Response(response, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def notionUpload(request):
+    try:
+        helpers.verifyNotionInfo(request.data)
+        helpers.verifyProblemInfo(request.data)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_201_CREATED)
