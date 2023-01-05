@@ -4,6 +4,18 @@ import base64
 import json
 import requests
 
+from notion_client import Client
+from datetime import datetime
+
+
+def getChildren(problemInfo):
+    children = []
+    children.append(setChildren(constants.BLOCK_TYPE_HEADING1, '풀이'))
+    children.append(setChildren('paragraph', ''))
+    children.append(setChildren(constants.BLOCK_TYPE_HEADING1, '소스코드'))
+    children.append(setChildren('code', problemInfo))
+    return children
+
 
 def getEtx(ext):
     extension = {
@@ -27,7 +39,18 @@ def getGithubInfo(requestData):
     return githubInfo
 
 
-def getLevelKo(level):
+def getLanguage(mime):
+    language = {
+        'text/x-csrc': constants.LANGUAGE_C,
+        'text/x-c++src': constants.LANGUAGE_CPP,
+        'text/x-java': constants.LANGUAGE_JAVA,
+        'text/x-python': constants.LANGUAGE_PYTHON,
+        'text/plain': constants.LANGUAGE_TEXT
+    }
+    return language.get(mime)
+
+
+def getLevel(level):
     tier = ['Unrated']
 
     tierNames = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Ruby']
@@ -35,7 +58,7 @@ def getLevelKo(level):
 
     for tierName in tierNames:
         for tierInfo in tierInfos:
-            tier.append(tierName.join(tierInfo))
+            tier.append('%s %s' % (tierName, tierInfo))
 
     return tier[level]
 
@@ -46,6 +69,14 @@ def getNotionInfo(requestData):
         'url': requestData.get('notionUrl')
     }
     return notionInfo
+
+
+def getParent(notionInfo):
+    parent = {
+        "type": "database_id",
+        "database_id": notionInfo.get('url')
+    }
+    return parent
 
 
 def getProblemInfo(requestData):
@@ -59,11 +90,27 @@ def getProblemInfo(requestData):
         'title': problemFullInfo.get('titleKo'),
         'sourcecode': requestData.get('sourcecode'),
         'ext': getEtx(mime),
-        'level': getLevelKo(problemFullInfo.get('level')),
-        'tags': getTags(problemFullInfo.get('tags'))
+        'level': getLevel(problemFullInfo.get('level')),
+        'tags': getTags(problemFullInfo.get('tags')),
+        'language': getLanguage(mime)
     }
 
     return problemInfo
+
+
+def getProperties(problemInfo):
+    properties = {}
+
+    properties['title'] = setProperty('title', problemInfo.get('title'))
+    properties['info'] = setProperty(
+        'multi_select', ["BOJ", problemInfo.get('level'), problemInfo.get('problemId')])
+    properties['tags'] = setProperty('multi_select', problemInfo.get('tags'))
+    properties['URL'] = setProperty(
+        'url', '%s/problem/%s' % (constants.BOJ_BASE_URL, problemInfo.get('problemId')))
+    properties['Date'] = setProperty('date')
+    properties['mime'] = setProperty('select', 'c++')
+
+    return properties
 
 
 def getSHA(problemInfo, githubInfo):
@@ -124,6 +171,16 @@ def isEmpty(o):
     return False
 
 
+def notion(notionInfo, problemInfo):
+    nc = Client(auth=notionInfo.get('token'))
+
+    body = setNotionBody(notionInfo, problemInfo)
+
+    res = nc.pages.create(**body)
+
+    return res.get('url')
+
+
 def requestsolvedac(problemId):
     url = '%s/%s' % (constants.SOLVEDAC_BASE_URL,
                      constants.GETTING_PROBLEM_WITH_ID_URL)
@@ -133,6 +190,76 @@ def requestsolvedac(problemId):
     response = requests.request("GET", url, headers=headers, params=params)
 
     return response.json()
+
+
+def setChildren(type, value):
+    children = {'type': type}
+
+    if type == constants.BLOCK_TYPE_PARAGRAPH:
+        children[constants.BLOCK_TYPE_PARAGRAPH] = {
+            "rich_text": [{
+                "type": "text",
+                "text": {
+                    "content": value
+                }
+            }]}
+    elif type == constants.BLOCK_TYPE_CODE:
+        children[constants.BLOCK_TYPE_CODE] = {
+            "rich_text": [{
+                "type": "text",
+                "text": {
+                    "content": value.get('sourcecode')
+                }
+            }],
+            "language": value.get('language')
+        }
+    elif type == constants.BLOCK_TYPE_HEADING1:
+        children[constants.BLOCK_TYPE_HEADING1] = {
+            "rich_text": [{
+                "type": "text",
+                "text": {
+                    "content": value
+                }
+            }]
+        }
+
+    return children
+
+
+def setNotionBody(notionInfo, problemInfo):
+    body = {}
+
+    body['parent'] = getParent(notionInfo)
+    body['properties'] = getProperties(problemInfo)
+    body['children'] = getChildren(problemInfo)
+
+    return body
+
+
+def setProperty(type, value=None):
+    property = {}
+    if type == constants.PROPERTY_TYPE_TITLE:
+        arr = [{"text": {
+            "content": value
+        }}]
+        property[constants.PROPERTY_TYPE_TITLE] = arr
+    elif type == constants.PROPERTY_TYPE_MULTI_SELECT:
+        arr = []
+        for v in value:
+            arr.append({"name": v})
+        property[constants.PROPERTY_TYPE_MULTI_SELECT] = arr
+    elif type == constants.PROPERTY_TYPE_DATE:
+        property[constants.PROPERTY_TYPE_DATE] = {
+            "start": datetime.now().strftime('%Y-%m-%d')
+        }
+    elif type == constants.PROPERTY_TYPE_URL:
+        property[constants.PROPERTY_TYPE_URL] = value
+    elif type == constants.PROPERTY_TYPE_SELECT:
+        property[constants.PROPERTY_TYPE_SELECT] = {
+            "name": value
+        }
+
+    return property
 
 
 def verifyGithubInfo(requestData):
