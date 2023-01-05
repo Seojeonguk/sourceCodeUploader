@@ -117,6 +117,14 @@ def verifyGithubInfo(requestData):
         raise Exception('Does not exist github folder path!')
 
 
+def verifyNotionInfo(requestData):
+    if isEmpty(requestData.get('notionToken')):
+        raise Exception('Does not exist notion token!')
+
+    if isEmpty(requestData.get('notionUrl')):
+        raise Exception('Does not exist notion url!')
+
+
 def verifyProblemInfo(requestData):
     if isEmpty(requestData.get('problemId')):
         raise Exception('Does not exist problem ID!')
