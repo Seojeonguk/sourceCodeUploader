@@ -27,6 +27,19 @@ def getGithubInfo(requestData):
     return githubInfo
 
 
+def getLevelKo(level):
+    tier = ['Unrated']
+
+    tierNames = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Ruby']
+    tierInfos = ['V', 'IV', 'III', 'II', 'I']
+
+    for tierName in tierNames:
+        for tierInfo in tierInfos:
+            tier.append(tierName.join(tierInfo))
+
+    return tier[level]
+
+
 def getProblemInfo(requestData):
     problemId = requestData.get('problemId')
     mime = requestData.get('mime')
@@ -37,7 +50,9 @@ def getProblemInfo(requestData):
         'problemId': problemId,
         'title': problemFullInfo.get('titleKo'),
         'sourcecode': requestData.get('sourcecode'),
-        'ext': getEtx(mime)
+        'ext': getEtx(mime),
+        'level': getLevelKo(problemFullInfo.get('level')),
+        'tags': getTags(problemFullInfo.get('tags'))
     }
 
     return problemInfo
@@ -57,6 +72,15 @@ def getSHA(problemInfo, githubInfo):
     res = requests.get(url=url, headers=headers)
 
     return res.json().get('sha')
+
+
+def getTags(tagInfos):
+    tags = []
+
+    for tagInfo in tagInfos:
+        tags.append(tagInfo.get('displayNames')[0].get('name'))
+
+    return tags
 
 
 def github(problemInfo, githubInfo, sha):

@@ -26,6 +26,7 @@ def notionUpload(request):
     try:
         helpers.verifyNotionInfo(request.data)
         helpers.verifyProblemInfo(request.data)
+        problemInfo = helpers.getProblemInfo(request.data)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_201_CREATED)
