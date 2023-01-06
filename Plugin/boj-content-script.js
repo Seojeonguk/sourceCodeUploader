@@ -6,6 +6,7 @@ $(function () {
   const btnWrap = createBtnWrap();
   const theme = getTheme();
   createGithubBtn(btnWrap, theme);
+  createNotionBtn(btnWrap, theme);
 });
 
 function createBtnWrap() {
@@ -73,6 +74,8 @@ function createGithubBtn(btnWrap, theme) {
 
   btnWrap.append(githubBtn);
 }
+
+function createNotionBtn(btnWrap, theme) {}
 
 function getTheme() {
   let theme = "cm-s-default";
