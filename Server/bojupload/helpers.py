@@ -197,30 +197,16 @@ def setChildren(type, value):
 
     if type == constants.BLOCK_TYPE_PARAGRAPH:
         children[constants.BLOCK_TYPE_PARAGRAPH] = {
-            "rich_text": [{
-                "type": "text",
-                "text": {
-                    "content": value
-                }
-            }]}
+            "rich_text": setRichText(value)
+        }
     elif type == constants.BLOCK_TYPE_CODE:
         children[constants.BLOCK_TYPE_CODE] = {
-            "rich_text": [{
-                "type": "text",
-                "text": {
-                    "content": value.get('sourcecode')
-                }
-            }],
+            "rich_text": setRichText(value.get('sourcecode')),
             "language": value.get('language')
         }
     elif type == constants.BLOCK_TYPE_HEADING1:
         children[constants.BLOCK_TYPE_HEADING1] = {
-            "rich_text": [{
-                "type": "text",
-                "text": {
-                    "content": value
-                }
-            }]
+            "rich_text": setRichText(value)
         }
 
     return children
@@ -239,15 +225,12 @@ def setNotionBody(notionInfo, problemInfo):
 def setProperty(type, value=None):
     property = {}
     if type == constants.PROPERTY_TYPE_TITLE:
-        arr = [{"text": {
-            "content": value
-        }}]
-        property[constants.PROPERTY_TYPE_TITLE] = arr
+        property[constants.PROPERTY_TYPE_TITLE] = setRichText(value)
     elif type == constants.PROPERTY_TYPE_MULTI_SELECT:
-        arr = []
-        for v in value:
-            arr.append({"name": v})
-        property[constants.PROPERTY_TYPE_MULTI_SELECT] = arr
+        multiSelect = []
+        for name in value:
+            multiSelect.append({"name": name})
+        property[constants.PROPERTY_TYPE_MULTI_SELECT] = multiSelect
     elif type == constants.PROPERTY_TYPE_DATE:
         property[constants.PROPERTY_TYPE_DATE] = {
             "start": datetime.now().strftime('%Y-%m-%d')
@@ -260,6 +243,17 @@ def setProperty(type, value=None):
         }
 
     return property
+
+
+def setRichText(contents):
+    richText = []
+    subContents = contents
+    while len(subContents) != 0:
+        richText.append(
+            {"type": "text", "text": {"content": subContents[:2000]}})
+        subContents = subContents[2000:]
+
+    return richText
 
 
 def verifyGithubInfo(requestData):
