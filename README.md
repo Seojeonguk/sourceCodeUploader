@@ -11,6 +11,8 @@ Unofficial automatic upload.
 
 ### Activate the chrome extension
 
+---
+
 Enter `chrome://extensions` to access. Then, activate the developer mode in the upper right corner.
 ![image](https://user-images.githubusercontent.com/44386047/210470325-8fd32660-b398-42be-aacd-5685b3b8cf20.png)
 
@@ -18,11 +20,25 @@ Load a plugin folder with `manifest.json` as root through the `Load uncompressed
 
 ### Get access token
 
+---
+
 Get access token for github upload.
 
 [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+### Create Integration
+
+---
+
+Make sure you have Admin level access to the workspace.
+
+Create at least one database in the workspace.
+
+[Create an integration](https://developers.notion.com/docs/create-a-notion-integration)
+
 ### Enter information required for upload
+
+---
 
 Click autoupload through the extension button in the upper right corner of the chrome.
 (Press the pin button to secure it to the upper right without pressing the extension button.)
@@ -40,6 +56,8 @@ Then, when the following pop-up window appears, enter the information you need t
 - `github repository` : repository to commit to github
 - `github folder` : path in repository
 - `request url` : server address to request upload (the request must be applied with `https`)
+  - You can currently request it from the following sites:
+  - `https://juserver.ga`
 
 ## Settings for django
 
