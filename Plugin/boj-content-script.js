@@ -75,7 +75,53 @@ function createGithubBtn(btnWrap, theme) {
   btnWrap.append(githubBtn);
 }
 
-function createNotionBtn(btnWrap, theme) {}
+function createNotionBtn(btnWrap, theme) {
+  const notionBtn = document.createElement("a");
+  notionBtn.href = "#";
+  notionBtn.style.cursor = "pointer";
+  notionBtn.onclick = function (e) {
+    const textarea = document.querySelector("[name='source']");
+    const sourcecode = textarea.value;
+    const mime = textarea.getAttribute("data-mime");
+    const problemId = document
+      .querySelector("table")
+      .querySelector("a[href^='/problem/']").innerHTML;
+
+    chrome.storage.local.get().then((value) => {
+      const data = {
+        notionToken: value["notionToken"],
+        notionUrl: value["notionUrl"],
+        sourcecode: sourcecode,
+        mime: mime,
+        problemId: problemId,
+      };
+
+      const url = value["requestUrl"];
+      $.post(`${url}/bojupload/notion`, data)
+        .done((v) => {
+          alert("Success notion upload!");
+        })
+        .fail((e) => {
+          alert(e.responseText);
+        });
+    });
+  };
+
+  var notionURL = "icon/notionIcon.png";
+  if (isDarkmode(theme)) {
+    notionURL = "icon/notionDarkIcon.png";
+  }
+
+  const notionImg = document.createElement("img");
+  notionImg.src = chrome.runtime.getURL(notionURL);
+  notionImg.alt = "notion";
+  notionImg.style.width = "32px";
+  notionImg.style.height = "32px";
+
+  notionBtn.append(notionImg);
+
+  btnWrap.append(notionBtn);
+}
 
 function getTheme() {
   let theme = "cm-s-default";
