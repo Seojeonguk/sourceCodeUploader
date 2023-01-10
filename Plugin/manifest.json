@@ -19,7 +19,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icon/githubDarkIcon.png", "icon/githubIcon.png"],
+      "resources": [
+        "icon/githubDarkIcon.png",
+        "icon/githubIcon.png",
+        "icon/notionDarkIcon.png",
+        "icon/notionIcon.png"
+      ],
       "matches": ["https://www.acmicpc.net/*"]
     }
   ]
