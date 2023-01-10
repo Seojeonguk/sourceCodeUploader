@@ -90,7 +90,7 @@ function createNotionBtn(btnWrap, theme) {
     chrome.storage.local.get().then((value) => {
       const data = {
         notionToken: value["notionToken"],
-        notionUrl: value["notionUrl"],
+        notionDatabaseId: value["notionDatabaseId"],
         sourcecode: sourcecode,
         mime: mime,
         problemId: problemId,
