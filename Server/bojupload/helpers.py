@@ -66,7 +66,7 @@ def getLevel(level):
 def getNotionInfo(requestData):
     notionInfo = {
         'token': requestData.get('notionToken'),
-        'url': requestData.get('notionUrl')
+        'databaseID': requestData.get('NotionDatabseId')
     }
     return notionInfo
 
@@ -74,7 +74,7 @@ def getNotionInfo(requestData):
 def getParent(notionInfo):
     parent = {
         "type": "database_id",
-        "database_id": notionInfo.get('url')
+        "database_id": notionInfo.get('databaseID')
     }
     return parent
 
@@ -274,8 +274,8 @@ def verifyNotionInfo(requestData):
     if isEmpty(requestData.get('notionToken')):
         raise Exception('Does not exist notion token!')
 
-    if isEmpty(requestData.get('notionUrl')):
-        raise Exception('Does not exist notion url!')
+    if isEmpty(requestData.get('NotionDatabseId')):
+        raise Exception('Does not exist notion database ID!')
 
 
 def verifyProblemInfo(requestData):
