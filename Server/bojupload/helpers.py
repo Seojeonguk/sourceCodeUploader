@@ -43,7 +43,8 @@ def getEtx(ext):
         'text/x-sh': constants.FILE_EXTENSION_SHELL,
         'text/x-fortran': constants.FILE_EXTENSION_FORTRAN,
         'text/x-scheme': constants.FILE_EXTENSION_SCHEME,
-        'text/x-ocaml': constants.FILE_EXTENSION_OCAML
+        'text/x-ocaml': constants.FILE_EXTENSION_OCAML,
+        'text/x-tcl': constants.FILE_EXTENSION_TCL
     }
     return extension.get(ext)
 
@@ -85,7 +86,9 @@ def getLanguage(mime):
         'text/x-sh': constants.LANGUAGE_SHELL,
         'text/x-fortran': constants.LANGUAGE_FORTRAN,
         'text/x-scheme': constants.LANGUAGE_SCHEME,
-        'text/x-ocaml': constants.LANGUAGE_OCAML
+        'text/x-ocaml': constants.LANGUAGE_OCAML,
+        'text/x-tcl': constants.LANGUAGE_TEXT
+
 
     }
     return language.get(mime)
