@@ -7,6 +7,7 @@ $(function () {
   const theme = getTheme();
   createGithubBtn(btnWrap, theme);
   createNotionBtn(btnWrap, theme);
+  createAllBtn(btnWrap, theme);
 });
 
 function createBtnWrap() {
@@ -23,6 +24,58 @@ function createBtnWrap() {
   addingElement.append(btnWrap);
 
   return btnWrap;
+}
+
+function createAllBtn(btnWrap, theme) {
+  const allBtn = document.createElement("a");
+  allBtn.href = "#";
+  allBtn.style.cursor = "pointer";
+  allBtn.onclick = function (e) {
+    const textarea = document.querySelector("[name='source']");
+    const sourcecode = textarea.value;
+    const mime = textarea.getAttribute("data-mime");
+    const problemId = document
+      .querySelector("table")
+      .querySelector("a[href^='/problem/']").innerHTML;
+
+    chrome.storage.local.get().then((value) => {
+      const data = {
+        githubToken: value["githubToken"],
+        githubUserName: value["githubUserName"],
+        githubRepo: value["githubRepository"],
+        githubFolderPath: value["githubFolder"],
+        notionToken: value["notionToken"],
+        notionDatabaseId: value["notionDatabaseId"],
+        sourcecode: sourcecode,
+        mime: mime,
+        problemId: problemId,
+      };
+
+      const url = value["requestUrl"];
+      $.post(`${url}/bojupload/all`, data)
+        .done((v) => {
+          alert("Success github and notion upload!");
+        })
+        .fail((e) => {
+          alert(e.responseText);
+        });
+    });
+  };
+
+  var allURL = "icon/allIcon.png";
+  if (isDarkmode(theme)) {
+    allURL = "icon/allDarkIcon.png";
+  }
+
+  const allImg = document.createElement("img");
+  allImg.src = chrome.runtime.getURL(allURL);
+  allImg.alt = "all";
+  allImg.style.width = "32px";
+  allImg.style.height = "32px";
+
+  allBtn.append(allImg);
+
+  btnWrap.append(allBtn);
 }
 
 function createGithubBtn(btnWrap, theme) {
