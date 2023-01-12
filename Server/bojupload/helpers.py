@@ -28,7 +28,8 @@ def getEtx(ext):
         'text/x-ruby': constants.FILE_EXTENSION_RUBY,
         'text/x-kotlin': constants.FILE_EXTENSION_KOTLIN,
         'text/x-swift': constants.FILE_EXTENSION_SWIFT,
-        'text/x-csharp': constants.FILE_EXTENSION_CSHARP
+        'text/x-csharp': constants.FILE_EXTENSION_CSHARP,
+        'text/javascript': constants.FILE_EXTENSION_JAVASCRIPT
     }
     return extension.get(ext)
 
@@ -55,7 +56,8 @@ def getLanguage(mime):
         'text/x-ruby': constants.LANGUAGE_RUBY,
         'text/x-kotlin': constants.LANGUAGE_KOTLIN,
         'text/x-swfit': constants.LANGUAGE_SWIFT,
-        'text/x-csharp': constants.LANGUAGE_CSHARP
+        'text/x-csharp': constants.LANGUAGE_CSHARP,
+        'text/javascript': constants.LANGUAGE_JAVASCRIPT
 
     }
     return language.get(mime)
