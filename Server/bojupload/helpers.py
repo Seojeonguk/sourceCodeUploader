@@ -37,7 +37,8 @@ def getEtx(ext):
         'text/x-pascal': constants.FILE_EXTENSION_PASCAL,
         'text/x-scala': constants.FILE_EXTENSION_SCALA,
         'text/x-lua': constants.FILE_EXTENSION_LUA,
-        'text/x-perl': constants.FILE_EXTENSION_PERL
+        'text/x-perl': constants.FILE_EXTENSION_PERL,
+        'text/x-fsharp': constants.FILE_EXTENSION_FSHARP
     }
     return extension.get(ext)
 
@@ -73,7 +74,8 @@ def getLanguage(mime):
         'text/x-pascal': constants.LANGUAGE_PASCAL,
         'text/x-scala': constants.LANGUAGE_SCALA,
         'text/x-lua': constants.LANGUAGE_LUA,
-        'text/x-perl': constants.LANGUAGE_PERL
+        'text/x-perl': constants.LANGUAGE_PERL,
+        'text/x-fsharp': constants.LANGUAGE_FSHARP
 
     }
     return language.get(mime)
