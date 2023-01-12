@@ -29,7 +29,8 @@ def getEtx(ext):
         'text/x-kotlin': constants.FILE_EXTENSION_KOTLIN,
         'text/x-swift': constants.FILE_EXTENSION_SWIFT,
         'text/x-csharp': constants.FILE_EXTENSION_CSHARP,
-        'text/javascript': constants.FILE_EXTENSION_JAVASCRIPT
+        'text/javascript': constants.FILE_EXTENSION_JAVASCRIPT,
+        'text/x-go': constants.FILE_EXTENSION_GO
     }
     return extension.get(ext)
 
@@ -57,7 +58,8 @@ def getLanguage(mime):
         'text/x-kotlin': constants.LANGUAGE_KOTLIN,
         'text/x-swfit': constants.LANGUAGE_SWIFT,
         'text/x-csharp': constants.LANGUAGE_CSHARP,
-        'text/javascript': constants.LANGUAGE_JAVASCRIPT
+        'text/javascript': constants.LANGUAGE_JAVASCRIPT,
+        'text/x-go': constants.LANGUAGE_GO
 
     }
     return language.get(mime)
