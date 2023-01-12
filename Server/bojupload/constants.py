@@ -17,6 +17,7 @@ FILE_EXTENSION_JAVASCRIPT = "js"
 FILE_EXTENSION_GO = "go"
 FILE_EXTENSION_D = "d"
 FILE_EXTENSION_PHP = "php"
+FILE_EXTENSION_RUST = "rs"
 
 BOJ_BASE_URL = "https://www.acmicpc.net"
 
@@ -37,6 +38,7 @@ LANGUAGE_CSHARP = "c#"
 LANGUAGE_JAVASCRIPT = "javascript"
 LANGUAGE_GO = "go"
 LANGUAGE_PHP = "php"
+LANGUAGE_RUST = "rust"
 
 PROPERTY_TYPE_TITLE = "title"
 PROPERTY_TYPE_MULTI_SELECT = "multi_select"
