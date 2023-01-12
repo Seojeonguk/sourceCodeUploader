@@ -23,7 +23,8 @@ def getEtx(ext):
         'text/x-c++src': constants.FILE_EXTENSION_CPLUSCPLUS,
         'text/x-java': constants.FILE_EXTENSION_JAVA,
         'text/x-python': constants.FILE_EXTENSION_PYTHON,
-        'text/plain': constants.FILE_EXTENSION_TEXT
+        'text/plain': constants.FILE_EXTENSION_TEXT,
+        'text/x-vb': constants.FILE_EXTENSION_VISUAL_BASIC
     }
     return extension.get(ext)
 
@@ -45,7 +46,8 @@ def getLanguage(mime):
         'text/x-c++src': constants.LANGUAGE_CPP,
         'text/x-java': constants.LANGUAGE_JAVA,
         'text/x-python': constants.LANGUAGE_PYTHON,
-        'text/plain': constants.LANGUAGE_TEXT
+        'text/plain': constants.LANGUAGE_TEXT,
+        'text/x-vb': constants.LANGUAGE_VISUAL_BASIC
     }
     return language.get(mime)
 
