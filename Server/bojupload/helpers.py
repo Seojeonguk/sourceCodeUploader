@@ -25,7 +25,8 @@ def getEtx(ext):
         'text/x-python': constants.FILE_EXTENSION_PYTHON,
         'text/plain': constants.FILE_EXTENSION_TEXT,
         'text/x-vb': constants.FILE_EXTENSION_VISUAL_BASIC,
-        'text/x-ruby': constants.FILE_EXTENSION_RUBY
+        'text/x-ruby': constants.FILE_EXTENSION_RUBY,
+        'text/x-kotlin': constants.FILE_EXTENSION_KOTLIN
     }
     return extension.get(ext)
 
@@ -49,7 +50,8 @@ def getLanguage(mime):
         'text/x-python': constants.LANGUAGE_PYTHON,
         'text/plain': constants.LANGUAGE_TEXT,
         'text/x-vb': constants.LANGUAGE_VISUAL_BASIC,
-        'text/x-ruby': constants.LANGUAGE_RUBY
+        'text/x-ruby': constants.LANGUAGE_RUBY,
+        'text/x-kotlin': constants.LANGUAGE_KOTLIN
     }
     return language.get(mime)
 
