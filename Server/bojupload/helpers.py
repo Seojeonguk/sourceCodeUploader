@@ -42,7 +42,8 @@ def getEtx(ext):
         'text/x-objectivec': constants.FILE_EXTENSION_OBJECTIVE_C,
         'text/x-sh': constants.FILE_EXTENSION_SHELL,
         'text/x-fortran': constants.FILE_EXTENSION_FORTRAN,
-        'text/x-scheme': constants.FILE_EXTENSION_SCHEME
+        'text/x-scheme': constants.FILE_EXTENSION_SCHEME,
+        'text/x-ocaml': constants.FILE_EXTENSION_OCAML
     }
     return extension.get(ext)
 
@@ -83,7 +84,8 @@ def getLanguage(mime):
         'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C,
         'text/x-sh': constants.LANGUAGE_SHELL,
         'text/x-fortran': constants.LANGUAGE_FORTRAN,
-        'text/x-scheme': constants.LANGUAGE_SCHEME
+        'text/x-scheme': constants.LANGUAGE_SCHEME,
+        'text/x-ocaml': constants.LANGUAGE_OCAML
 
     }
     return language.get(mime)
