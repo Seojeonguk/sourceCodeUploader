@@ -34,7 +34,8 @@ def getEtx(ext):
         'text/x-d': constants.FILE_EXTENSION_D,
         'text/x-php': constants.FILE_EXTENSION_PHP,
         'text/x-rustsrc': constants.LANGUAGE_RUST,
-        'text/x-pascal': constants.LANGUAGE_PASCAL
+        'text/x-pascal': constants.LANGUAGE_PASCAL,
+        'text/x-scala': constants.FILE_EXTENSION_SCALA
     }
     return extension.get(ext)
 
@@ -67,7 +68,8 @@ def getLanguage(mime):
         'text/x-d': constants.LANGUAGE_TEXT,
         'text/x-php': constants.LANGUAGE_PHP,
         'text/x-rustsrc': constants.LANGUAGE_RUST,
-        'text/x-pascal': constants.LANGUAGE_PASCAL
+        'text/x-pascal': constants.LANGUAGE_PASCAL,
+        'text/x-scala': constants.LANGUAGE_SCALA
 
     }
     return language.get(mime)
