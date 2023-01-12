@@ -36,7 +36,8 @@ def getEtx(ext):
         'text/x-rustsrc': constants.FILE_EXTENSION_RUST,
         'text/x-pascal': constants.FILE_EXTENSION_PASCAL,
         'text/x-scala': constants.FILE_EXTENSION_SCALA,
-        'text/x-lua': constants.FILE_EXTENSION_LUA
+        'text/x-lua': constants.FILE_EXTENSION_LUA,
+        'text/x-perl': constants.FILE_EXTENSION_PERL
     }
     return extension.get(ext)
 
@@ -71,7 +72,8 @@ def getLanguage(mime):
         'text/x-rustsrc': constants.LANGUAGE_RUST,
         'text/x-pascal': constants.LANGUAGE_PASCAL,
         'text/x-scala': constants.LANGUAGE_SCALA,
-        'text/x-lua': constants.LANGUAGE_LUA
+        'text/x-lua': constants.LANGUAGE_LUA,
+        'text/x-perl': constants.LANGUAGE_PERL
 
     }
     return language.get(mime)

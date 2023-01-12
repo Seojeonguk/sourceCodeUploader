@@ -21,6 +21,7 @@ FILE_EXTENSION_RUST = "rs"
 FILE_EXTENSION_PASCAL = "pas"
 FILE_EXTENSION_SCALA = "scala"
 FILE_EXTENSION_LUA = "lua"
+FILE_EXTENSION_PERL = "pl"
 
 BOJ_BASE_URL = "https://www.acmicpc.net"
 
@@ -45,6 +46,7 @@ LANGUAGE_RUST = "rust"
 LANGUAGE_PASCAL = "pascal"
 LANGUAGE_SCALA = "scala"
 LANGUAGE_LUA = "lua"
+LANGUAGE_PERL = "perl"
 
 PROPERTY_TYPE_TITLE = "title"
 PROPERTY_TYPE_MULTI_SELECT = "multi_select"
