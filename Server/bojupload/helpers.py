@@ -48,7 +48,10 @@ def getEtx(ext):
         'text/x-brainfuck': constants.FILE_EXTENSION_BRAINFUCK,
         'text/x-haxe': constants.FILE_EXTENSION_HAXE,
         'text/x-systemverilog': constants.FILE_EXTENSION_SYSTEMVERILOG,
-        'text/x-cobol': constants.FILE_EXTENSION_COBOL
+        'text/x-cobol': constants.FILE_EXTENSION_COBOL,
+        'text/typescript': constants.FILE_EXTENSION_TYPESCRIPT,
+        'application/typescript': constants.FILE_EXTENSION_TYPESCRIPT
+
     }
     return extension.get(ext)
 
@@ -95,7 +98,9 @@ def getLanguage(mime):
         'text/x-brainfuck': constants.LANGUAGE_TEXT,
         'text/x-haxe': constants.LANGUAGE_TEXT,
         'text/x-systemverilog': constants.LANGUAGE_SYSTEMVERILOG,
-        'text/x-cobol': constants.LANGUAGE_TEXT
+        'text/x-cobol': constants.LANGUAGE_TEXT,
+        'text/typescript': constants.LANGUAGE_TYPESCRIPT,
+        'application/typescript': constants.LANGUAGE_TYPESCRIPT
     }
     return language.get(mime)
 
