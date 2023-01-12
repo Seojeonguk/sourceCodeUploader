@@ -40,7 +40,8 @@ def getEtx(ext):
         'text/x-perl': constants.FILE_EXTENSION_PERL,
         'text/x-fsharp': constants.FILE_EXTENSION_FSHARP,
         'text/x-objectivec': constants.FILE_EXTENSION_OBJECTIVE_C,
-        'text/x-sh': constants.FILE_EXTENSION_SHELL
+        'text/x-sh': constants.FILE_EXTENSION_SHELL,
+        'text/x-fortran': constants.FILE_EXTENSION_FORTRAN
     }
     return extension.get(ext)
 
@@ -79,7 +80,8 @@ def getLanguage(mime):
         'text/x-perl': constants.LANGUAGE_PERL,
         'text/x-fsharp': constants.LANGUAGE_FSHARP,
         'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C,
-        'text/x-sh': constants.LANGUAGE_SHELL
+        'text/x-sh': constants.LANGUAGE_SHELL,
+        'text/x-fortran': constants.LANGUAGE_FORTRAN
 
     }
     return language.get(mime)
