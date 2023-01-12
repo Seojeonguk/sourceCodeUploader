@@ -41,7 +41,8 @@ def getEtx(ext):
         'text/x-fsharp': constants.FILE_EXTENSION_FSHARP,
         'text/x-objectivec': constants.FILE_EXTENSION_OBJECTIVE_C,
         'text/x-sh': constants.FILE_EXTENSION_SHELL,
-        'text/x-fortran': constants.FILE_EXTENSION_FORTRAN
+        'text/x-fortran': constants.FILE_EXTENSION_FORTRAN,
+        'text/x-scheme': constants.FILE_EXTENSION_SCHEME
     }
     return extension.get(ext)
 
@@ -81,7 +82,8 @@ def getLanguage(mime):
         'text/x-fsharp': constants.LANGUAGE_FSHARP,
         'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C,
         'text/x-sh': constants.LANGUAGE_SHELL,
-        'text/x-fortran': constants.LANGUAGE_FORTRAN
+        'text/x-fortran': constants.LANGUAGE_FORTRAN,
+        'text/x-scheme': constants.LANGUAGE_SCHEME
 
     }
     return language.get(mime)
