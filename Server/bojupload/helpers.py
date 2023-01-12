@@ -24,7 +24,8 @@ def getEtx(ext):
         'text/x-java': constants.FILE_EXTENSION_JAVA,
         'text/x-python': constants.FILE_EXTENSION_PYTHON,
         'text/plain': constants.FILE_EXTENSION_TEXT,
-        'text/x-vb': constants.FILE_EXTENSION_VISUAL_BASIC
+        'text/x-vb': constants.FILE_EXTENSION_VISUAL_BASIC,
+        'text/x-ruby': constants.FILE_EXTENSION_RUBY
     }
     return extension.get(ext)
 
@@ -47,7 +48,8 @@ def getLanguage(mime):
         'text/x-java': constants.LANGUAGE_JAVA,
         'text/x-python': constants.LANGUAGE_PYTHON,
         'text/plain': constants.LANGUAGE_TEXT,
-        'text/x-vb': constants.LANGUAGE_VISUAL_BASIC
+        'text/x-vb': constants.LANGUAGE_VISUAL_BASIC,
+        'text/x-ruby': constants.LANGUAGE_RUBY
     }
     return language.get(mime)
 

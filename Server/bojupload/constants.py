@@ -9,6 +9,7 @@ FILE_EXTENSION_JAVA = "java"
 FILE_EXTENSION_TEXT = "txt"
 FILE_EXTENSION_PYTHON = "py"
 FILE_EXTENSION_VISUAL_BASIC = "vb"
+FILE_EXTENSION_RUBY = "rb"
 
 BOJ_BASE_URL = "https://www.acmicpc.net"
 
@@ -22,6 +23,7 @@ LANGUAGE_PYTHON = "python"
 LANGUAGE_TEXT = "plain text"
 LANGUAGE_C = "c"
 LANGUAGE_VISUAL_BASIC = "basic"
+LANGUAGE_RUBY = "ruby"
 
 PROPERTY_TYPE_TITLE = "title"
 PROPERTY_TYPE_MULTI_SELECT = "multi_select"
