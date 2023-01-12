@@ -39,7 +39,7 @@ def getEtx(ext):
         'text/x-lua': constants.FILE_EXTENSION_LUA,
         'text/x-perl': constants.FILE_EXTENSION_PERL,
         'text/x-fsharp': constants.FILE_EXTENSION_FSHARP,
-        'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C,
+        'text/x-objectivec': constants.FILE_EXTENSION_OBJECTIVE_C,
         'text/x-sh': constants.FILE_EXTENSION_SHELL
     }
     return extension.get(ext)
