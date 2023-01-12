@@ -45,7 +45,8 @@ def getEtx(ext):
         'text/x-scheme': constants.FILE_EXTENSION_SCHEME,
         'text/x-ocaml': constants.FILE_EXTENSION_OCAML,
         'text/x-tcl': constants.FILE_EXTENSION_TCL,
-        'text/x-brainfuck': constants.FILE_EXTENSION_BRAINFUCK
+        'text/x-brainfuck': constants.FILE_EXTENSION_BRAINFUCK,
+        'text/x-haxe': constants.FILE_EXTENSION_HAXE
     }
     return extension.get(ext)
 
@@ -89,7 +90,8 @@ def getLanguage(mime):
         'text/x-scheme': constants.LANGUAGE_SCHEME,
         'text/x-ocaml': constants.LANGUAGE_OCAML,
         'text/x-tcl': constants.LANGUAGE_TEXT,
-        'text/x-brainfuck': constants.LANGUAGE_TEXT
+        'text/x-brainfuck': constants.LANGUAGE_TEXT,
+        'text/x-haxe': constants.LANGUAGE_TEXT
     }
     return language.get(mime)
 
