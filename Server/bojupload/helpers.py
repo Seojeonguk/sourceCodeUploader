@@ -31,7 +31,8 @@ def getEtx(ext):
         'text/x-csharp': constants.FILE_EXTENSION_CSHARP,
         'text/javascript': constants.FILE_EXTENSION_JAVASCRIPT,
         'text/x-go': constants.FILE_EXTENSION_GO,
-        'text/x-d': constants.FILE_EXTENSION_D
+        'text/x-d': constants.FILE_EXTENSION_D,
+        'text/x-php': constants.FILE_EXTENSION_PHP
     }
     return extension.get(ext)
 
@@ -61,7 +62,8 @@ def getLanguage(mime):
         'text/x-csharp': constants.LANGUAGE_CSHARP,
         'text/javascript': constants.LANGUAGE_JAVASCRIPT,
         'text/x-go': constants.LANGUAGE_GO,
-        'text/x-d': constants.LANGUAGE_TEXT
+        'text/x-d': constants.LANGUAGE_TEXT,
+        'text/x-php': constants.LANGUAGE_PHP
 
     }
     return language.get(mime)
