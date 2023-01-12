@@ -38,7 +38,8 @@ def getEtx(ext):
         'text/x-scala': constants.FILE_EXTENSION_SCALA,
         'text/x-lua': constants.FILE_EXTENSION_LUA,
         'text/x-perl': constants.FILE_EXTENSION_PERL,
-        'text/x-fsharp': constants.FILE_EXTENSION_FSHARP
+        'text/x-fsharp': constants.FILE_EXTENSION_FSHARP,
+        'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C
     }
     return extension.get(ext)
 
@@ -75,7 +76,8 @@ def getLanguage(mime):
         'text/x-scala': constants.LANGUAGE_SCALA,
         'text/x-lua': constants.LANGUAGE_LUA,
         'text/x-perl': constants.LANGUAGE_PERL,
-        'text/x-fsharp': constants.LANGUAGE_FSHARP
+        'text/x-fsharp': constants.LANGUAGE_FSHARP,
+        'text/x-objectivec': constants.LANGUAGE_OBJECTIVE_C
 
     }
     return language.get(mime)
