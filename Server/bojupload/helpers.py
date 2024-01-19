@@ -163,7 +163,7 @@ def getProperties(problemInfo):
     properties['URL'] = setProperty(
         'url', '%s/problem/%s' % (constants.BOJ_BASE_URL, problemInfo.get('problemId')))
     properties['Date'] = setProperty('date')
-    properties['mime'] = setProperty('select', 'c++')
+    properties['mime'] = setProperty('select', problemInfo.get('language'))
 
     return properties
 
