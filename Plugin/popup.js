@@ -56,6 +56,15 @@ $(function () {
     });
 });
 
+$(function () {
+  chrome.storage.local.get(["githubAccessToken"]).then((res) => {
+    const accessToken = res?.githubAccessToken;
+    if (accessToken) {
+      $(".status-circle").addClass("green");
+    }
+  });
+});
+
 function sendMessageToBackground(className, action, payload) {
   chrome.runtime.sendMessage({
     className: className,
@@ -77,9 +86,9 @@ $("#github-commit").on("click", () => {
       action: "getRepositories",
     },
     (repositories) => {
-      chrome.storage.local.set({ repositories: repositories });
-      chrome.storage.local.get(["uploadedRepository"]).then((res) => {
-        const uploadedRepository = res?.uploadedRepository;
+      chrome.storage.local.set({ githubRepositories: repositories });
+      chrome.storage.local.get(["githubUploadedRepository"]).then((res) => {
+        const uploadedRepository = res?.githubUploadedRepository;
         repositories.forEach((repository) => {
           $("#repositories").append(
             `<option ${
@@ -94,5 +103,5 @@ $("#github-commit").on("click", () => {
 
 $("#save-repo").on("click", () => {
   const value = $("#repositories").val();
-  chrome.storage.local.set({ uploadedRepository: value });
+  chrome.storage.local.set({ githubUploadedRepository: value });
 });

@@ -17,14 +17,14 @@ export default class Github {
         this.getUserData(accessToken);
       } else if (action === "commit") {
         const res = await chrome.storage.local.get([
-          "accessToken",
+          "githubAccessToken",
           "githubID",
-          "uploadedRepository",
+          "githubUploadedRepository",
         ]);
 
-        const accessToken = res?.accessToken;
+        const accessToken = res?.githubAccessToken;
         const githubID = res?.githubID;
-        const uploadedRepository = res?.uploadedRepository;
+        const uploadedRepository = res?.githubUploadedRepository;
         const problemId = payload?.problemId;
         const type = payload?.type;
 
@@ -53,9 +53,9 @@ export default class Github {
       } else if (action === "authentication") {
         this.getCode();
       } else if (action === "getRepositories") {
-        const res = await chrome.storage.local.get(["accessToken"]);
+        const res = await chrome.storage.local.get(["githubAccessToken"]);
 
-        const accessToken = res?.accessToken;
+        const accessToken = res?.githubAccessToken;
         const repositories = await this.getRepositories(accessToken);
         return repositories;
       } else {
@@ -146,7 +146,7 @@ export default class Github {
     const text = await response.text();
     const accessToken = text.match(/access_token=([^&]*)/)[1];
 
-    chrome.storage.local.set({ accessToken: accessToken });
+    chrome.storage.local.set({ githubAccessToken: accessToken });
 
     return accessToken;
   }
