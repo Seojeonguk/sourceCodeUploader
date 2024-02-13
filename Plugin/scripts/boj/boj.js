@@ -79,37 +79,43 @@ function createAllBtn(btnWrap, theme) {
 }
 
 function createGithubBtn(btnWrap, theme) {
-  const githubBtn = document.createElement("a");
-  githubBtn.href = "#";
+  const githubBtn = document.createElement("button");
+  githubBtn.style.border = 0;
+  githubBtn.style.background = "none";
   githubBtn.style.cursor = "pointer";
   githubBtn.onclick = function (e) {
     const textarea = document.querySelector("[name='source']");
-    const sourcecode = textarea.value;
+    const sourceCode = textarea.value;
     const mime = textarea.getAttribute("data-mime");
     const problemId = document
       .querySelector("table")
       .querySelector("a[href^='/problem/']").innerHTML;
 
-    chrome.storage.local.get().then((value) => {
-      const data = {
-        githubToken: value["githubToken"],
-        githubUserName: value["githubUserName"],
-        githubRepo: value["githubRepository"],
-        githubFolderPath: value["githubFolder"],
-        sourcecode: sourcecode,
-        mime: mime,
-        problemId: problemId,
-      };
+    const payload = {
+      type: "BOJ",
+      sourceCode: sourceCode,
+      mime: mime,
+      problemId: problemId,
+    };
 
-      const url = value["requestUrl"];
-      $.post(`${url}/bojupload/github`, data)
-        .done((v) => {
-          alert("Success github upload!");
-        })
-        .fail((e) => {
-          alert(e.responseText);
-        });
-    });
+    chrome.runtime.sendMessage(
+      {
+        className: "github",
+        action: "commit",
+        payload: payload,
+      },
+      (responseStatus) => {
+        if (responseStatus === 200 || responseStatus === 201) {
+          alert(
+            `Successfully uploaded the source code for ${problemId} problem.`
+          );
+        } else {
+          alert(
+            `An error occurred during the upload process of the source code for ${problemId} problem.`
+          );
+        }
+      }
+    );
   };
 
   var githubURL = "icon/githubIcon.png";

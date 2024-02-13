@@ -1,20 +1,40 @@
 {
-  "name": "Upload the source code",
+  "name": "Source code Uploader",
   "action": {
-    "default_title": "Auto Upload",
+    "default_title": "SCU",
     "default_popup": "popup.html"
   },
   "manifest_version": 3,
   "version": "0.1",
-  "description": "Upload the source code of the problem I got.",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "description": "This will allow you to upload the source code of the problem you solved.",
+  "host_permissions": [
+    "https://www.acmicpc.net/*",
+    "https://api.notion.com/*",
+    "https://github.com/*",
+    "https://solved.ac/*"
+  ],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "nativeMessaging",
+    "tabs"
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.acmicpc.net/source/*"],
-      "js": ["library/jquery-3.6.2.min.js", "boj-content-script.js"]
+      "matches": ["https://www.acmicpc.net/*"],
+      "include_globs": ["*/source/*"],
+      "js": ["library/jquery-3.6.2.min.js", "scripts/boj/boj.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["scripts/githubEventListener.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
