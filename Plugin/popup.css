@@ -162,10 +162,7 @@ body {
   width: 6px;
   height: 6px;
   background-color: #e21212;
-  position: absolute;
   border-radius: 50%;
-  top: calc(50% - 3px);
-  left: -15px;
 }
 
 .status-circle.green {
