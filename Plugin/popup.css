@@ -128,7 +128,7 @@ body {
   margin-right: 10px;
 }
 
-.name svg {
+svg {
   width: 24px;
   height: 24px;
   border-radius: 6px;
@@ -169,17 +169,7 @@ body {
   background-color: #3bf083;
 }
 
-.status-button.open {
-  background: none;
-  color: var(--button-inactive);
-  border: 1px solid var(--button-inactive);
-}
-.status-button:not(.open):hover {
-  color: #fff;
-  border-color: #fff;
-}
-
-.content-button:not(.open):hover {
+.authentication-button:not(.open):hover {
   background: #1e59f1;
 }
 
@@ -191,8 +181,8 @@ body {
   justify-content: right;
 }
 
-.content-button {
-  background-color: #3a6df0;
+.authentication-button {
+  background-color: #4d73d3;
   border: none;
   padding: 6px 24px;
   color: #fff;
@@ -202,6 +192,18 @@ body {
   transition: 0.3s;
   white-space: nowrap;
   font-size: 15px;
+}
+
+.authentication-button:hover {
+  background-color: #3a6df0;
+}
+
+.authentication-button.delete {
+  background-color: #ce3939;
+}
+
+.authentication-button.delete:hover {
+  background-color: #e21212;
 }
 
 .menu {

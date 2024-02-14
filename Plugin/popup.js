@@ -64,8 +64,25 @@ $(function () {
       const accessToken = res?.[`${providePlatporm}AccessToken`];
       if (accessToken) {
         $(`.${providePlatporm} .status-circle`).addClass("green");
+        $(`.${providePlatporm} .authentication-button`).html("인증제거");
+        $(`.${providePlatporm} .authentication-button`).addClass("delete");
       }
     });
+  });
+});
+
+$(function () {
+  $(".authentication-button").on("click", function () {
+    const platpromName = $(this).closest("li")[0].className;
+
+    if ($(this).hasClass("delete")) {
+      chrome.storage.local.remove([`${platpromName}AccessToken`]);
+      $(this).removeClass("delete");
+      $(this).html("인증하기");
+      $(this).closest("li").find(".status-circle").removeClass("green");
+    } else {
+      sendMessageToBackground(platpromName, "authentication");
+    }
   });
 });
 
@@ -76,10 +93,6 @@ function sendMessageToBackground(className, action, payload) {
     payload: payload,
   });
 }
-
-$("#github-authentication").on("click", () => {
-  sendMessageToBackground("github", "authentication");
-});
 
 $("#github-commit").on("click", () => {
   $("#repositories option").remove();
