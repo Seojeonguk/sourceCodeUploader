@@ -1,3 +1,5 @@
+const providePlatporms = ["github", "notion"];
+
 $(function () {
   const dropdowns = document.querySelectorAll(".dropdown");
   dropdowns.forEach((dropdown) => {
@@ -57,11 +59,13 @@ $(function () {
 });
 
 $(function () {
-  chrome.storage.local.get(["githubAccessToken"]).then((res) => {
-    const accessToken = res?.githubAccessToken;
-    if (accessToken) {
-      $(".status-circle").addClass("green");
-    }
+  providePlatporms.forEach((providePlatporm) => {
+    chrome.storage.local.get([`${providePlatporm}AccessToken`]).then((res) => {
+      const accessToken = res?.[`${providePlatporm}AccessToken`];
+      if (accessToken) {
+        $(`.${providePlatporm} .status-circle`).addClass("green");
+      }
+    });
   });
 });
 
