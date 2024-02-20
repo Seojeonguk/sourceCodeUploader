@@ -42,7 +42,7 @@ li {
 body {
   font-family: var(--body-font);
   background: var(--body-color);
-  min-width: 500px;
+  min-width: 600px;
   justify-content: center;
   align-items: center;
 }
@@ -206,6 +206,28 @@ svg {
   background-color: #e21212;
 }
 
+.repository-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+  align-items: center;
+}
+
+.repository {
+  margin-right: 5px;
+  border: 0;
+  width: 125px;
+  border-radius: 5px;
+  text-overflow: ellipsis;
+  height: 30px;
+}
+
+.sync-repository {
+  border: 0;
+  background-color: inherit;
+  cursor: pointer;
+}
+
 .menu {
   width: 5px;
   height: 5px;
@@ -240,6 +262,7 @@ svg {
   transform: translatey(10px);
   transition: all 0.4s ease;
   z-index: 3;
+  border-radius: 5px;
 }
 
 .dropdown.is-active ul {

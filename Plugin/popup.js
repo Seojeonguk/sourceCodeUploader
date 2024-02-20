@@ -46,9 +46,9 @@ $(function () {
       const repositories = res?.repositories;
       const uploadedRepository = res?.uploadedRepository;
       if (repositories) {
-        $("#repositories option").remove();
+        $("#repository option").remove();
         repositories.forEach((repository) => {
-          $("#repositories").append(
+          $("#repository").append(
             `<option ${
               repository.name === uploadedRepository ? "selected" : ""
             }>${repository.name}</option>`
@@ -94,8 +94,8 @@ function sendMessageToBackground(className, action, payload) {
   });
 }
 
-$("#github-commit").on("click", () => {
-  $("#repositories option").remove();
+$("#sync-repository").on("click", () => {
+  $("#repository option").remove();
 
   chrome.runtime.sendMessage(
     {
@@ -106,8 +106,9 @@ $("#github-commit").on("click", () => {
       chrome.storage.local.set({ githubRepositories: repositories });
       chrome.storage.local.get(["githubUploadedRepository"]).then((res) => {
         const uploadedRepository = res?.githubUploadedRepository;
+
         repositories.forEach((repository) => {
-          $("#repositories").append(
+          $("#repository").append(
             `<option ${
               repository.name === uploadedRepository ? "selected" : ""
             }>${repository.name}</option>`
