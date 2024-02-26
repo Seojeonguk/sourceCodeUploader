@@ -34,15 +34,25 @@
   --content-title-color: --theme-color;
 }
 
+html {
+  min-height: 0;
+  min-width: 0;
+}
+
 ul,
 li {
   list-style: none;
 }
 
+a {
+  text-decoration: none;
+  color: var(--body-font);
+}
+
 body {
   font-family: var(--body-font);
   background: var(--body-color);
-  min-width: 600px;
+  width: 600px;
   justify-content: center;
   align-items: center;
 }
@@ -100,23 +110,6 @@ body {
   margin-bottom: 14px;
 }
 
-.content-section ul {
-  padding: 0;
-  border-radius: 14px;
-  border: 1px solid var(--theme-bg-color);
-  display: flex;
-  flex-direction: column;
-}
-
-.content-section ul li {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 10px 10px;
-  justify-content: space-between;
-  height: 40px;
-}
-
 .name {
   display: flex;
   flex-direction: row;
@@ -132,19 +125,36 @@ svg {
   margin-right: 5px;
 }
 
-.content-section ul li:hover {
+.icon-list {
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid var(--theme-bg-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.icon-list li {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 10px;
+  justify-content: space-between;
+  height: 40px;
+}
+
+.icon-list li:hover {
   background-color: var(--theme-bg-color);
 }
 
-.content-section ul li:hover:first-child {
+.icon-list li:hover:first-child {
   border-radius: 13px 13px 0 0;
 }
 
-.content-section ul li:hover:last-child {
+.icon-list li:hover:last-child {
   border-radius: 0 0 13px 13px;
 }
 
-.content-section ul li + li {
+.icon-list li + li {
   border-top: 1px solid var(--border-color);
 }
 
@@ -282,4 +292,71 @@ svg {
   pointer-events: none;
   transition: 0.3s;
   background-color: var(--overlay-bg);
+}
+
+.repository-wrapper {
+  position: relative;
+  width: 150px;
+  text-overflow: ellipsis;
+  max-height: 50px;
+}
+
+.selected-repository {
+  width: 100%;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  height: 100%;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.repository-wrapper ul {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  max-height: 200px;
+  overflow: auto;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  opacity: 0;
+  pointer-events: none;
+  padding: 5px;
+}
+
+.repository-wrapper ul.is-active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.repository-wrapper ul::-webkit-scrollbar {
+  display: none;
+}
+
+.repository-wrapper ul li {
+  width: 100%;
+  padding: 0;
+  cursor: pointer;
+}
+
+.repository-wrapper ul li p {
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+  width: 100%;
+  padding: 5px 10px;
+  line-height: 30px;
+}
+
+.text-list li {
+  list-style: disc;
+  line-height: 30px;
+}
+
+.text-list li a {
+  padding: 5px;
 }
