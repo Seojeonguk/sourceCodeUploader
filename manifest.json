@@ -7,9 +7,10 @@
   "manifest_version": 3,
   "version": "0.1",
   "description": "Upload the source code of the problem I got.",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
