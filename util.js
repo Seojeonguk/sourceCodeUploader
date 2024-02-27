@@ -10,3 +10,11 @@ function removeChromeStorage(token) {
 function setChromeStorage(token, value) {
   chrome.storage.local.set({ [token]: value });
 }
+
+function sendMessage(platform, action, payload) {
+  chrome.runtime.sendMessage({
+    platform: platform,
+    action: action,
+    payload: payload,
+  });
+}
