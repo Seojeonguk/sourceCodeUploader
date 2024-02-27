@@ -7,4 +7,8 @@ export default class Github {
     this.REDIRECT_URL = "https://github.com";
     this.SCOPES = ["repo"];
   }
+
+  async dispatch(action, payload, solvedAC) {
+    // Add more..
+  }
 }
