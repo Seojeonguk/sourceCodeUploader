@@ -36,8 +36,7 @@ function handleAuthenticationButton() {
       $(this).html("Authroize");
       $(this).closest("li").find(".status").removeClass("green");
     } else {
-      // Add more..
-      setChromeStorage("githubAccessToken", "value");
+      sendMessage("github", "openGithubOauthPage");
     }
   });
 }
