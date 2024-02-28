@@ -1,12 +1,10 @@
-import Github from "./scripts/Github.js";
-
-const github = new Github();
+import { dispatch as githubDispatch } from "./scripts/github/Github.js";
 
 function handleMessage(request, sender, sendResponse) {
   try {
     const { platform, action, payload } = request;
     if (platform === "github") {
-      github.dispatch(action, payload).then((res) => {
+      githubDispatch(action, payload).then((res) => {
         sendResponse(res);
       });
       return true;
