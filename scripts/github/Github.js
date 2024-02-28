@@ -8,7 +8,12 @@ async function dispatch(action, payload) {
     requestAndSaveAccessToken(payload);
   }
 }
-
+/**
+ * Opens the GitHub OAuth authorization page in a new browser tab.
+ * The authorization page URL is constructed using the GitHub client ID,
+ * optional redirect URL, and optional scopes. If the redirect URL or scopes
+ * are provided, they are appended to the authorization page URL as query parameters.
+ */
 function openGithubOauthPage() {
   let parameters = `client_id=${Github.CLIENT_ID}`;
   if (Github.REDIRECT_URL) {
