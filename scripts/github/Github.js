@@ -1,6 +1,15 @@
 import * as Github from "./constants.js";
 import * as Util from "../util.js";
 
+/**
+ * Dispatches an action with an optional payload to the appropriate handler function.
+ * If the action is to open the GitHub OAuth authorization page, it calls the function
+ * to open the page. If the action is to request and save an access token, it calls
+ * the function to perform the request and save the token.
+ *
+ * @param {string} action - The action to be dispatched.
+ * @param {Object} payload - The optional payload associated with the action.
+ */
 async function dispatch(action, payload) {
   if (action === Github.OPEN_OAUTH_PAGE) {
     openGithubOauthPage();
@@ -8,6 +17,7 @@ async function dispatch(action, payload) {
     requestAndSaveAccessToken(payload);
   }
 }
+
 /**
  * Opens the GitHub OAuth authorization page in a new browser tab.
  * The authorization page URL is constructed using the GitHub client ID,
