@@ -16,6 +16,11 @@
     {
       "matches": ["https://www.acmicpc.net/source/*"],
       "js": ["library/jquery-3.6.2.min.js", "boj-content-script.js"]
+    },
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["scripts/github/githubEvents.js"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
@@ -30,5 +35,6 @@
       ],
       "matches": ["https://www.acmicpc.net/*"]
     }
-  ]
+  ],
+  "host_permissions": ["https://github.com/*"]
 }
