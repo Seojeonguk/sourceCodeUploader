@@ -177,6 +177,7 @@ svg {
 .select-list ul.is-active {
   transform: translateY(10px);
   opacity: 1;
+  pointer-events: all;
 }
 
 .select-list ul::-webkit-scrollbar {

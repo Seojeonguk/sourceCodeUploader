@@ -15,7 +15,37 @@ async function dispatch(action, payload) {
     openGithubOauthPage();
   } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
     requestAndSaveAccessToken(payload);
+  } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
+    const repositories = await getAuthenticatedUserRepositories(payload);
+    return repositories;
   }
+}
+/**
+ * Fetches repositories owned by the authenticated user from the GitHub API.
+ * Before making the request, it verifies the presence of the access token.
+ * Throws an error if the access token is not found in the local storage.
+ * Throws an error if the API request to fetch repositories fails.
+ *
+ * @returns {Promise<Array>} A promise that resolves to an array of repositories.
+ * @throws {Error} If the access token is not found or if the API request fails.
+ */
+async function getAuthenticatedUserRepositories() {
+  const accessToken = await Util.readLocalStorage("githubAccessToken");
+  Util.throwIfFalsy(accessToken, "Access token not found.");
+
+  const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
+  const headers = {
+    accept: "application/vnd.github+json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const response = await Util.request(url, "GET", headers, undefined);
+  if (!response.ok) {
+    throw new Error("Failed to fetch repositories.");
+  }
+  const repositories = await response.json();
+
+  return repositories;
 }
 
 /**

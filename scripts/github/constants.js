@@ -7,6 +7,7 @@ const SCOPES = ["repo"];
 
 const OPEN_OAUTH_PAGE = "openGithubOauthPage";
 const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";
+const GET_AUTHENTICATED_USER_REPOSITORIES = "getAuthenticatedUserRepositories";
 
 export {
   BASE_URL,
@@ -17,4 +18,5 @@ export {
   SCOPES,
   OPEN_OAUTH_PAGE,
   REQUEST_AND_SAVE_ACCESS_TOKEN,
+  GET_AUTHENTICATED_USER_REPOSITORIES,
 };

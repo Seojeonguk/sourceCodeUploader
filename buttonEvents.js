@@ -3,6 +3,7 @@ function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   showSelectList();
   handleAuthenticationButton();
+  syncRepository();
 }
 
 function closeSelectListOnOutsideClick() {
@@ -38,5 +39,26 @@ function handleAuthenticationButton() {
     } else {
       sendMessage("github", "openGithubOauthPage");
     }
+  });
+}
+
+function syncRepository() {
+  $("#sync-repository").on("click", function (e) {
+    console.log("sync button click!");
+    chrome.runtime.sendMessage(
+      {
+        platform: "github",
+        action: "getAuthenticatedUserRepositories",
+      },
+      (repositories) => {
+        $("#repository-list li").remove();
+
+        repositories.forEach((repository) => {
+          $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
+        });
+
+        setChromeStorage("githubRepositories", repositories);
+      }
+    );
   });
 }
