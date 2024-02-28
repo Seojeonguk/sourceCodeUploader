@@ -6,6 +6,7 @@ const REDIRECT_URL = "https://github.com";
 const SCOPES = ["repo"];
 
 const OPEN_OAUTH_PAGE = "openGithubOauthPage";
+const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";
 
 export {
   BASE_URL,
@@ -15,4 +16,5 @@ export {
   REDIRECT_URL,
   SCOPES,
   OPEN_OAUTH_PAGE,
+  REQUEST_AND_SAVE_ACCESS_TOKEN,
 };
