@@ -3,6 +3,12 @@ function initializeOnLoad() {
   loadCachedRepositoryList();
 }
 
+/**
+ * Checks authentication status for various platforms (e.g., GitHub, Notion).
+ * Iterates through the platforms array and retrieves access tokens from Chrome storage.
+ * If an access token is found for a platform, updates the UI accordingly by adding a green status class
+ * and changing the text and style of the authentication button to indicate removal.
+ */
 async function checkPlatformsAuthentication() {
   const platforms = ["github", "notion"];
 
