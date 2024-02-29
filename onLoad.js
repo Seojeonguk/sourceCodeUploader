@@ -1,5 +1,6 @@
 function initializeOnLoad() {
   checkPlatformsAuthentication();
+  syncRepositories();
 }
 
 async function checkPlatformsAuthentication() {
@@ -13,4 +14,15 @@ async function checkPlatformsAuthentication() {
       $(`.${platform} .authentication-btn`).addClass("delete");
     }
   });
+}
+
+async function syncRepositories() {
+  const repositories = await getChromeStorage("githubRepositories");
+  if (repositories) {
+    $("#repository-list li").remove();
+
+    repositories.forEach((repository) => {
+      $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
+    });
+  }
 }
