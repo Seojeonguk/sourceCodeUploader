@@ -14,8 +14,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.acmicpc.net/source/*"],
-      "js": ["library/jquery-3.6.2.min.js", "boj-content-script.js"]
+      "matches": ["https://www.acmicpc.net/*"],
+      "css": ["scripts/boj/boj.css"],
+      "js": [
+        "library/jquery-3.6.2.min.js",
+        "scripts/boj/buttonUtils.js",
+        "scripts/boj/Boj.js"
+      ],
+      "run_at": "document_idle",
+      "include_globs": ["*/source/*"]
     },
     {
       "matches": ["https://github.com/*"],
@@ -25,16 +32,9 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "icon/allIcon.png",
-        "icon/allDarkIcon.png",
-        "icon/githubDarkIcon.png",
-        "icon/githubIcon.png",
-        "icon/notionDarkIcon.png",
-        "icon/notionIcon.png"
-      ],
+      "resources": ["icon/*.png"],
       "matches": ["https://www.acmicpc.net/*"]
     }
   ],
-  "host_permissions": ["https://github.com/*"]
+  "host_permissions": ["https://github.com/*", "https://www.acmicpc.net/*"]
 }

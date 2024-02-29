@@ -1,0 +1,17 @@
+.btnWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  padding: 15px;
+}
+
+.btnWrapper .uploadBtn {
+  border: 0;
+  background: none;
+}
+
+.btnWrapper .uploadBtn img {
+  width: 40px;
+  height: 40px;
+}
