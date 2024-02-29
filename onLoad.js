@@ -23,17 +23,20 @@ async function checkPlatformsAuthentication() {
 }
 
 /**
- * Loads cached repository list from Chrome storage and displays it as a list.
- * If cached repositories exist, removes existing list items and appends new ones
- * based on the retrieved repository data.
+ * Loads the cached repository list from Chrome storage and displays it on the popup page.
+ * Also updates the uploaded repository display if a repository is selected for upload.
  */
 async function loadCachedRepositoryList() {
   const repositories = await getChromeStorage("githubRepositories");
+  const uploadedRepository = await getChromeStorage("githubUploadedRepository");
   if (repositories) {
     $("#repository-list li").remove();
 
     repositories.forEach((repository) => {
       $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
+      if (repository.name === uploadedRepository) {
+        $("#uploaded-repository").text(uploadedRepository);
+      }
     });
   }
 }
