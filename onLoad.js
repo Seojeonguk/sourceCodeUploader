@@ -1,6 +1,6 @@
 function initializeOnLoad() {
   checkPlatformsAuthentication();
-  syncRepositories();
+  loadCachedRepositoryList();
 }
 
 async function checkPlatformsAuthentication() {
@@ -16,7 +16,12 @@ async function checkPlatformsAuthentication() {
   });
 }
 
-async function syncRepositories() {
+/**
+ * Loads cached repository list from Chrome storage and displays it as a list.
+ * If cached repositories exist, removes existing list items and appends new ones
+ * based on the retrieved repository data.
+ */
+async function loadCachedRepositoryList() {
   const repositories = await getChromeStorage("githubRepositories");
   if (repositories) {
     $("#repository-list li").remove();
