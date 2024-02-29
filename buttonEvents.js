@@ -1,6 +1,7 @@
 function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   handleAuthenticationButton();
+  handleUploadedRepositorySelection();
   showSelectList();
   syncRepository();
   toggleDarkMode();
@@ -32,6 +33,20 @@ function handleAuthenticationButton() {
     } else {
       sendMessage("github", "openGithubOauthPage");
     }
+  });
+}
+
+/**
+ * Handles click event on the repository list items to select the repository for upload.
+ * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
+ */
+function handleUploadedRepositorySelection() {
+  $(document).on("click", "#repository-list li p", function (e) {
+    const uploadedRepository = e.target.innerHTML;
+
+    $("#uploaded-repository").text(uploadedRepository);
+
+    setChromeStorage("githubUploadedRepository", uploadedRepository);
   });
 }
 
