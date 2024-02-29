@@ -1,6 +1,10 @@
 const buttonWrapper = createButtonWrapper();
 createButton(buttonWrapper, "icon/githubIcon.png", () => {
-  // Add more..
+  try {
+    const problemId = parsingProblemID();
+  } catch (e) {
+    console.error(e);
+  }
 });
 
 const codeMirror = $(".CodeMirror");
