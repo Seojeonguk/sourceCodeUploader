@@ -18,6 +18,7 @@
       "css": ["scripts/boj/boj.css"],
       "js": [
         "library/jquery-3.6.2.min.js",
+        "scripts/boj/constants.js",
         "scripts/boj/buttonUtils.js",
         "scripts/boj/parsing.js",
         "scripts/boj/Boj.js"
