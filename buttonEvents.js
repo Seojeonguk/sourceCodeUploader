@@ -1,9 +1,9 @@
 function initializeButtonEvents() {
-  toggleDarkMode();
   closeSelectListOnOutsideClick();
-  showSelectList();
   handleAuthenticationButton();
+  showSelectList();
   syncRepository();
+  toggleDarkMode();
 }
 
 /**
@@ -13,31 +13,6 @@ function closeSelectListOnOutsideClick() {
   $(document).on("click", function () {
     $(".select-list ul").removeClass("is-active");
     $(".content-wrapper").removeClass("overlay");
-  });
-}
-
-/**
- * Toggles dark mode when the dark-light element is clicked.
- * Adds or removes the "light-mode" class from the body element based on its current state.
- * Stops event propagation to prevent further event handling.
- */
-function toggleDarkMode() {
-  $(".dark-light").on("click", function (e) {
-    $("body").toggleClass("light-mode");
-    e.stopPropagation();
-  });
-}
-
-/**
- * Shows the select list when the paragraph element inside select-list is clicked.
- * Adds the "is-active" class to the select list ul and the "overlay" class to the content wrapper.
- * Stops event propagation to prevent further event handling.
- */
-function showSelectList() {
-  $(".select-list p").on("click", function (e) {
-    $(".select-list ul").addClass("is-active");
-    $(".content-wrapper").addClass("overlay");
-    e.stopPropagation();
   });
 }
 
@@ -57,6 +32,19 @@ function handleAuthenticationButton() {
     } else {
       sendMessage("github", "openGithubOauthPage");
     }
+  });
+}
+
+/**
+ * Shows the select list when the paragraph element inside select-list is clicked.
+ * Adds the "is-active" class to the select list ul and the "overlay" class to the content wrapper.
+ * Stops event propagation to prevent further event handling.
+ */
+function showSelectList() {
+  $(".select-list p").on("click", function (e) {
+    $(".select-list ul").addClass("is-active");
+    $(".content-wrapper").addClass("overlay");
+    e.stopPropagation();
   });
 }
 
@@ -82,5 +70,17 @@ function syncRepository() {
         setChromeStorage("githubRepositories", repositories);
       }
     );
+  });
+}
+
+/**
+ * Toggles dark mode when the dark-light element is clicked.
+ * Adds or removes the "light-mode" class from the body element based on its current state.
+ * Stops event propagation to prevent further event handling.
+ */
+function toggleDarkMode() {
+  $(".dark-light").on("click", function (e) {
+    $("body").toggleClass("light-mode");
+    e.stopPropagation();
   });
 }
