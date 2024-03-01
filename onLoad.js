@@ -1,4 +1,6 @@
-function initializeOnLoad() {
+import * as Util from "./scripts/util.js";
+
+export function initializeOnLoad() {
   checkPlatformsAuthentication();
   loadCachedRepositoryList();
 }
@@ -9,11 +11,12 @@ function initializeOnLoad() {
  * If an access token is found for a platform, updates the UI accordingly by adding a green status class
  * and changing the text and style of the authentication button to indicate removal.
  */
+
 async function checkPlatformsAuthentication() {
-  const platforms = ["github", "notion"];
+  const platforms = ["github"];
 
   platforms.forEach(async (platform) => {
-    const accessToken = await getChromeStorage(`${platform}AccessToken`);
+    const accessToken = await Util.getChromeStorage(`${platform}AccessToken`);
     if (accessToken) {
       $(`.${platform} .status`).addClass("green");
       $(`.${platform} .authentication-btn`).html("Remove");
@@ -27,8 +30,11 @@ async function checkPlatformsAuthentication() {
  * Also updates the uploaded repository display if a repository is selected for upload.
  */
 async function loadCachedRepositoryList() {
-  const repositories = await getChromeStorage("githubRepositories");
-  const uploadedRepository = await getChromeStorage("githubUploadedRepository");
+  const repositories = await Util.getChromeStorage("githubRepositories");
+  const uploadedRepository = await Util.getChromeStorage(
+    "githubUploadedRepository"
+  );
+
   if (repositories) {
     $("#repository-list li").remove();
 

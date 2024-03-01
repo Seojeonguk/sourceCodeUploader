@@ -6,7 +6,7 @@
  */
 function parsingExtension() {
   const resultTable = $("table tbody tr td");
-  if (resultTable.length == 0) {
+  if (util.isEmpty(resultTable)) {
     throw new Error("Not found result table");
   }
 
@@ -27,9 +27,10 @@ function parsingExtension() {
  */
 function parsingSourceCode() {
   const textarea = $("textarea[name='source']");
-  if (textarea.length == 0) {
+  if (util.isEmpty(textarea)) {
     throw new Error("Not found source code");
   }
+
   return textarea[0].value;
 }
 
@@ -41,8 +42,9 @@ function parsingSourceCode() {
  */
 function parsingProblemID() {
   const a = $("table a[href^='/problem/']");
-  if (a.length == 0) {
+  if (util.isEmpty(a)) {
     throw new Error("Not found problem ID");
   }
+
   return a[0].innerHTML;
 }

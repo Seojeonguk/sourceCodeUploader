@@ -1,29 +1,28 @@
-const buttonWrapper = createButtonWrapper();
-createButton(buttonWrapper, "icon/githubIcon.png", async () => {
-  try {
-    const problemId = parsingProblemID();
-    const sourceCode = parsingSourceCode();
-    const extension = parsingExtension();
+let util;
+(async () => {
+  const src = chrome.runtime.getURL("scripts/util.js");
+  util = await import(src);
 
-    chrome.runtime.sendMessage(
-      {
-        platform: "github",
-        action: "commit",
-        payload: {
-          extension: extension,
-          problemId: problemId,
-          sourceCode: sourceCode,
-          type: "BOJ",
-        },
-      },
-      (response) => {
-        // Add more..
-      }
-    );
-  } catch (e) {
-    console.error(e);
-  }
-});
+  const buttonWrapper = createButtonWrapper();
+  createButton(buttonWrapper, "icon/githubIcon.png", async () => {
+    try {
+      const problemId = parsingProblemID();
+      const sourceCode = parsingSourceCode();
+      const extension = parsingExtension();
 
-const codeMirror = $(".CodeMirror");
-codeMirror.append(buttonWrapper);
+      const response = await util.sendMessage("github", "commit", {
+        extension: extension,
+        problemId: problemId,
+        sourceCode: sourceCode,
+        type: "BOJ",
+      });
+
+      // Add more..
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  const codeMirror = $(".CodeMirror");
+  codeMirror.append(buttonWrapper);
+})();

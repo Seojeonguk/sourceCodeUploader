@@ -21,7 +21,7 @@ function createButton(buttonWrapper, imageUrl, clickHandler) {
   button.classList.add("uploadBtn");
 
   const img = document.createElement("img");
-  img.src = chrome.runtime.getURL(imageUrl);
+  img.src = util.getResourceURL(imageUrl);
 
   button.appendChild(img);
   button.addEventListener("click", clickHandler);

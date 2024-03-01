@@ -36,6 +36,10 @@
     {
       "resources": ["icon/*.png"],
       "matches": ["https://www.acmicpc.net/*"]
+    },
+    {
+      "resources": ["scripts/util.js"],
+      "matches": ["<all_urls>"]
     }
   ],
   "host_permissions": ["https://github.com/*", "https://www.acmicpc.net/*"]

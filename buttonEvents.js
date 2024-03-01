@@ -1,4 +1,6 @@
-function initializeButtonEvents() {
+import * as Util from "./scripts/util.js";
+
+export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   handleAuthenticationButton();
   handleUploadedRepositorySelection();
@@ -26,12 +28,12 @@ function handleAuthenticationButton() {
   $(".authentication-btn").on("click", function () {
     if ($(this).hasClass("delete")) {
       const platform = $(this).closest("li").attr("platform");
-      removeChromeStorage(`${platform}AccessToken`);
+      Util.removeChromeStorage(`${platform}AccessToken`);
       $(this).removeClass("delete");
       $(this).html("Authorize");
       $(this).closest("li").find(".status").removeClass("green");
     } else {
-      sendMessage("github", "openGithubOauthPage");
+      Util.sendMessage("github", "openGithubOauthPage");
     }
   });
 }
@@ -46,7 +48,7 @@ function handleUploadedRepositorySelection() {
 
     $("#uploaded-repository").text(uploadedRepository);
 
-    setChromeStorage("githubUploadedRepository", uploadedRepository);
+    Util.setChromeStorage("githubUploadedRepository", uploadedRepository);
   });
 }
 
@@ -69,22 +71,19 @@ function showSelectList() {
  * Updates the repository list UI and stores the repositories in Chrome storage.
  */
 function syncRepository() {
-  $("#sync-repository").on("click", function (e) {
-    chrome.runtime.sendMessage(
-      {
-        platform: "github",
-        action: "getAuthenticatedUserRepositories",
-      },
-      (repositories) => {
-        $("#repository-list li").remove();
-
-        repositories.forEach((repository) => {
-          $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
-        });
-
-        setChromeStorage("githubRepositories", repositories);
-      }
+  $("#sync-repository").on("click", async function () {
+    const repositories = await Util.sendMessage(
+      "github",
+      "getAuthenticatedUserRepositories"
     );
+
+    $("#repository-list li").remove();
+
+    repositories.forEach((repository) => {
+      $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
+    });
+
+    Util.setChromeStorage("githubRepositories", repositories);
   });
 }
 

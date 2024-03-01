@@ -43,7 +43,7 @@ async function commit(payload) {
  * @throws {Error} If the access token is not found or if the API request fails.
  */
 async function getAuthenticatedUserRepositories() {
-  const accessToken = await Util.readLocalStorage("githubAccessToken");
+  const accessToken = await Util.getChromeStorage("githubAccessToken");
   Util.throwIfFalsy(accessToken, "Access token not found.");
 
   const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
