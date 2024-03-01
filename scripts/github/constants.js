@@ -8,12 +8,14 @@ const SCOPES = ["repo"];
 const OPEN_OAUTH_PAGE = "openGithubOauthPage";
 const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";
 const GET_AUTHENTICATED_USER_REPOSITORIES = "getAuthenticatedUserRepositories";
+const COMMIT = "commit";
 
 export {
   BASE_URL,
   API_BASE_URL,
   CLIENT_ID,
   CLIENT_SECRET,
+  COMMIT,
   REDIRECT_URL,
   SCOPES,
   OPEN_OAUTH_PAGE,

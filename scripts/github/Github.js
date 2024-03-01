@@ -18,8 +18,21 @@ async function dispatch(action, payload) {
   } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
     const repositories = await getAuthenticatedUserRepositories(payload);
     return repositories;
+  } else if (action === Github.COMMIT) {
+    return await commit(payload);
   }
 }
+
+/**
+ * Commits the source code to the GitHub repository.
+ *
+ * @param {Object} payload - Payload containing information related to the problem.
+ * @throws {Error} If an error occurs during the commit process.
+ */
+async function commit(payload) {
+  // Add more..
+}
+
 /**
  * Fetches repositories owned by the authenticated user from the GitHub API.
  * Before making the request, it verifies the presence of the access token.
