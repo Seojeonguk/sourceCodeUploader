@@ -17,8 +17,7 @@ async function dispatch(action, payload) {
     const accessToken = await requestAndSaveAccessToken(payload);
     getAuthenticatedUserInfo(accessToken);
   } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
-    const repositories = await getAuthenticatedUserRepositories(payload);
-    return repositories;
+    return await getAuthenticatedUserRepositories(payload);
   } else if (action === Github.COMMIT) {
     const response = await getShaForExistingFile(payload);
     if (response.content === btoa(payload.sourceCode)) {
@@ -112,9 +111,8 @@ async function getAuthenticatedUserRepositories() {
   if (!response.ok) {
     throw new Error("Failed to fetch repositories.");
   }
-  const repositories = await response.json();
 
-  return repositories;
+  return await response.json();
 }
 
 /**
