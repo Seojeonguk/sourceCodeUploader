@@ -12,11 +12,11 @@ let util;
       const title = parsingTitle();
 
       const response = await util.sendMessage("github", "commit", {
-        extension: extension,
-        problemId: problemId,
-        sourceCode: sourceCode,
+        extension,
+        problemId,
+        sourceCode,
         type: "BOJ",
-        title: title,
+        title,
       });
 
       alert(response.message);

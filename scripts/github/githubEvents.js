@@ -5,7 +5,7 @@ if (code) {
   chrome.runtime.sendMessage({
     platform: "github",
     action: "requestAndSaveAccessToken",
-    payload: payload,
+    payload,
   });
 
   window.close();

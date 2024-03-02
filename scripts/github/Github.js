@@ -73,7 +73,7 @@ async function commit(payload) {
   const body = JSON.stringify({
     content: btoa(sourceCode),
     message: title,
-    sha: sha,
+    sha,
   });
 
   const response = await Util.request(url, "PUT", headers, body);
@@ -83,7 +83,7 @@ async function commit(payload) {
 
   return {
     ok: response.ok,
-    message: message,
+    message,
   };
 }
 
