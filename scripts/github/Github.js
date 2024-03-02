@@ -20,7 +20,8 @@ async function dispatch(action, payload) {
     const repositories = await getAuthenticatedUserRepositories(payload);
     return repositories;
   } else if (action === Github.COMMIT) {
-    return await commit(payload);
+    const sha = await getShaForExistingFile(payload);
+    return await commit({ ...payload, sha: sha });
   }
 }
 
@@ -29,6 +30,7 @@ async function dispatch(action, payload) {
  * @param {object} payload - The payload containing information about the commit.
  * @param {string} payload.extension - The file extension of the source code.
  * @param {string} payload.problemId - The ID of the problem associated with the source code.
+ * @param {string} payload.sha - The SHA value of the existing file to be updated.
  * @param {string} payload.sourceCode - The source code to be committed.
  * @param {string} payload.type - The type of the source code (e.g., 'BOJ', 'LeetCode').
  * @param {string} payload.title - The title/message for the commit.
@@ -53,7 +55,7 @@ async function commit(payload) {
     throw new Error("Invalid uploaded repository for requesting commit.");
   }
 
-  const { extension, problemId, sourceCode, type, title } = payload;
+  const { extension, problemId, sha, sourceCode, type, title } = payload;
   const path = `${type}/${problemId}.${extension}`;
   const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
   const headers = {
@@ -64,6 +66,7 @@ async function commit(payload) {
   const body = JSON.stringify({
     content: btoa(sourceCode),
     message: title,
+    sha: sha,
   });
 
   const response = await Util.request(url, "PUT", headers, body);
@@ -139,6 +142,48 @@ async function getAuthenticatedUserInfo(accessToken) {
   }
 
   chrome.storage.local.set({ githubID: githubID });
+}
+
+/**
+ * Retrieves the SHA value for an existing file at the specified path in the GitHub repository.
+ * @param {object} payload - The payload containing information about the file.
+ * @param {string} payload.extension - The file extension.
+ * @param {string} payload.problemId - The ID of the problem.
+ * @param {string} payload.type - The type of file (e.g., 'source', 'solution').
+ * @returns {Promise<string>} A promise that resolves with the SHA value of the existing file.
+ * @throws {Error} If the access token, GitHub ID, or uploaded repository is invalid.
+ */
+async function getShaForExistingFile(payload) {
+  const accessToken = await Util.getChromeStorage("githubAccessToken");
+  if (Util.isEmpty(accessToken)) {
+    throw new Error("Invalid access token for requesting commit.");
+  }
+
+  const githubID = await Util.getChromeStorage("githubID");
+  if (Util.isEmpty(githubID)) {
+    throw new Error("Invalid github ID for requesting commit.");
+  }
+
+  const uploadedRepository = await Util.getChromeStorage(
+    "githubUploadedRepository"
+  );
+  if (Util.isEmpty(uploadedRepository)) {
+    throw new Error("Invalid uploaded repository for requesting commit.");
+  }
+
+  const { extension, problemId, type } = payload;
+  const path = `${type}/${problemId}.${extension}`;
+  const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
+  const headers = {
+    accept: "application/vnd.github+json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const response = await Util.request(url, "GET", headers, undefined);
+  const text = await response.text();
+  const textJson = JSON.parse(text);
+
+  return textJson.sha;
 }
 
 /**
