@@ -76,8 +76,7 @@ async function commit(payload) {
   });
 
   const response = await Util.request(url, "PUT", headers, body);
-  const responseText = await response.text();
-  const text = JSON.parse(responseText);
+  const text = await response.json();
   const message = text.commit.html_url ?? text.message;
 
   return {
@@ -179,10 +178,9 @@ async function getShaForExistingFile(payload) {
   };
 
   const response = await Util.request(url, "GET", headers, undefined);
-  const text = await response.text();
-  const textJson = JSON.parse(text);
+  const text = await response.json();
 
-  const { sha, content } = textJson;
+  const { sha, content } = text;
   const sanitizedContent = content?.replaceAll(/\n/g, "");
 
   return {
