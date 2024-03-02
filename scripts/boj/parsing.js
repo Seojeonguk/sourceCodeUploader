@@ -34,6 +34,15 @@ function parsingSourceCode() {
   return textarea[0].value;
 }
 
+function parsingTitle() {
+  const resultTable = $("table tbody tr td");
+  if (util.isEmpty(resultTable)) {
+    throw new Error("Not found result table");
+  }
+
+  return resultTable[3].innerHTML;
+}
+
 /**
  * Parses the problem ID from the first anchor tag within a table that has a href attribute starting with '/problem/'.
  * If no anchor tag is found, it throws an error.

@@ -9,12 +9,14 @@ let util;
       const problemId = parsingProblemID();
       const sourceCode = parsingSourceCode();
       const extension = parsingExtension();
+      const title = parsingTitle();
 
       const response = await util.sendMessage("github", "commit", {
         extension: extension,
         problemId: problemId,
         sourceCode: sourceCode,
         type: "BOJ",
+        title: title,
       });
 
       // Add more..
