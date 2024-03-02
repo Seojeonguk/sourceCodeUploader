@@ -25,13 +25,61 @@ async function dispatch(action, payload) {
 }
 
 /**
- * Commits the source code to the GitHub repository.
- *
- * @param {Object} payload - Payload containing information related to the problem.
- * @throws {Error} If an error occurs during the commit process.
+ * Commits the source code to the specified GitHub repository.
+ * @param {object} payload - The payload containing information about the commit.
+ * @param {string} payload.extension - The file extension of the source code.
+ * @param {string} payload.problemId - The ID of the problem associated with the source code.
+ * @param {string} payload.sourceCode - The source code to be committed.
+ * @param {string} payload.type - The type of the source code (e.g., 'BOJ', 'LeetCode').
+ * @param {string} payload.title - The title/message for the commit.
+ * @returns {Promise<object>} A promise that resolves with the result of the commit operation.
  */
+
 async function commit(payload) {
-  // Add more..
+  const accessToken = await Util.getChromeStorage("githubAccessToken");
+  if (Util.isEmpty(accessToken)) {
+    throw new Error("Invalid access token for requesting commit.");
+  }
+
+  const githubID = await Util.getChromeStorage("githubID");
+  if (Util.isEmpty(githubID)) {
+    throw new Error("Invalid github ID for requesting commit.");
+  }
+
+  const uploadedRepository = await Util.getChromeStorage(
+    "githubUploadedRepository"
+  );
+  if (Util.isEmpty(uploadedRepository)) {
+    throw new Error("Invalid uploaded repository for requesting commit.");
+  }
+
+  const { extension, problemId, sourceCode, type, title } = payload;
+  const path = `${type}/${problemId}.${extension}`;
+  const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
+  const headers = {
+    accept: "application/vnd.github+json",
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const body = JSON.stringify({
+    content: btoa(sourceCode),
+    message: title,
+  });
+
+  const response = await Util.request(url, "PUT", headers, body);
+  const responseText = await response.text();
+  const text = JSON.parse(responseText);
+  let message = "";
+  if (response.ok) {
+    message = text.commit.html_url;
+  } else {
+    message = text.message;
+  }
+
+  return {
+    ok: response.ok,
+    message: message,
+  };
 }
 
 /**

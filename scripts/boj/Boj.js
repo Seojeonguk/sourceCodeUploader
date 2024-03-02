@@ -19,7 +19,7 @@ let util;
         title: title,
       });
 
-      // Add more..
+      alert(response.message);
     } catch (e) {
       console.error(e);
     }
