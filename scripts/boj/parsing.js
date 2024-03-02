@@ -57,3 +57,18 @@ function parsingProblemID() {
 
   return a[0].innerHTML;
 }
+
+function parsingCodeMirrorTheme() {
+  const codeMirror = $(".CodeMirror");
+  if (util.isEmpty(codeMirror)) {
+    throw new Error("Not found codemirror");
+  }
+
+  codeMirror[0].classList.forEach((className) => {
+    if (className.startsWith("cm-s")) {
+      return className;
+    }
+  });
+
+  return "cm-s-default";
+}

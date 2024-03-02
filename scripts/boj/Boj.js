@@ -4,7 +4,13 @@ let util;
   util = await import(src);
 
   const buttonWrapper = createButtonWrapper();
-  createButton(buttonWrapper, "icon/githubIcon.png", async () => {
+  const theme = parsingCodeMirrorTheme();
+  const isDark = darkTheme[theme];
+  const githubIconPath = isDark
+    ? "icon/githubIcon.png"
+    : "icon/githubDarkIcon.png";
+
+  createButton(buttonWrapper, githubIconPath, async () => {
     try {
       const problemId = parsingProblemID();
       const sourceCode = parsingSourceCode();
