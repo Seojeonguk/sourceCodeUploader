@@ -14,7 +14,7 @@ async function dispatch(action, payload) {
   if (action === Github.OPEN_OAUTH_PAGE) {
     openGithubOauthPage();
   } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
-    const accessToken = requestAndSaveAccessToken(payload);
+    const accessToken = await requestAndSaveAccessToken(payload);
     getAuthenticatedUserInfo(accessToken);
   } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
     const repositories = await getAuthenticatedUserRepositories(payload);
@@ -74,7 +74,7 @@ async function getAuthenticatedUserInfo(accessToken) {
     throw new Error("Invalid access token for requesting user information.");
   }
 
-  const url = `${this.GITHUB_API_BASE_URL}/user`;
+  const url = `${Github.API_BASE_URL}/user`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,
   };
