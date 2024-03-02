@@ -14,7 +14,8 @@ async function dispatch(action, payload) {
   if (action === Github.OPEN_OAUTH_PAGE) {
     openGithubOauthPage();
   } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
-    requestAndSaveAccessToken(payload);
+    const accessToken = requestAndSaveAccessToken(payload);
+    getAuthenticatedUserInfo(accessToken);
   } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
     const repositories = await getAuthenticatedUserRepositories(payload);
     return repositories;
@@ -59,6 +60,31 @@ async function getAuthenticatedUserRepositories() {
   const repositories = await response.json();
 
   return repositories;
+}
+
+/**
+ * Retrieves authenticated user information using the GitHub API.
+ * @param {string} accessToken - The access token for authentication.
+ * @throws {Error} Throws an error if the access token is falsy or if fetching user information fails.
+ */
+async function getAuthenticatedUserInfo(accessToken) {
+  Util.throwIfFalsy(accessToken, "Access token not found.");
+
+  const url = `${this.GITHUB_API_BASE_URL}/user`;
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  const response = await Util.request(url, "GET", headers, undefined);
+  if (!response.ok) {
+    throw new Error("Failed to fetch user information.");
+  }
+
+  const json = await response.json();
+  const githubID = json.login;
+  Util.throwIfFalsy(githubID, "Github ID not found.");
+
+  chrome.storage.local.set({ githubID: githubID });
 }
 
 /**
@@ -118,6 +144,8 @@ async function requestAndSaveAccessToken(payload) {
 
   const accessToken = matchResult[1];
   chrome.storage.local.set({ githubAccessToken: accessToken });
+
+  return accessToken;
 }
 
 export { dispatch };
