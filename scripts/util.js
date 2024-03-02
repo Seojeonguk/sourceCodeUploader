@@ -28,17 +28,6 @@ export async function request(url, method, headers, body) {
 }
 
 /**
- * Throws an error if the given value is falsy.
- * @param {*} value - The value to be checked.
- * @param {string} errorMessage - The error message to be thrown if the value is falsy.
- */
-export function throwIfFalsy(value, errorMessage) {
-  if (isEmpty(value)) {
-    throw new Error(errorMessage);
-  }
-}
-
-/**
  * Sends a message to the background script.
  * @param {string} platform - The platform to which the message is sent.
  * @param {string} action - The action to be performed by the background script.

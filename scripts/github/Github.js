@@ -45,7 +45,9 @@ async function commit(payload) {
  */
 async function getAuthenticatedUserRepositories() {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
-  Util.throwIfFalsy(accessToken, "Access token not found.");
+  if (Util.isEmpty(accessToken)) {
+    throw new Error("Invalid access token for requesting user repositories.");
+  }
 
   const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
   const headers = {
@@ -68,7 +70,9 @@ async function getAuthenticatedUserRepositories() {
  * @throws {Error} Throws an error if the access token is falsy or if fetching user information fails.
  */
 async function getAuthenticatedUserInfo(accessToken) {
-  Util.throwIfFalsy(accessToken, "Access token not found.");
+  if (Util.isEmpty(accessToken)) {
+    throw new Error("Invalid access token for requesting user information.");
+  }
 
   const url = `${this.GITHUB_API_BASE_URL}/user`;
   const headers = {
@@ -82,7 +86,9 @@ async function getAuthenticatedUserInfo(accessToken) {
 
   const json = await response.json();
   const githubID = json.login;
-  Util.throwIfFalsy(githubID, "Github ID not found.");
+  if (Util.isEmpty(githubID)) {
+    throw new Error("Github ID not found.");
+  }
 
   chrome.storage.local.set({ githubID: githubID });
 }
@@ -116,12 +122,14 @@ function openGithubOauthPage() {
  * @throws {Error} If the API request fails or if the access token is not found in the response.
  */
 async function requestAndSaveAccessToken(payload) {
-  Util.throwIfFalsy(
-    payload,
-    "Invalid payload object for reqeusting access token."
-  );
+  if (Util.isEmpty(payload)) {
+    throw new Error("Invalid payload object for reqeusting access token.");
+  }
+
   const { code } = payload;
-  Util.throwIfFalsy(code, "Invalid code for requesting access token.");
+  if (Util.isEmpty(code)) {
+    throw new Error("Invalid code for requesting access token.");
+  }
 
   const url = `${Github.BASE_URL}/login/oauth/access_token`;
 
