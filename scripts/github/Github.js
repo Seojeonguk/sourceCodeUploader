@@ -20,8 +20,15 @@ async function dispatch(action, payload) {
     const repositories = await getAuthenticatedUserRepositories(payload);
     return repositories;
   } else if (action === Github.COMMIT) {
-    const sha = await getShaForExistingFile(payload);
-    return await commit({ ...payload, sha: sha });
+    const response = await getShaForExistingFile(payload);
+    if (response.content === btoa(payload.sourceCode)) {
+      return {
+        ok: false,
+        message:
+          "The upload source code and the existing content are the same.",
+      };
+    }
+    return await commit({ ...payload, sha: response.sha });
   }
 }
 
@@ -72,12 +79,7 @@ async function commit(payload) {
   const response = await Util.request(url, "PUT", headers, body);
   const responseText = await response.text();
   const text = JSON.parse(responseText);
-  let message = "";
-  if (response.ok) {
-    message = text.commit.html_url;
-  } else {
-    message = text.message;
-  }
+  const message = text.commit.html_url ?? text.message;
 
   return {
     ok: response.ok,
@@ -145,13 +147,12 @@ async function getAuthenticatedUserInfo(accessToken) {
 }
 
 /**
- * Retrieves the SHA value for an existing file at the specified path in the GitHub repository.
- * @param {object} payload - The payload containing information about the file.
+ * Retrieves the SHA and sanitized content for an existing file from the GitHub repository.
+ * @param {Object} payload - The payload containing information about the file.
  * @param {string} payload.extension - The file extension.
- * @param {string} payload.problemId - The ID of the problem.
- * @param {string} payload.type - The type of file (e.g., 'source', 'solution').
- * @returns {Promise<string>} A promise that resolves with the SHA value of the existing file.
- * @throws {Error} If the access token, GitHub ID, or uploaded repository is invalid.
+ * @param {string} payload.problemId - The ID of the problem associated with the file.
+ * @param {string} payload.type - The type of the file.
+ * @returns {Promise<{sha: string, content: string}>} A promise that resolves with the SHA and sanitized content of the file.
  */
 async function getShaForExistingFile(payload) {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
@@ -183,7 +184,13 @@ async function getShaForExistingFile(payload) {
   const text = await response.text();
   const textJson = JSON.parse(text);
 
-  return textJson.sha;
+  const { sha, content } = textJson;
+  const sanitizedContent = content?.replaceAll(/\n/g, "");
+
+  return {
+    sha,
+    content: sanitizedContent,
+  };
 }
 
 /**
