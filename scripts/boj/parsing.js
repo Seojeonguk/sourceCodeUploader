@@ -58,6 +58,11 @@ function parsingProblemID() {
   return a[0].innerHTML;
 }
 
+/**
+ * Parses the CodeMirror theme being used in the application.
+ * @returns {string} The name of the CodeMirror theme.
+ * @throws {Error} Throws an error if CodeMirror element is not found.
+ */
 function parsingCodeMirrorTheme() {
   const codeMirror = $(".CodeMirror");
   if (util.isEmpty(codeMirror)) {
