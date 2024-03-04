@@ -1,13 +1,15 @@
 {
-  "name": "Upload the source code",
+  "manifest_version": 3,
+  "name": "Source Code Uploader",
+  "version": "0.0.1",
+  "description": "A extension enabling seamless uploading of source code to platforms.",
   "action": {
-    "default_title": "Auto Upload",
+    "default_title": "Source Code Uploader",
     "default_popup": "popup.html"
   },
-  "manifest_version": 3,
-  "version": "0.1",
-  "description": "Upload the source code of the problem I got.",
-  "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
+  "author": {
+    "email": "junguk7880@naver.com"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -32,6 +34,9 @@
       "run_at": "document_idle"
     }
   ],
+  "host_permissions": ["https://github.com/*", "https://www.acmicpc.net/*"],
+  "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
+  "short_name": "SCU",
   "web_accessible_resources": [
     {
       "resources": ["icon/*.png"],
@@ -41,6 +46,5 @@
       "resources": ["scripts/util.js"],
       "matches": ["<all_urls>"]
     }
-  ],
-  "host_permissions": ["https://github.com/*", "https://www.acmicpc.net/*"]
+  ]
 }
