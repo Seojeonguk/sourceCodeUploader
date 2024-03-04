@@ -3,6 +3,12 @@
   "name": "Source Code Uploader",
   "version": "0.0.1",
   "description": "A extension enabling seamless uploading of source code to platforms.",
+  "icons": {
+    "16": "icon/icon16.png",
+    "32": "icon/icon32.png",
+    "48": "icon/icon48.png",
+    "128": "icon/icon128.png"
+  },
   "action": {
     "default_title": "Source Code Uploader",
     "default_popup": "popup.html"
