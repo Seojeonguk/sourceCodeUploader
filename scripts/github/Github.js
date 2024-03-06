@@ -11,23 +11,27 @@ import * as Util from "../util.js";
  * @param {Object} payload - The optional payload associated with the action.
  */
 async function dispatch(action, payload) {
-  if (action === Github.OPEN_OAUTH_PAGE) {
-    openGithubOauthPage();
-  } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
-    const accessToken = await requestAndSaveAccessToken(payload);
-    getAuthenticatedUserInfo(accessToken);
-  } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
-    return await getAuthenticatedUserRepositories(payload);
-  } else if (action === Github.COMMIT) {
-    const response = await getShaForExistingFile(payload);
-    if (response.content === btoa(payload.sourceCode)) {
-      return {
-        ok: false,
-        message:
-          "The upload source code and the existing content are the same.",
-      };
+  try {
+    if (action === Github.OPEN_OAUTH_PAGE) {
+      openGithubOauthPage();
+    } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
+      const accessToken = await requestAndSaveAccessToken(payload);
+      getAuthenticatedUserInfo(accessToken);
+    } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
+      return await getAuthenticatedUserRepositories(payload);
+    } else if (action === Github.COMMIT) {
+      const response = await getShaForExistingFile(payload);
+      if (response.content === btoa(payload.sourceCode)) {
+        return {
+          ok: false,
+          message:
+            "The upload source code and the existing content are the same.",
+        };
+      }
+      return await commit({ ...payload, sha: response.sha });
     }
-    return await commit({ ...payload, sha: response.sha });
+  } catch (e) {
+    throw e;
   }
 }
 
