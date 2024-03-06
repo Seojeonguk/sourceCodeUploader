@@ -21,7 +21,8 @@ function closeSelectListOnOutsideClick() {
 
 /**
  * Handles click event on the authentication button.
- * If the button has "delete" class, removes access token from Chrome storage and updates UI accordingly.
+ * If the button has the "delete" class, it removes associated data from Chrome storage.
+ * This includes access token, repository, and uploaded repository data.
  * Otherwise, sends a message to open GitHub OAuth page.
  */
 function handleAuthenticationButton() {
@@ -29,9 +30,9 @@ function handleAuthenticationButton() {
     if ($(this).hasClass("delete")) {
       const platform = $(this).closest("li").attr("platform");
       Util.removeChromeStorage(`${platform}AccessToken`);
-      $(this).removeClass("delete");
-      $(this).html("Authorize");
-      $(this).closest("li").find(".status").removeClass("green");
+      Util.removeChromeStorage(`${platform}Repositories`);
+      Util.removeChromeStorage(`${platform}UploadedRepository`);
+      location.reload(true);
     } else {
       Util.sendMessage("github", "openGithubOauthPage");
     }
