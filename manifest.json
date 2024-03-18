@@ -40,7 +40,11 @@
       "run_at": "document_idle"
     }
   ],
-  "host_permissions": ["https://github.com/*", "https://www.acmicpc.net/*"],
+  "host_permissions": [
+    "https://api.notion.com/*",
+    "https://github.com/*",
+    "https://www.acmicpc.net/*"
+  ],
   "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
   "short_name": "SCU",
   "web_accessible_resources": [
