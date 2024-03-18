@@ -31,6 +31,17 @@ let util;
     }
   });
 
+  const notionIconPath = isDark
+    ? "icon/notionIcon.png"
+    : "icon/notionDarkIcon.png";
+  createButton(buttonWrapper, notionIconPath, async () => {
+    try {
+      // To do more..
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
   const codeMirror = $(".CodeMirror");
   codeMirror.append(buttonWrapper);
 })();
