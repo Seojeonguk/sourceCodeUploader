@@ -118,15 +118,15 @@ svg {
   background-color: var(--theme-bg-color);
 }
 
-.icon-list li:hover:only-child {
+.icon-list > li:hover:only-child {
   border-radius: 9px;
 }
 
-.icon-list li:hover:first-child:not(:last-child) {
+.icon-list > li:hover:first-child:not(:last-child) {
   border-radius: 9px 9px 0 0;
 }
 
-.icon-list li:hover:last-child:not(:first-child) {
+.icon-list > li:hover:last-child:not(:first-child) {
   border-radius: 0 0 9px 9px;
 }
 
