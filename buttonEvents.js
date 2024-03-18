@@ -67,9 +67,10 @@ function showSelectList() {
 }
 
 /**
- * Handles click event on the sync repository button.
- * Sends a message to background script to get authenticated user repositories for GitHub.
- * Updates the repository list UI and stores the repositories in Chrome storage.
+ * Handles click event on the sync repository button. Sends a message to the background script
+ * to retrieve the authenticated user's GitHub repositories. It then updates the UI by clearing
+ * the current repository list, iterating over the retrieved repositories to append each one to
+ * the list, and finally stores the repositories in Chrome storage for later use.
  */
 function syncRepository() {
   $("#sync-repository").on("click", async function () {
@@ -78,8 +79,14 @@ function syncRepository() {
       "getAuthenticatedUserRepositories"
     );
 
+    if (!Array.isArray(repositories)) {
+      alert(repositories.message);
+      return;
+    }
+
     $("#repository-list li").remove();
 
+    console.log(repositories);
     repositories.forEach((repository) => {
       $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
     });
