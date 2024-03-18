@@ -8,5 +8,5 @@ export const SCOPES = ["repo"];
 export const COMMIT = "commit";
 export const GET_AUTHENTICATED_USER_REPOSITORIES =
   "getAuthenticatedUserRepositories";
-export const OPEN_OAUTH_PAGE = "openGithubOauthPage";
+export const OPEN_OAUTH_PAGE = "openOauthPage";
 export const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";

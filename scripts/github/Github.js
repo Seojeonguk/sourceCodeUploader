@@ -13,7 +13,7 @@ import * as Util from "../util.js";
 async function dispatch(action, payload) {
   try {
     if (action === Github.OPEN_OAUTH_PAGE) {
-      openGithubOauthPage();
+      openOauthPage();
     } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
       const accessToken = await requestAndSaveAccessToken(payload);
       getAuthenticatedUserInfo(accessToken);
@@ -199,7 +199,7 @@ async function getShaForExistingFile(payload) {
  * optional redirect URL, and optional scopes. If the redirect URL or scopes
  * are provided, they are appended to the authorization page URL as query parameters.
  */
-function openGithubOauthPage() {
+function openOauthPage() {
   let parameters = `client_id=${Github.CLIENT_ID}`;
   if (Github.REDIRECT_URL) {
     parameters += `&redirect_url=${Github.REDIRECT_URL}`;

@@ -27,6 +27,8 @@ function closeSelectListOnOutsideClick() {
  */
 function handleAuthenticationButton() {
   $(".authentication-btn").on("click", function () {
+    const platform = $(this).closest("li").attr("platform");
+
     if ($(this).hasClass("delete")) {
       const platform = $(this).closest("li").attr("platform");
       Util.removeChromeStorage(`${platform}AccessToken`);
@@ -34,7 +36,7 @@ function handleAuthenticationButton() {
       Util.removeChromeStorage(`${platform}UploadedRepository`);
       location.reload(true);
     } else {
-      Util.sendMessage("github", "openGithubOauthPage");
+      Util.sendMessage(platform, "openOauthPage");
     }
   });
 }
