@@ -1,6 +1,12 @@
 import * as Notion from "./constants.js";
 import * as Util from "../util.js";
 
+/**
+ * Dispatches an action with an optional payload to the appropriate handler function.
+ *
+ * @param {string} action - The action to be dispatched.
+ * @param {Object} payload - The optional payload associated with the action.
+ */
 async function dispatch(action, payload) {
   try {
     if (action === Notion.OPEN_OAUTH_PAGE) {
@@ -13,6 +19,9 @@ async function dispatch(action, payload) {
   }
 }
 
+/**
+ * Opens the Notion OAuth page in a new tab.
+ */
 function openOauthPage() {
   let parameters = `owner=user&client_id=${Notion.CLIENT_ID}&response_type=code`;
   if (Notion.REDIRECT_URL) {
@@ -24,6 +33,16 @@ function openOauthPage() {
   chrome.tabs.create({ url: url });
 }
 
+/**
+ * Requests and saves an access token.
+ * Upon successful retrieval, the relavant information is saved to the local storage.
+ *
+ * @param {Object} payload - The payload containing the authorization code.
+ * @param {string} payload.code - The code for authorization.
+ * @returns {string} - The access token authenticated user.
+ * @throws {Error} If the payload object is invalid or if the code is missing or invalid.
+ * @throws {Error} If the API request fails or if the access token is not found in the response.
+ */
 async function requestAndSaveAccessToken(payload) {
   if (Util.isEmpty(payload)) {
     throw new Error("Invalid payload object for reqeusting access token.");
