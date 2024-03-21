@@ -5,7 +5,7 @@ export function initializeButtonEvents() {
   handleAuthenticationButton();
   handleUploadedRepositorySelection();
   showSelectList();
-  syncRepository();
+  handleGithubSyncBtn();
   toggleDarkMode();
 }
 
@@ -69,13 +69,14 @@ function showSelectList() {
 }
 
 /**
- * Handles click event on the sync repository button. Sends a message to the background script
- * to retrieve the authenticated user's GitHub repositories. It then updates the UI by clearing
- * the current repository list, iterating over the retrieved repositories to append each one to
- * the list, and finally stores the repositories in Chrome storage for later use.
+ * Handles click event on the GitHub sync repository button. Sends a message to
+ * the background script to retrieve the authenticated user's GitHub repositories.
+ * It then updates the UI by clearing the current repository list, iterating over
+ * the retrieved repositories to append each one to the list, and finally stores
+ * the repositories in Chrome storage for later use.
  */
-function syncRepository() {
-  $("#sync-repository").on("click", async function () {
+function handleGithubSyncBtn() {
+  $("#github-sync-btn").on("click", async function () {
     const repositories = await Util.sendMessage(
       "github",
       "getAuthenticatedUserRepositories"
