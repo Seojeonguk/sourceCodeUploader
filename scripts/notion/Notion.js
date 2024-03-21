@@ -76,7 +76,6 @@ async function requestAndSaveAccessToken(payload) {
 
   const json = await response.json();
 
-  console.log(json);
   const accessToken = json.access_token;
   if (Util.isEmpty(accessToken)) {
     throw new Error("Access token not found.");

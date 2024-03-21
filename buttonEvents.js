@@ -88,7 +88,6 @@ function syncRepository() {
 
     $("#repository-list li").remove();
 
-    console.log(repositories);
     repositories.forEach((repository) => {
       $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
     });
