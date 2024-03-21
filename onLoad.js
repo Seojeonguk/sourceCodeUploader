@@ -3,6 +3,7 @@ import * as Util from "./scripts/util.js";
 export function initializeOnLoad() {
   checkPlatformsAuthentication();
   loadCachedRepositoryList();
+  loadCachedWorkspace();
 }
 
 /**
@@ -44,5 +45,17 @@ async function loadCachedRepositoryList() {
         $("#uploaded-repository").text(uploadedRepository);
       }
     });
+  }
+}
+
+/**
+ * Loads the cached notion workspace from Chrome storage and displays it on the popup page.
+ * Also updates a workspace name display if a workspace name is exist.
+ */
+async function loadCachedWorkspace() {
+  const workspaceName = await Util.getChromeStorage("notionWorkspaceName");
+
+  if (workspaceName) {
+    $("#uploaded-workspace").text(workspaceName);
   }
 }
