@@ -13,7 +13,7 @@ export function initializeOnLoad() {
  */
 
 async function checkPlatformsAuthentication() {
-  const platforms = ["github"];
+  const platforms = ["github", "notion"];
 
   platforms.forEach(async (platform) => {
     const accessToken = await Util.getChromeStorage(`${platform}AccessToken`);
