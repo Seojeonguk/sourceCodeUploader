@@ -3,9 +3,6 @@ import * as Util from "../util.js";
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
- * If the action is to open the GitHub OAuth authorization page, it calls the function
- * to open the page. If the action is to request and save an access token, it calls
- * the function to perform the request and save the token.
  *
  * @param {string} action - The action to be dispatched.
  * @param {Object} payload - The optional payload associated with the action.
@@ -36,14 +33,15 @@ async function dispatch(action, payload) {
 }
 
 /**
- * Commits the source code to the specified GitHub repository.
+ * Commits the source code to the GitHub repository.
+ *
  * @param {object} payload - The payload containing information about the commit.
  * @param {string} payload.extension - The file extension of the source code.
- * @param {string} payload.problemId - The ID of the problem associated with the source code.
+ * @param {string} payload.problemId - The problem ID associated with the source code.
  * @param {string} payload.sha - The SHA value of the existing file to be updated.
  * @param {string} payload.sourceCode - The source code to be committed.
  * @param {string} payload.type - The type of the source code (e.g., 'BOJ', 'LeetCode').
- * @param {string} payload.title - The title/message for the commit.
+ * @param {string} payload.title - The title for the commit.
  * @returns {Promise<object>} A promise that resolves with the result of the commit operation.
  */
 
@@ -90,13 +88,10 @@ async function commit(payload) {
 }
 
 /**
- * Fetches repositories owned by the authenticated user from the GitHub API.
- * Before making the request, it verifies the presence of the access token.
- * Throws an error if the access token is not found in the local storage.
- * Throws an error if the API request to fetch repositories fails.
+ * Retrieves repository list owned by the authenticated user.
  *
  * @returns {Promise<Array>} A promise that resolves to an array of repositories.
- * @throws {Error} If the access token is not found or if the API request fails.
+ * @throws {Error} If the access token is falsy or if the API request fails.
  */
 async function getAuthenticatedUserRepositories() {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
@@ -119,9 +114,10 @@ async function getAuthenticatedUserRepositories() {
 }
 
 /**
- * Retrieves authenticated user information using the GitHub API.
+ * Retrieves authenticated user information.
+ *
  * @param {string} accessToken - The access token for authentication.
- * @throws {Error} Throws an error if the access token is falsy or if fetching user information fails.
+ * @throws {Error} If the access token is falsy or if the API request fails.
  */
 async function getAuthenticatedUserInfo(accessToken) {
   if (Util.isEmpty(accessToken)) {
@@ -149,9 +145,10 @@ async function getAuthenticatedUserInfo(accessToken) {
 
 /**
  * Retrieves the SHA and sanitized content for an existing file from the GitHub repository.
+ *
  * @param {Object} payload - The payload containing information about the file.
  * @param {string} payload.extension - The file extension.
- * @param {string} payload.problemId - The ID of the problem associated with the file.
+ * @param {string} payload.problemId - The problem ID associated with the file.
  * @param {string} payload.type - The type of the file.
  * @returns {Promise<{sha: string, content: string}>} A promise that resolves with the SHA and sanitized content of the file.
  */
@@ -195,9 +192,6 @@ async function getShaForExistingFile(payload) {
 
 /**
  * Opens the GitHub OAuth authorization page in a new browser tab.
- * The authorization page URL is constructed using the GitHub client ID,
- * optional redirect URL, and optional scopes. If the redirect URL or scopes
- * are provided, they are appended to the authorization page URL as query parameters.
  */
 function openOauthPage() {
   let parameters = `client_id=${Github.CLIENT_ID}`;
@@ -213,11 +207,12 @@ function openOauthPage() {
 }
 
 /**
- * Requests an access token from the GitHub API using the provided payload,
- * which should contain a code obtained from the OAuth authorization flow.
+ * Requests and saves an access token.
  * Upon successful retrieval, the access token is saved to the local storage.
  *
  * @param {Object} payload - The payload containing the authorization code.
+ * @param {string} payload.code - The code for authorization.
+ * @returns {string} - The access token authenticated user.
  * @throws {Error} If the payload object is invalid or if the code is missing or invalid.
  * @throws {Error} If the API request fails or if the access token is not found in the response.
  */
