@@ -253,6 +253,8 @@ async function requestAndSaveAccessToken(payload) {
   const accessToken = matchResult[1];
   chrome.storage.local.set({ githubAccessToken: accessToken });
 
+  Util.closeLatestTab();
+
   return accessToken;
 }
 

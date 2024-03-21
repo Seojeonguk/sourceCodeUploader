@@ -82,3 +82,11 @@ export function setChromeStorage(key, value) {
 export function getResourceURL(path) {
   return chrome.runtime.getURL(path);
 }
+
+export function closeLatestTab() {
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+    tabs.forEach((tab) => {
+      chrome.tabs.remove(tab.id);
+    });
+  });
+}
