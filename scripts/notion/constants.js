@@ -6,3 +6,4 @@ export const REDIRECT_URL = "https://github.com";
 
 export const OPEN_OAUTH_PAGE = "openOauthPage";
 export const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";
+export const GET_DATABASES = "getDatabases";

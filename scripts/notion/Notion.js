@@ -13,10 +13,44 @@ async function dispatch(action, payload) {
       openOauthPage();
     } else if (action === Notion.REQUEST_AND_SAVE_ACCESS_TOKEN) {
       const accessToken = await requestAndSaveAccessToken(payload);
+    } else if (action === Notion.GET_DATABASES) {
+      return await getDatabases();
     }
   } catch (e) {
     throw e;
   }
+}
+
+async function getDatabases() {
+  const accessToken = await Util.getChromeStorage("notionAccessToken");
+  if (Util.isEmpty(accessToken)) {
+    throw new Error("Invalid access token for getting databases.");
+  }
+
+  const url = `${Notion.API_BASE_URL}/v1/search`;
+
+  const headers = {
+    "Authorization": `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+    "Notion-Version": "2022-06-28",
+  };
+
+  const body = JSON.stringify({
+    "filter": {
+      "value": "database",
+      "property": "object",
+    },
+  });
+
+  const response = await Util.request(url, "POST", headers, body);
+  if (!response.ok) {
+    throw new Error("Failed to fetch databases.");
+  }
+
+  const json = await response.json();
+  const results = json.results;
+
+  return results;
 }
 
 /**

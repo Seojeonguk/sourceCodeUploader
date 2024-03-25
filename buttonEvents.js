@@ -3,6 +3,7 @@ import * as Util from "./scripts/util.js";
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   handleAuthenticationButton();
+  handleNotionSyncBtn();
   handleUploadedRepositorySelection();
   showSelectList();
   handleGithubSyncBtn();
@@ -42,6 +43,40 @@ function handleAuthenticationButton() {
 }
 
 /**
+ * Handles the click event for the Notion sync button.
+ * When the button is clicked, it sends a request to the Notion API to retrieve databases.
+ * Upon receiving the response, it updates the UI with the list of databases.
+ * It also formats the response data and stores it in Chrome storage.
+ */
+function handleNotionSyncBtn() {
+  $("#notion-sync-btn").on("click", async function () {
+    const response = await Util.sendMessage("notion", "getDatabases");
+
+    if (!Array.isArray(response)) {
+      alert(response.message);
+      return;
+    }
+
+    $("#notion-database-list li").remove();
+
+    response.forEach((database) => {
+      $("#notion-database-list").append(
+        `<li><p database-id=${database.id}>${database.title[0].plain_text}</p></li>`
+      );
+    });
+
+    const formattedDatabases = response.map((database) => {
+      return {
+        databaseId: database.id,
+        title: database.title[0].plain_text,
+      };
+    });
+
+    Util.setChromeStorage("notionDatabases", formattedDatabases);
+  });
+}
+
+/**
  * Handles click event on the repository list items to select the repository for upload.
  * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
  */
@@ -62,8 +97,10 @@ function handleUploadedRepositorySelection() {
  */
 function showSelectList() {
   $(".select-list p").on("click", function (e) {
-    $(".select-list ul").addClass("is-active");
-    $(".content-wrapper").addClass("overlay");
+    $(this).next().addClass("is-active");
+    $(this).next().addClass("overlay");
+    //$(".select-list ul").addClass("is-active");
+    //$(".content-wrapper").addClass("overlay");
     e.stopPropagation();
   });
 }
