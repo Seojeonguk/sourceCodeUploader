@@ -81,14 +81,7 @@ async function requestAndSaveAccessToken(payload) {
     throw new Error("Access token not found.");
   }
 
-  const botId = json.bot_id;
-  const workspaceId = json.workspace_id;
-  const workspaceName = json.workspace_name;
-
   Util.setChromeStorage("notionAccessToken", accessToken);
-  Util.setChromeStorage("notionBotId", botId);
-  Util.setChromeStorage("notionWorkspaceId", workspaceId);
-  Util.setChromeStorage("notionWorkspaceName", workspaceName);
 
   Util.closeLatestTab();
 
