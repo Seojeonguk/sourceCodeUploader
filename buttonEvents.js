@@ -53,7 +53,7 @@ function handleUploadedDatabaseSelection() {
     const uploadedDatabase = $(this).text();
     const uploadedDatabaseId = $(this).attr("database-id");
 
-    $("#uploaded-workspace").text(uploadedDatabase);
+    $("#uploaded-database").text(uploadedDatabase);
 
     Util.setChromeStorage("notionUploadedDatabase", uploadedDatabase);
     Util.setChromeStorage("notionUploadedDatabaseId", uploadedDatabaseId);

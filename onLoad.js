@@ -2,6 +2,7 @@ import * as Util from "./scripts/util.js";
 
 export function initializeOnLoad() {
   checkPlatformsAuthentication();
+  loadCachedDatabaseList();
   loadCachedRepositoryList();
 }
 
@@ -23,6 +24,26 @@ async function checkPlatformsAuthentication() {
       $(`.${platform} .authentication-btn`).addClass("delete");
     }
   });
+}
+
+async function loadCachedDatabaseList() {
+  const databases = await Util.getChromeStorage("notionDatabases");
+  const uploadedDatabase = await Util.getChromeStorage(
+    "notionUploadedDatabase"
+  );
+
+  if (databases) {
+    $("#notion-database-list li").remove();
+
+    databases.forEach((database) => {
+      $("#notion-database-list").append(
+        `<li><p database-id=${database.databaseId}>${database.title}</p></li>`
+      );
+      if (database.title === uploadedDatabase) {
+        $("#uploaded-database").text(uploadedDatabase);
+      }
+    });
+  }
 }
 
 /**
