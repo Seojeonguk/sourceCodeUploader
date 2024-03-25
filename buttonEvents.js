@@ -4,6 +4,7 @@ export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   handleAuthenticationButton();
   handleNotionSyncBtn();
+  handleUploadedDatabaseSelection();
   handleUploadedRepositorySelection();
   showSelectList();
   handleGithubSyncBtn();
@@ -39,6 +40,23 @@ function handleAuthenticationButton() {
     } else {
       Util.sendMessage(platform, "openOauthPage");
     }
+  });
+}
+
+/**
+ * Handles the click event when a database is selected from the list.
+ * When a database is clicked, it retrieves the database name and ID from the clicked element.
+ * It then updates the UI to display the selected database name and stores both the name and ID in Chrome storage.
+ */
+function handleUploadedDatabaseSelection() {
+  $(document).on("click", "#notion-database-list li p", function (e) {
+    const uploadedDatabase = $(this).text();
+    const uploadedDatabaseId = $(this).attr("database-id");
+
+    $("#uploaded-workspace").text(uploadedDatabase);
+
+    Util.setChromeStorage("notionUploadedDatabase", uploadedDatabase);
+    Util.setChromeStorage("notionUploadedDatabaseId", uploadedDatabaseId);
   });
 }
 
