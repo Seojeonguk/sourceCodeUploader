@@ -15,6 +15,8 @@ async function dispatch(action, payload) {
       const accessToken = await requestAndSaveAccessToken(payload);
     } else if (action === Notion.GET_DATABASES) {
       return await getDatabases();
+    } else if (action === Notion.UPLOAD) {
+      return await upload(payload);
     }
   } catch (e) {
     throw e;
@@ -120,6 +122,10 @@ async function requestAndSaveAccessToken(payload) {
   Util.closeLatestTab();
 
   return accessToken;
+}
+
+async function upload() {
+  // Add more..
 }
 
 export { dispatch };

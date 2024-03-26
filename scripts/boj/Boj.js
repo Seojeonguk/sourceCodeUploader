@@ -40,7 +40,20 @@ let util;
     : "icon/notionDarkIcon.png";
   createButton(buttonWrapper, notionIconPath, async () => {
     try {
-      // To do more..
+      const problemId = parsingProblemID();
+      const sourceCode = parsingSourceCode();
+      const extension = parsingExtension();
+      const title = parsingTitle();
+
+      const response = await util.sendMessage("notion", "upload", {
+        extension,
+        problemId,
+        sourceCode,
+        type: "BOJ",
+        title,
+      });
+
+      alert(response.message);
     } catch (e) {
       console.error(e);
     }
