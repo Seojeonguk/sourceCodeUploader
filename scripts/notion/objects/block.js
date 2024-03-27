@@ -1,5 +1,5 @@
-import { BLOCK_TYPE, COLORS, LANGUAGES } from "./blockConstants.js";
-import { splitTextIntoChunks } from "../util.js";
+import { BLOCK_TYPE, COLORS, LANGUAGES } from "./constants/blockConstants.js";
+import { splitTextIntoChunks } from "../../util.js";
 
 /**
  * Create a block based on the specified type and payload.
