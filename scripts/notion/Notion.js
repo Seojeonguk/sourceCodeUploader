@@ -18,7 +18,7 @@ async function dispatch(action, payload) {
       return await getDatabases();
     } else if (action === Notion.UPLOAD) {
       const problemInfo = await SolvedAC.fetchProblemByID(payload);
-      return await upload(payload);
+      return await upload(payload, problemInfo);
     }
   } catch (e) {
     throw e;
@@ -126,7 +126,7 @@ async function requestAndSaveAccessToken(payload) {
   return accessToken;
 }
 
-async function upload() {
+async function upload({ problemId, type, extension }, { title, level, tags }) {
   // Add more..
 }
 
