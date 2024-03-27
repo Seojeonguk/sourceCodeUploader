@@ -1,4 +1,5 @@
 import * as Notion from "./constants.js";
+import * as SolvedAC from "../solvedAC/SolvedAC.js";
 import * as Util from "../util.js";
 
 /**
@@ -16,6 +17,7 @@ async function dispatch(action, payload) {
     } else if (action === Notion.GET_DATABASES) {
       return await getDatabases();
     } else if (action === Notion.UPLOAD) {
+      const problemInfo = await SolvedAC.fetchProblemByID(payload);
       return await upload(payload);
     }
   } catch (e) {

@@ -43,7 +43,8 @@
   "host_permissions": [
     "https://api.notion.com/*",
     "https://github.com/*",
-    "https://www.acmicpc.net/*"
+    "https://www.acmicpc.net/*",
+    "https://solved.ac/*"
   ],
   "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
   "short_name": "SCU",
