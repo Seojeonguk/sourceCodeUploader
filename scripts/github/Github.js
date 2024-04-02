@@ -14,7 +14,7 @@ async function dispatch(action, payload) {
     } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
       const accessToken = await requestAndSaveAccessToken(payload);
       getAuthenticatedUserInfo(accessToken);
-    } else if (action === Github.GET_AUTHENTICATED_USER_REPOSITORIES) {
+    } else if (action === Github.GET_REPOSITORIES) {
       return await getAuthenticatedUserRepositories(payload);
     } else if (action === Github.COMMIT) {
       const response = await getShaForExistingFile(payload);

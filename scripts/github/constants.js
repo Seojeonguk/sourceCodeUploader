@@ -6,7 +6,6 @@ export const REDIRECT_URL = "https://github.com";
 export const SCOPES = ["repo"];
 
 export const COMMIT = "commit";
-export const GET_AUTHENTICATED_USER_REPOSITORIES =
-  "getAuthenticatedUserRepositories";
+export const GET_REPOSITORIES = "getRepositories";
 export const OPEN_OAUTH_PAGE = "openOauthPage";
 export const REQUEST_AND_SAVE_ACCESS_TOKEN = "requestAndSaveAccessToken";
