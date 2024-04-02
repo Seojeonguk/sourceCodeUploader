@@ -1,15 +1,15 @@
 import { BLOCK_TYPE, COLORS, LANGUAGES } from "./constants/blockConstants.js";
-import { splitTextIntoChunks } from "../../util.js";
 
 /**
  * Create a block based on the specified type and payload.
+ *
  * @param {Object} params - Object containing the type and payload of the block to create
  * @param {string} params.type - The type of the block
  * @param {*} params.payload - The payload containing the necessary data to create the block
  * @returns {Object} - The created block object
  * @throws {Error} - If an unsupported block type is provided
  */
-export const createBlock = ({ type, payload }) => {
+export const createBlock = (type, payload) => {
   switch (type) {
     case BLOCK_TYPE.CODE:
       return createCode(payload);
@@ -29,18 +29,19 @@ export const createBlock = ({ type, payload }) => {
 };
 
 /**
- * Create a code block object.
- * @param {Object} params - Object containing the parameters for creating the code block
- * @param {string} [params.caption] - The caption for the code block
- * @param {string} params.text - The code content of the code block
- * @param {string} [params.language=blockConstants.LANGUAGES.PLAIN_TEXT] - The programming language of the code block, default is plain text
- * @returns {Object} - The created code block object
+ * Create a code block.
+ *
+ * @param {Object} code - The code block to add.
+ * @param {string} [code.caption] - The caption for the code block.
+ * @param {string} code.text - The code content of the code block.
+ * @param {string} [code.language=plain_text] - The programming language of the code block.
+ * @returns {Object} - The created code block.
  */
 export const createCode = ({ caption, text, language = LANGUAGES.Text }) => {
   return {
     type: BLOCK_TYPE.CODE,
     [BLOCK_TYPE.CODE]: {
-      caption: createRichTextArray(caption),
+      caption: caption && createRichTextArray(caption),
       rich_text: createRichTextArray(text),
       language,
     },
@@ -48,18 +49,19 @@ export const createCode = ({ caption, text, language = LANGUAGES.Text }) => {
 };
 
 /**
- * Create a heading object.
- * @param {Object} params - Object containing the parameters for creating the heading
- * @param {string} [params.type="heading_1"] - The type of heading, default is "heading_1"
- * @param {string} params.text - The text content of the heading
- * @param {string} [params.color="default"] - The color of the heading, default is "default"
- * @param {boolean} [params.is_toggleable=false] - Whether the heading is toggleable or not, default is false
- * @returns {Object} - The created heading object
+ * Create a heading block.
+ *
+ * @param {Object} heading - The heading block to add.
+ * @param {string} [heading.type=heading_1] - The type of heading.
+ * @param {string} heading.text - The text content of the heading.
+ * @param {string} [heading.color] - The color of the heading.
+ * @param {boolean} [heading.is_toggleable=false] - Whether the heading is toggleable.
+ * @returns {Object} - The created heading block.
  */
 export const createHeading = ({
   type = BLOCK_TYPE.HEADING_LARGE,
   text,
-  color = COLORS.DEFAULT,
+  color,
   is_toggleable = false,
 }) => {
   return {
@@ -73,13 +75,14 @@ export const createHeading = ({
 };
 
 /**
- * Create a paragraph object.
- * @param {Object} params - An object containing the parameters for creating the paragraph block.
- * @param {string} params.text - The text content of the paragraph.
- * @param {string} [params.color="default"] - The color of the paragraph text, default is "default".
- * @returns {Object} - The created paragraph block object.
+ * Creates a paragraph block.
+ *
+ * @param {Object} paragraph - The paragraph block to add.
+ * @param {string} paragraph.text - The text content of the paragraph.
+ * @param {string} [paragraph.color] - The color of the text in the paragraph.
+ * @returns {Object} The created paragraph block.
  */
-export const createParagraph = ({ text, color = COLORS.DEFAULT }) => {
+export const createParagraph = ({ text, color }) => {
   return {
     type: BLOCK_TYPE.PARAGRAPH,
     [BLOCK_TYPE.PARAGRAPH]: {
@@ -90,24 +93,32 @@ export const createParagraph = ({ text, color = COLORS.DEFAULT }) => {
 };
 
 /**
- * Create a rich text object.
- * @param {Object} params - Object containing the parameters for creating the rich text
- * @param {string} params.text - The content of the rich text
- * @param {string|null} [params.link=null] - The link URL associated with the rich text, default is null
- * @param {Object} [params.annotations={}] - Object containing the text formatting annotations, default is an empty object
- * @param {boolean} [params.annotations.bold=false] - Whether the text is bold or not, default is false
- * @param {boolean} [params.annotations.italic=false] - Whether the text is italic or not, default is false
- * @param {boolean} [params.annotations.strikethrough=false] - Whether the text has a strikethrough or not, default is false
- * @param {boolean} [params.annotations.underline=false] - Whether the text is underlined or not, default is false
- * @param {boolean} [params.annotations.code=false] - Whether the text is formatted as code or not, default is false
- * @param {string} [params.annotations.color="default"] - The color of the text, default is "default"
- * @param {string|null} [params.href=null] - The href attribute associated with the rich text, default is null
- * @returns {Object} - The created rich text object
+ * Creates a rich text block.
+ *
+ * @param {Object} richText - The rich text block to add.
+ * @param {string} richText.text - The text content of the rich text.
+ * @param {?string} [richText.link=null] - link associated with the text.
+ * @param {Object} [richText.annotations={}] - formatting annotations including:
+ * @param {boolean} [richText.annotations.bold=false] - Whether the text is bold.
+ * @param {boolean} [richText.annotations.italic=false] - Whether the text is italicized.
+ * @param {boolean} [richText.annotations.strikethrough=false] - Whether the text has a strikethrough.
+ * @param {boolean} [richText.annotations.underline=false] - Whether the text is underlined.
+ * @param {boolean} [richText.annotations.code=false] - Whether the text is formatted as code.
+ * @param {string} [richText.annotations.color] - The color of the text.
+ * @param {?string} [href=null] - URL associated with the text.
+ * @returns {Object} The created rich text block.
  */
 export const createRichText = ({
   text,
   link = null,
-  annotations = {},
+  annotations: {
+    bold = false,
+    italic = false,
+    strikethrough = false,
+    underline = false,
+    code = false,
+    color,
+  } = {},
   href = null,
 }) => {
   return {
@@ -117,12 +128,12 @@ export const createRichText = ({
       link,
     },
     annotations: {
-      bold: annotations.bold || false,
-      italic: annotations.italic || false,
-      strikethrough: annotations.strikethrough || false,
-      underline: annotations.underline || false,
-      code: annotations.code || false,
-      color: annotations.color || blockConstants.COLORS.DEFAULT,
+      bold,
+      italic,
+      strikethrough,
+      underline,
+      code,
+      color,
     },
     plain_text: text,
     href,
@@ -130,12 +141,16 @@ export const createRichText = ({
 };
 
 /**
- * Function to split the given text into chunks of 1000 characters each and convert them into an array of Rich Text objects.
- * @param {string} text The text to be converted
- * @returns {object[]} An array of Rich Text objects
+ * Splits the given text by newline characters ('\n') and creates an array of rich text objects,
+ * where each line is transformed into a rich text object using the createRichText function.
+ * Adds a newline character to all lines except the last one.
+ * @param {string} text The text to be transformed
+ * @returns {Object[]} An array of rich text objects
  */
 export const createRichTextArray = (text) => {
-  const chunks = splitTextIntoChunks(text, 1000);
-  const richTextArray = chunks.map((chunk) => createRichText({ text: chunk }));
-  return richTextArray;
+  return text.split("\n").map((value, index, array) => {
+    return createRichText({
+      text: array.length - 1 === index ? value : value + "\n",
+    });
+  });
 };

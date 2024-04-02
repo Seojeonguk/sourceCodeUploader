@@ -90,14 +90,3 @@ export function closeLatestTab() {
     });
   });
 }
-
-/**
- * Splits a given text into chunks of a specified size.
- * @param {string} text The text to be split into chunks.
- * @param {number} chunkSize The size of each chunk.
- * @returns {string[]} An array containing the text chunks.
- */
-export const splitTextIntoChunks = (text, chunkSize) => {
-  const regex = new RegExp(`.{1,${chunkSize}}`, "g");
-  return text.match(regex) || [];
-};
