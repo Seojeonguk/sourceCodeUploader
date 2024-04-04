@@ -12,6 +12,7 @@ This Chrome extension enables seamless uploading of source code to various platf
 ### Platforms for uploading source code
 
 - [Github](https://github.com/)
+- [Notion](https://www.notion.so/)
 
 ### Platforms for Accessing source code
 
