@@ -3,7 +3,8 @@ import { GET_REPOSITORIES } from "./scripts/github/constants.js";
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
-  handleAuthenticationButton();
+  handleGithubAuthenticationBtn();
+  handleNotionAuthenticationBtn();
   handleUploadedDatabaseSelection();
   handleUploadedRepositorySelection();
   showDatabases();
@@ -22,26 +23,41 @@ function closeSelectListOnOutsideClick() {
 }
 
 /**
- * Handles click event on the authentication button.
- * If the button has the "delete" class, it removes associated data from Chrome storage.
- * This includes access token, repository, and uploaded repository data.
- * Otherwise, sends a message to open GitHub OAuth page.
+ * If the delete class does not exist on github authentication button, open the github oauth page.
+ * Otherwise, clear the information related to github.
  */
-function handleAuthenticationButton() {
-  $(".authentication-btn").on("click", function () {
-    const platform = $(this).closest("li").attr("platform");
-
-    if ($(this).hasClass("delete")) {
-      const platform = $(this).closest("li").attr("platform");
-      Util.removeChromeStorage(`${platform}AccessToken`);
-      Util.removeChromeStorage(`${platform}Repositories`);
-      Util.removeChromeStorage(`${platform}UploadedRepository`);
-      location.reload(true);
-    } else {
-      Util.sendMessage(platform, "openOauthPage");
+const handleGithubAuthenticationBtn = () => {
+  $("#github-authentication").on("click", (e) => {
+    if (!$(e.currentTarget).hasClass("delete")) {
+      Util.sendMessage("github", "openOauthPage");
+      return;
     }
+
+    Util.removeChromeStorage(`githubAccessToken`);
+    Util.removeChromeStorage(`githubRepositories`);
+    Util.removeChromeStorage(`githubUploadedRepository`);
+    location.reload(true);
   });
-}
+};
+
+/**
+ * If the delete class does not exist on notion authentication button, open the notion oauth page.
+ * Otherwise, clear the information related to notion.
+ */
+const handleNotionAuthenticationBtn = () => {
+  $("#notion-authentication").on("click", (e) => {
+    if (!$(e.currentTarget).hasClass("delete")) {
+      Util.sendMessage("notion", "openOauthPage");
+      return;
+    }
+
+    Util.removeChromeStorage(`notionAccessToken`);
+    Util.removeChromeStorage(`notionUploadedDatabase`);
+    Util.removeChromeStorage(`notionUploadedDatabases`);
+    Util.removeChromeStorage(`notionUploadedDatabaseId`);
+    location.reload(true);
+  });
+};
 
 /**
  * Handles the click event when a database is selected from the list.
@@ -94,17 +110,8 @@ const showDatabases = () => {
       );
     });
 
-    const formattedDatabases = response.map((database) => {
-      return {
-        databaseId: database.id,
-        title: database.title[0].plain_text,
-      };
-    });
-
     $("#notion-database-list").addClass("is-active");
     $(".content-wrapper").addClass("overlay");
-
-    Util.setChromeStorage("notionDatabases", formattedDatabases);
   });
 };
 
@@ -128,8 +135,6 @@ const showRepositories = () => {
 
     $("#repository-list").addClass("is-active");
     $(".content-wrapper").addClass("overlay");
-
-    Util.setChromeStorage("githubRepositories", response);
   });
 };
 

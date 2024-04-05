@@ -26,44 +26,28 @@ async function checkPlatformsAuthentication() {
   });
 }
 
+/**
+ * Load the database to upload to notion from chrome storage and display it on the popup page.
+ */
 async function loadCachedDatabaseList() {
-  const databases = await Util.getChromeStorage("notionDatabases");
   const uploadedDatabase = await Util.getChromeStorage(
     "notionUploadedDatabase"
   );
 
-  if (databases) {
-    $("#notion-database-list li").remove();
-
-    databases.forEach((database) => {
-      $("#notion-database-list").append(
-        `<li><p database-id=${database.databaseId}>${database.title}</p></li>`
-      );
-      if (database.title === uploadedDatabase) {
-        $("#uploaded-database").text(uploadedDatabase);
-      }
-    });
+  if (!Util.isEmpty(uploadedDatabase)) {
+    $("#uploaded-database").text(uploadedDatabase);
   }
 }
 
 /**
- * Loads the cached repository list from Chrome storage and displays it on the popup page.
- * Also updates the uploaded repository display if a repository is selected for upload.
+ * Load the repository to upload to github from Chrome storage and display it on the popup page.
  */
 async function loadCachedRepositoryList() {
-  const repositories = await Util.getChromeStorage("githubRepositories");
   const uploadedRepository = await Util.getChromeStorage(
     "githubUploadedRepository"
   );
 
-  if (repositories) {
-    $("#repository-list li").remove();
-
-    repositories.forEach((repository) => {
-      $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
-      if (repository.name === uploadedRepository) {
-        $("#uploaded-repository").text(uploadedRepository);
-      }
-    });
+  if (!Util.isEmpty(uploadedRepository)) {
+    $("#uploaded-repository").text(uploadedRepository);
   }
 }
