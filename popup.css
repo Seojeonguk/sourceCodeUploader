@@ -169,7 +169,7 @@ svg {
   left: 0;
   max-height: 150px;
   width: 100%;
-  background: var(--theme-bg-color);
+  background: black;
   border-radius: 5px;
   padding: 5px;
   overflow: auto;
@@ -177,6 +177,7 @@ svg {
   opacity: 0;
   transition: all 0.5s;
   pointer-events: none;
+  z-index: 2;
 }
 
 .select-list ul.is-active {
@@ -193,6 +194,10 @@ svg {
   padding: 5px;
   width: 100%;
   cursor: pointer;
+}
+
+.select-list ul li:hover {
+  background: gray;
 }
 
 .select-list ul li + li {
