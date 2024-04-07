@@ -7,6 +7,16 @@ let util;
   const src = chrome.runtime.getURL("scripts/util.js");
   util = await import(src);
 
+  const currentUrl = window.location.href;
+
+  if (currentUrl.includes("status")) {
+    statusPage();
+  } else {
+    sourcePage();
+  }
+})();
+
+const sourcePage = () => {
   const buttonWrapper = createButtonWrapper();
   const theme = parsingCodeMirrorTheme();
   const isDark = darkTheme[theme];
@@ -61,4 +71,6 @@ let util;
 
   const codeMirror = $(".CodeMirror");
   codeMirror.append(buttonWrapper);
-})();
+};
+
+const statusPage = () => {};
