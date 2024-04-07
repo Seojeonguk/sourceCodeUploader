@@ -40,13 +40,28 @@
       "run_at": "document_idle"
     }
   ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
   "host_permissions": [
     "https://api.notion.com/*",
     "https://github.com/*",
     "https://www.acmicpc.net/*",
     "https://solved.ac/*"
   ],
-  "permissions": ["activeTab", "scripting", "storage", "nativeMessaging"],
+  "permissions": [
+    "activeTab",
+    "declarativeNetRequest",
+    "scripting",
+    "storage",
+    "nativeMessaging"
+  ],
   "short_name": "SCU",
   "web_accessible_resources": [
     {
