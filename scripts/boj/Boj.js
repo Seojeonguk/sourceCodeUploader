@@ -73,4 +73,10 @@ const sourcePage = () => {
   codeMirror.append(buttonWrapper);
 };
 
-const statusPage = () => {};
+const statusPage = () => {
+  // Add todo..
+  // parse result table
+  // get submit info
+  // add github icon
+  // add notion iocn
+};
