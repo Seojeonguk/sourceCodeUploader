@@ -75,4 +75,9 @@ const sourcePage = () => {
 
 const statusPage = () => {
   const statusTable = parsingStatusTable();
+  const rowSubmitInfos = processRows(statusTable);
+
+  rowSubmitInfos.forEach((rowSubmitInfo) => {
+    // To do more..
+  });
 };

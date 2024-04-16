@@ -1,4 +1,26 @@
 /**
+ * Extracts row data from a table row element.
+ *
+ * @param {HTMLElement} row The table row element.
+ * @returns {Object} An object containing extracted data from the row.
+ */
+const extractRowData = (row) => {
+  const submitNum = $(row).find("td:eq(0)").text();
+  const submitId = $(row).find("td:eq(1)").text();
+  const problemId = $(row).find("td:eq(2)").text();
+  const isCorrect = $(row).find("td:eq(3) span").hasClass("result-ac");
+  const submitLanguage = $(row).find("td:eq(6) a:eq(0)").text();
+
+  return {
+    submitNum,
+    submitId,
+    problemId,
+    isCorrect,
+    submitLanguage,
+  };
+};
+
+/**
  * Get the file extension to the language parsing the result table.
  *
  * @throws {Error} If the result table is not found or the language is not supported.
@@ -36,7 +58,7 @@ function parsingSourceCode() {
 
 /**
  * Prase the status table from the status page.
- * 
+ *
  * @returns {HTMLElement} The dom element of the status table.
  * @throws {Error} If the status table is not found.
  */
@@ -47,7 +69,7 @@ const parsingStatusTable = () => {
   }
 
   return statusTable;
-}
+};
 
 function parsingTitle() {
   const resultTable = $("table tbody tr td");
@@ -93,3 +115,15 @@ function parsingCodeMirrorTheme() {
 
   return "cm-s-default";
 }
+
+/**
+ * Processes rows of a status table.
+ *
+ * @param {HTMLElement} statusTable The DOM element representing the status table.
+ * @returns {Array} An array of objects containing extracted data from each row.
+ */
+const processRows = (statusTable) => {
+  const rows = $(statusTable).find("tbody tr").toArray();
+  const rowData = rows.map(extractRowData);
+  return rowData;
+};
