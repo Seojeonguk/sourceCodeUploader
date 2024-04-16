@@ -42,6 +42,21 @@ function parsingExtension() {
 }
 
 /**
+ * Parse the login ID.
+ *
+ * @returns {string} The parsed login ID.
+ * @throws {Error} If the login ID is not found.
+ */
+const parsingLoginID = () => {
+  const loginID = $(".username").text();
+  if (util.isEmpty(loginID)) {
+    throw new Error("Not found login ID");
+  }
+
+  return loginID;
+};
+
+/**
  * Parse the source code from a textarea element.
  *
  * @returns {string} The parsed source code.

@@ -74,10 +74,15 @@ const sourcePage = () => {
 };
 
 const statusPage = () => {
-  const statusTable = parsingStatusTable();
-  const rowSubmitInfos = processRows(statusTable);
+  try {
+    const loginID = parsingLoginID();
+    const statusTable = parsingStatusTable();
+    const rowSubmitInfos = processRows(statusTable);
 
-  rowSubmitInfos.forEach((rowSubmitInfo) => {
-    // To do more..
-  });
+    rowSubmitInfos.forEach((rowSubmitInfo) => {
+      // To do more..
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
