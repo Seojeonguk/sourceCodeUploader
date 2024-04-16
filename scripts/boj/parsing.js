@@ -34,6 +34,21 @@ function parsingSourceCode() {
   return textarea[0].value;
 }
 
+/**
+ * Prase the status table from the status page.
+ * 
+ * @returns {HTMLElement} The dom element of the status table.
+ * @throws {Error} If the status table is not found.
+ */
+const parsingStatusTable = () => {
+  const statusTable = $("#status-table")?.[0];
+  if (!statusTable) {
+    throw new Error("Not found status table");
+  }
+
+  return statusTable;
+}
+
 function parsingTitle() {
   const resultTable = $("table tbody tr td");
   if (util.isEmpty(resultTable)) {
