@@ -1,4 +1,40 @@
 /**
+ * Extracts row data from a table row element.
+ *
+ * @param {HTMLElement} row The table row element.
+ * @returns {Object} An object containing extracted data from the row.
+ */
+const extractRowData = (row) => {
+  const submitNum = $(row).find("td:eq(0)").text();
+  const submitId = $(row).find("td:eq(1)").text();
+  const problemId = $(row).find("td:eq(2) a").text();
+  const isCorrect = $(row).find("td:eq(3) span").hasClass("result-ac");
+  const submitLanguage = $(row).find("td:eq(6) a:eq(0)").text();
+  const resultTag = $(row).find("td:eq(3)")?.[0];
+  const title = $(row).find("td:eq(2) a").attr("data-original-title");
+
+  return {
+    submitNum,
+    submitId,
+    problemId,
+    isCorrect,
+    submitLanguage,
+    resultTag,
+    title,
+  };
+};
+
+const fetchSourceCodeBySubmitNum = async (submitNum) => {
+  const response = await fetch(
+    `https://www.acmicpc.net/source/download/${submitNum}`
+  );
+
+  const text = await response.text();
+
+  return text;
+};
+
+/**
  * Get the file extension to the language parsing the result table.
  *
  * @throws {Error} If the result table is not found or the language is not supported.
@@ -20,6 +56,21 @@ function parsingExtension() {
 }
 
 /**
+ * Parse the login ID.
+ *
+ * @returns {string} The parsed login ID.
+ * @throws {Error} If the login ID is not found.
+ */
+const parsingLoginID = () => {
+  const loginID = $(".username").text();
+  if (util.isEmpty(loginID)) {
+    throw new Error("Not found login ID");
+  }
+
+  return loginID;
+};
+
+/**
  * Parse the source code from a textarea element.
  *
  * @returns {string} The parsed source code.
@@ -33,6 +84,21 @@ function parsingSourceCode() {
 
   return textarea[0].value;
 }
+
+/**
+ * Prase the status table from the status page.
+ *
+ * @returns {HTMLElement} The dom element of the status table.
+ * @throws {Error} If the status table is not found.
+ */
+const parsingStatusTable = () => {
+  const statusTable = $("#status-table")?.[0];
+  if (!statusTable) {
+    throw new Error("Not found status table");
+  }
+
+  return statusTable;
+};
 
 function parsingTitle() {
   const resultTable = $("table tbody tr td");
@@ -78,3 +144,15 @@ function parsingCodeMirrorTheme() {
 
   return "cm-s-default";
 }
+
+/**
+ * Processes rows of a status table.
+ *
+ * @param {HTMLElement} statusTable The DOM element representing the status table.
+ * @returns {Array} An array of objects containing extracted data from each row.
+ */
+const processRows = (statusTable) => {
+  const rows = $(statusTable).find("tbody tr").toArray();
+  const rowData = rows.map(extractRowData);
+  return rowData;
+};

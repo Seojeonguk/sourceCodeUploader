@@ -7,6 +7,16 @@ let util;
   const src = chrome.runtime.getURL("scripts/util.js");
   util = await import(src);
 
+  const currentUrl = window.location.href;
+
+  if (currentUrl.includes("status")) {
+    statusPage();
+  } else {
+    sourcePage();
+  }
+})();
+
+const sourcePage = () => {
   const buttonWrapper = createButtonWrapper();
   const theme = parsingCodeMirrorTheme();
   const isDark = darkTheme[theme];
@@ -61,4 +71,76 @@ let util;
 
   const codeMirror = $(".CodeMirror");
   codeMirror.append(buttonWrapper);
-})();
+};
+
+const statusPage = () => {
+  console.log("SCU START PARSE TABLE!");
+  try {
+    const loginID = parsingLoginID();
+    const statusTable = parsingStatusTable();
+    const rowSubmitInfos = processRows(statusTable);
+
+    if (rowSubmitInfos.length === 0) {
+      return;
+    }
+
+    rowSubmitInfos.forEach(
+      ({
+        submitNum,
+        submitId,
+        problemId,
+        isCorrect,
+        submitLanguage,
+        resultTag,
+        title,
+      }) => {
+        if (!isCorrect || submitId !== loginID) {
+          return;
+        }
+
+        const extension = languages[submitLanguage];
+
+        const buttonWrapper = createButtonWrapper();
+        const githubIconPath = "icon/githubIcon.png";
+        createButton(buttonWrapper, githubIconPath, async () => {
+          const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
+
+          const response = await util.sendMessage("github", "commit", {
+            extension,
+            problemId,
+            sourceCode,
+            type: "BOJ",
+            title,
+          });
+
+          alert(response.message);
+        });
+
+        const notionIconPath = "icon/notionIcon.png";
+        createButton(buttonWrapper, notionIconPath, async () => {
+          try {
+            const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
+
+            console.log(problemId);
+
+            const response = await util.sendMessage("notion", "upload", {
+              extension,
+              problemId,
+              sourceCode,
+              type: "BOJ",
+              title,
+            });
+
+            alert(response.message);
+          } catch (e) {
+            console.error(e);
+          }
+        });
+
+        resultTag.appendChild(buttonWrapper);
+      }
+    );
+  } catch (e) {
+    console.error(e);
+  }
+};

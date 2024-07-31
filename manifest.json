@@ -32,7 +32,7 @@
         "scripts/boj/Boj.js"
       ],
       "run_at": "document_idle",
-      "include_globs": ["*/source/*"]
+      "include_globs": ["*/source/*", "*/status*"]
     },
     {
       "matches": ["https://github.com/*"],
