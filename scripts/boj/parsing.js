@@ -7,9 +7,11 @@
 const extractRowData = (row) => {
   const submitNum = $(row).find("td:eq(0)").text();
   const submitId = $(row).find("td:eq(1)").text();
-  const problemId = $(row).find("td:eq(2)").text();
+  const problemId = $(row).find("td:eq(2) a").text();
   const isCorrect = $(row).find("td:eq(3) span").hasClass("result-ac");
   const submitLanguage = $(row).find("td:eq(6) a:eq(0)").text();
+  const resultTag = $(row).find("td:eq(3)")?.[0];
+  const title = $(row).find("td:eq(2) a").attr("data-original-title");
 
   return {
     submitNum,
@@ -17,7 +19,19 @@ const extractRowData = (row) => {
     problemId,
     isCorrect,
     submitLanguage,
+    resultTag,
+    title,
   };
+};
+
+const fetchSourceCodeBySubmitNum = async (submitNum) => {
+  const response = await fetch(
+    `https://www.acmicpc.net/source/download/${submitNum}`
+  );
+
+  const text = await response.text();
+
+  return text;
 };
 
 /**

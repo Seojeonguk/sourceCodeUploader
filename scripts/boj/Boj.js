@@ -74,14 +74,50 @@ const sourcePage = () => {
 };
 
 const statusPage = () => {
+  console.log("SCU START PARSE TABLE!");
   try {
     const loginID = parsingLoginID();
     const statusTable = parsingStatusTable();
     const rowSubmitInfos = processRows(statusTable);
 
-    rowSubmitInfos.forEach((rowSubmitInfo) => {
-      // To do more..
-    });
+    if (rowSubmitInfos.length === 0) {
+      return;
+    }
+
+    rowSubmitInfos.forEach(
+      ({
+        submitNum,
+        submitId,
+        problemId,
+        isCorrect,
+        submitLanguage,
+        resultTag,
+        title,
+      }) => {
+        if (!isCorrect || submitId !== loginID) {
+          return;
+        }
+
+        const buttonWrapper = createButtonWrapper();
+        const githubIconPath = "icon/githubIcon.png";
+        createButton(buttonWrapper, githubIconPath, async () => {
+          const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
+          const extension = languages[submitLanguage];
+
+          const response = await util.sendMessage("github", "commit", {
+            extension,
+            problemId,
+            sourceCode,
+            type: "BOJ",
+            title,
+          });
+
+          alert(response.message);
+        });
+
+        resultTag.appendChild(buttonWrapper);
+      }
+    );
   } catch (e) {
     console.error(e);
   }
