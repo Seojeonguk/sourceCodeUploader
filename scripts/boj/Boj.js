@@ -98,11 +98,12 @@ const statusPage = () => {
           return;
         }
 
+        const extension = languages[submitLanguage];
+
         const buttonWrapper = createButtonWrapper();
         const githubIconPath = "icon/githubIcon.png";
         createButton(buttonWrapper, githubIconPath, async () => {
           const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
-          const extension = languages[submitLanguage];
 
           const response = await util.sendMessage("github", "commit", {
             extension,
@@ -113,6 +114,27 @@ const statusPage = () => {
           });
 
           alert(response.message);
+        });
+
+        const notionIconPath = "icon/notionIcon.png";
+        createButton(buttonWrapper, notionIconPath, async () => {
+          try {
+            const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
+
+            console.log(problemId);
+
+            const response = await util.sendMessage("notion", "upload", {
+              extension,
+              problemId,
+              sourceCode,
+              type: "BOJ",
+              title,
+            });
+
+            alert(response.message);
+          } catch (e) {
+            console.error(e);
+          }
         });
 
         resultTag.appendChild(buttonWrapper);
