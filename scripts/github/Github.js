@@ -18,7 +18,7 @@ async function dispatch(action, payload) {
       return await getAuthenticatedUserRepositories(payload);
     } else if (action === Github.COMMIT) {
       const response = await getShaForExistingFile(payload);
-      if (response.content === btoa(payload.sourceCode)) {
+      if (response.content === Util.encodeBase64Unicode(payload.sourceCode)) {
         return {
           ok: false,
           message:
@@ -72,7 +72,7 @@ async function commit(payload) {
   };
 
   const body = JSON.stringify({
-    content: btoa(sourceCode),
+    content: Util.encodeBase64Unicode(sourceCode),
     message: title,
     sha,
   });
