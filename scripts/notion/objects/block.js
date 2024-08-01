@@ -42,7 +42,7 @@ export const createCode = ({ caption, text, language = LANGUAGES.Text }) => {
     type: BLOCK_TYPE.CODE,
     [BLOCK_TYPE.CODE]: {
       caption: caption && createRichTextArray(caption),
-      rich_text: createRichTextArray(text),
+      rich_text: createRichTextArrayByLength(text),
       language,
     },
   };
@@ -153,4 +153,23 @@ export const createRichTextArray = (text) => {
       text: array.length - 1 === index ? value : value + "\n",
     });
   });
+};
+
+/**
+ * Splits the given text into chunks of 2000 characters each and creates an array of rich text objects,
+ * where each chunk is transformed into a rich text object using the createRichText function.
+ * @param {string} text The text to be transformed
+ * @returns {Object[]} An array of rich text objects
+ */
+export const createRichTextArrayByLength = (text) => {
+  const array = [];
+  for (let i = 0; i < text.length; i += 2000) {
+    array.push(
+      createRichText({
+        text: text.slice(i, i + 2000),
+      })
+    );
+  }
+
+  return array;
 };
