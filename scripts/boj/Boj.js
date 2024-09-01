@@ -24,7 +24,7 @@ const sourcePage = () => {
     ? "icon/githubIcon.png"
     : "icon/githubDarkIcon.png";
 
-  createButton(buttonWrapper, githubIconPath, async () => {
+  const githubIcon = createButton(githubIconPath, async () => {
     try {
       const problemId = parsingProblemID();
       const sourceCode = parsingSourceCode();
@@ -45,10 +45,12 @@ const sourcePage = () => {
     }
   });
 
+  buttonWrapper.appendChild(githubIcon);
+
   const notionIconPath = isDark
     ? "icon/notionIcon.png"
     : "icon/notionDarkIcon.png";
-  createButton(buttonWrapper, notionIconPath, async () => {
+  const notionIcon = createButton(notionIconPath, async () => {
     try {
       const problemId = parsingProblemID();
       const sourceCode = parsingSourceCode();
@@ -68,6 +70,8 @@ const sourcePage = () => {
       console.error(e);
     }
   });
+
+  buttonWrapper.appendChild(notionIcon);
 
   const codeMirror = $(".CodeMirror");
   codeMirror.append(buttonWrapper);
@@ -102,7 +106,7 @@ const statusPage = () => {
 
         const buttonWrapper = createButtonWrapper();
         const githubIconPath = "icon/githubIcon.png";
-        createButton(buttonWrapper, githubIconPath, async () => {
+        const githubUploadBtn = createButton(githubIconPath, async () => {
           const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
 
           const response = await util.sendMessage("github", "commit", {
@@ -116,26 +120,24 @@ const statusPage = () => {
           alert(response.message);
         });
 
+        buttonWrapper.appendChild(githubUploadBtn);
+
         const notionIconPath = "icon/notionIcon.png";
-        createButton(buttonWrapper, notionIconPath, async () => {
-          try {
-            const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
+        const notionUploadIcon = createButton(notionIconPath, async () => {
+          const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
 
-            console.log(problemId);
+          const response = await util.sendMessage("notion", "upload", {
+            extension,
+            problemId,
+            sourceCode,
+            type: "BOJ",
+            title,
+          });
 
-            const response = await util.sendMessage("notion", "upload", {
-              extension,
-              problemId,
-              sourceCode,
-              type: "BOJ",
-              title,
-            });
-
-            alert(response.message);
-          } catch (e) {
-            console.error(e);
-          }
+          alert(response.message);
         });
+
+        buttonWrapper.appendChild(notionUploadIcon);
 
         resultTag.appendChild(buttonWrapper);
       }
