@@ -18,10 +18,10 @@ let util;
 
 const sourcePage = () => {
   const buttonWrapper = createButtonWrapper();
-  const theme = parsingCodeMirrorTheme();
-  const isDark = darkTheme[theme];
 
   try {
+    const theme = parsingCodeMirrorTheme();
+    const isDark = darkTheme[theme];
     const problemId = parsingProblemID();
     const sourceCode = parsingSourceCode();
     const extension = parsingExtension();
