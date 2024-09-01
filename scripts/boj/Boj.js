@@ -20,17 +20,18 @@ const sourcePage = () => {
   const buttonWrapper = createButtonWrapper();
   const theme = parsingCodeMirrorTheme();
   const isDark = darkTheme[theme];
-  const githubIconPath = isDark
-    ? "icon/githubIcon.png"
-    : "icon/githubDarkIcon.png";
 
-  const githubIcon = createButton(githubIconPath, async () => {
-    try {
-      const problemId = parsingProblemID();
-      const sourceCode = parsingSourceCode();
-      const extension = parsingExtension();
-      const title = parsingTitle();
+  try {
+    const problemId = parsingProblemID();
+    const sourceCode = parsingSourceCode();
+    const extension = parsingExtension();
+    const title = parsingTitle();
 
+    const githubIconPath = isDark
+      ? "icon/githubIcon.png"
+      : "icon/githubDarkIcon.png";
+
+    const githubIcon = createButton(githubIconPath, async () => {
       const response = await util.sendMessage("github", "commit", {
         extension,
         problemId,
@@ -40,23 +41,14 @@ const sourcePage = () => {
       });
 
       alert(response.message);
-    } catch (e) {
-      console.error(e);
-    }
-  });
+    });
 
-  buttonWrapper.appendChild(githubIcon);
+    buttonWrapper.appendChild(githubIcon);
 
-  const notionIconPath = isDark
-    ? "icon/notionIcon.png"
-    : "icon/notionDarkIcon.png";
-  const notionIcon = createButton(notionIconPath, async () => {
-    try {
-      const problemId = parsingProblemID();
-      const sourceCode = parsingSourceCode();
-      const extension = parsingExtension();
-      const title = parsingTitle();
-
+    const notionIconPath = isDark
+      ? "icon/notionIcon.png"
+      : "icon/notionDarkIcon.png";
+    const notionIcon = createButton(notionIconPath, async () => {
       const response = await util.sendMessage("notion", "upload", {
         extension,
         problemId,
@@ -66,15 +58,15 @@ const sourcePage = () => {
       });
 
       alert(response.message);
-    } catch (e) {
-      console.error(e);
-    }
-  });
+    });
 
-  buttonWrapper.appendChild(notionIcon);
+    buttonWrapper.appendChild(notionIcon);
 
-  const codeMirror = $(".CodeMirror");
-  codeMirror.append(buttonWrapper);
+    const codeMirror = $(".CodeMirror");
+    codeMirror.append(buttonWrapper);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 const statusPage = () => {
