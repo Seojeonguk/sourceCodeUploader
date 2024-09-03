@@ -33,27 +33,27 @@ async function dispatch(action, payload) {
 async function getDatabases() {
   const accessToken = await Util.getChromeStorage("notionAccessToken");
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Invalid access token for getting databases.");
+    throw new Error(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
   }
 
   const url = `${Notion.API_BASE_URL}/v1/search`;
 
   const headers = {
-    "Authorization": `Bearer ${accessToken}`,
+    Authorization: `Bearer ${accessToken}`,
     "Content-Type": "application/json",
     "Notion-Version": "2022-06-28",
   };
 
   const body = JSON.stringify({
-    "filter": {
-      "value": "database",
-      "property": "object",
+    filter: {
+      value: "database",
+      property: "object",
     },
   });
 
   const response = await Util.request(url, "POST", headers, body);
   if (!response.ok) {
-    throw new Error("Failed to fetch databases.");
+    throw new Error(Notion.ERROR[Notion.FETCH_API_FAILED]);
   }
 
   const json = await response.json();
@@ -88,12 +88,12 @@ function openOauthPage() {
  */
 async function requestAndSaveAccessToken(payload) {
   if (Util.isEmpty(payload)) {
-    throw new Error("Invalid payload object for reqeusting access token.");
+    throw new Error(Notion.ERROR[Notion.INVALID_PAYLOAD]);
   }
 
   const { code } = payload;
   if (Util.isEmpty(code)) {
-    throw new Error("Invalid code for requesting access token.");
+    throw new Error(Notion.ERROR[Notion.INVALID_CODE]);
   }
 
   const url = `${Notion.API_BASE_URL}/v1/oauth/token`;
@@ -114,14 +114,14 @@ async function requestAndSaveAccessToken(payload) {
 
   const response = await Util.request(url, "POST", headers, data);
   if (!response.ok) {
-    throw new Error("Failed to fetch access token.");
+    throw new Error(Notion.ERROR[Notion.FETCH_API_FAILED]);
   }
 
   const json = await response.json();
 
   const accessToken = json.access_token;
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Access token not found.");
+    throw new Error(Notion.ERROR[Notion.NOT_FOUND_ACCESS_TOKEN]);
   }
 
   Util.setChromeStorage("notionAccessToken", accessToken);
@@ -138,26 +138,26 @@ async function upload(
   const databaseId = await Util.getChromeStorage("notionUploadedDatabaseId");
 
   const properties = {
-    "title": createPageProperty(PROPERTY_TYPE.TITLE, {
+    title: createPageProperty(PROPERTY_TYPE.TITLE, {
       text: title,
     }),
-    "info": createPageProperty(PROPERTY_TYPE.MULTI_SELECT, {
+    info: createPageProperty(PROPERTY_TYPE.MULTI_SELECT, {
       selections: [type, level, problemId].map((value) => ({
         name: value,
       })),
     }),
-    "tags": createPageProperty(PROPERTY_TYPE.MULTI_SELECT, {
+    tags: createPageProperty(PROPERTY_TYPE.MULTI_SELECT, {
       selections: tags.map((tag) => ({
         name: tag,
       })),
     }),
-    "URL": createPageProperty(PROPERTY_TYPE.URL, {
+    URL: createPageProperty(PROPERTY_TYPE.URL, {
       url: `acmicpc.net/problem/${problemId}`,
     }),
-    "Date": createPageProperty(PROPERTY_TYPE.DATE, {
+    Date: createPageProperty(PROPERTY_TYPE.DATE, {
       start: new Date(),
     }),
-    "mime": createPageProperty(PROPERTY_TYPE.SELECT, {
+    mime: createPageProperty(PROPERTY_TYPE.SELECT, {
       name: extension,
     }),
   };
@@ -170,9 +170,9 @@ async function upload(
   ];
 
   const data = {
-    "parent": { "database_id": databaseId },
-    "properties": properties,
-    "children": children,
+    parent: { database_id: databaseId },
+    properties: properties,
+    children: children,
   };
 
   const result = await createPage(data);
