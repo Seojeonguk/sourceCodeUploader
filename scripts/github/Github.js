@@ -44,19 +44,19 @@ async function dispatch(action, payload) {
 async function commit(payload) {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Invalid access token for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
   const githubID = await Util.getChromeStorage("githubID");
   if (Util.isEmpty(githubID)) {
-    throw new Error("Invalid github ID for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_GITHUB_ID]);
   }
 
   const uploadedRepository = await Util.getChromeStorage(
     "githubUploadedRepository"
   );
   if (Util.isEmpty(uploadedRepository)) {
-    throw new Error("Invalid uploaded repository for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_UPLOADED_REPOSITORY]);
   }
 
   const { extension, problemId, sha, sourceCode, type, title } = payload;
@@ -92,7 +92,7 @@ async function commit(payload) {
 async function getAuthenticatedUserRepositories() {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Invalid access token for requesting user repositories.");
+    throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
   const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
@@ -103,7 +103,7 @@ async function getAuthenticatedUserRepositories() {
 
   const response = await Util.request(url, "GET", headers, undefined);
   if (!response.ok) {
-    throw new Error("Failed to fetch repositories.");
+    throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
 
   return await response.json();
@@ -117,7 +117,7 @@ async function getAuthenticatedUserRepositories() {
  */
 async function getAuthenticatedUserInfo(accessToken) {
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Invalid access token for requesting user information.");
+    throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
   const url = `${Github.API_BASE_URL}/user`;
@@ -127,13 +127,13 @@ async function getAuthenticatedUserInfo(accessToken) {
 
   const response = await Util.request(url, "GET", headers, undefined);
   if (!response.ok) {
-    throw new Error("Failed to fetch user information.");
+    throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
 
   const json = await response.json();
   const githubID = json.login;
   if (Util.isEmpty(githubID)) {
-    throw new Error("Github ID not found.");
+    throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
   }
 
   chrome.storage.local.set({ githubID: githubID });
@@ -151,19 +151,19 @@ async function getAuthenticatedUserInfo(accessToken) {
 async function getShaForExistingFile(payload) {
   const accessToken = await Util.getChromeStorage("githubAccessToken");
   if (Util.isEmpty(accessToken)) {
-    throw new Error("Invalid access token for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
   const githubID = await Util.getChromeStorage("githubID");
   if (Util.isEmpty(githubID)) {
-    throw new Error("Invalid github ID for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_GITHUB_ID]);
   }
 
   const uploadedRepository = await Util.getChromeStorage(
     "githubUploadedRepository"
   );
   if (Util.isEmpty(uploadedRepository)) {
-    throw new Error("Invalid uploaded repository for requesting commit.");
+    throw new Error(Github.ERROR[Github.INVALID_UPLOADED_REPOSITORY]);
   }
 
   const { extension, problemId, type } = payload;
@@ -214,12 +214,12 @@ function openOauthPage() {
  */
 async function requestAndSaveAccessToken(payload) {
   if (Util.isEmpty(payload)) {
-    throw new Error("Invalid payload object for reqeusting access token.");
+    throw new Error(Github.ERROR[Github.INVALID_PAYLOAD]);
   }
 
   const { code } = payload;
   if (Util.isEmpty(code)) {
-    throw new Error("Invalid code for requesting access token.");
+    throw new Error(Github.ERROR[Github.INVALID_CODE]);
   }
 
   const url = `${Github.BASE_URL}/login/oauth/access_token`;
@@ -231,14 +231,14 @@ async function requestAndSaveAccessToken(payload) {
 
   const response = await Util.request(url, "POST", undefined, data);
   if (!response.ok) {
-    throw new Error("Failed to fetch access token.");
+    throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
 
   const text = await response.text();
   const matchResult = text.match(/access_token=([^&]*)/);
 
   if (Util.isEmpty(matchResult) || matchResult.length < 2) {
-    throw new Error("Access token not found.");
+    throw new Error(Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN]);
   }
 
   const accessToken = matchResult[1];
