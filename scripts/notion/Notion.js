@@ -14,19 +14,15 @@ import { BLOCK_TYPE } from "./objects/constants/blockConstants.js";
  * @param {Object} payload - The optional payload associated with the action.
  */
 async function dispatch(action, payload) {
-  try {
-    if (action === Notion.OPEN_OAUTH_PAGE) {
-      openOauthPage();
-    } else if (action === Notion.REQUEST_AND_SAVE_ACCESS_TOKEN) {
-      const accessToken = await requestAndSaveAccessToken(payload);
-    } else if (action === Notion.GET_DATABASES) {
-      return await getDatabases();
-    } else if (action === Notion.UPLOAD) {
-      const problemInfo = await SolvedAC.fetchProblemByID(payload);
-      return await upload(payload, problemInfo);
-    }
-  } catch (e) {
-    throw e;
+  if (action === Notion.OPEN_OAUTH_PAGE) {
+    openOauthPage();
+  } else if (action === Notion.REQUEST_AND_SAVE_ACCESS_TOKEN) {
+    const accessToken = await requestAndSaveAccessToken(payload);
+  } else if (action === Notion.GET_DATABASES) {
+    return await getDatabases();
+  } else if (action === Notion.UPLOAD) {
+    const problemInfo = await SolvedAC.fetchProblemByID(payload);
+    return await upload(payload, problemInfo);
   }
 }
 
