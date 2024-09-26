@@ -5,21 +5,9 @@ function handleMessage(request, sender, sendResponse) {
   try {
     const { platform, action, payload } = request;
     if (platform === "github") {
-      githubDispatch(action, payload)
-        .then((res) => {
-          sendResponse(res);
-        })
-        .catch((e) => {
-          sendResponse({ ok: false, message: e.message });
-        });
+      githubDispatch(action, payload).then(res => {sendResponse(res);})
     } else if (platform === "notion") {
-      notionDispatch(action, payload)
-        .then((res) => {
-          sendResponse(res);
-        })
-        .catch((e) => {
-          sendResponse({ ok: false, message: e.message });
-        });
+      notionDispatch(action, payload).then(res => {sendResponse(res);})
     } else {
       throw new Error(`${platform} is not supported!`);
     }
