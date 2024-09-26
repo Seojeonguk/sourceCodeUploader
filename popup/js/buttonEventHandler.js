@@ -1,5 +1,5 @@
-import * as Util from "../../scripts/util.js";
-import { GET_REPOSITORIES } from "../../scripts/github/constants.js";
+import * as Util from '../../scripts/util.js';
+import { GET_REPOSITORIES } from '../../scripts/github/constants.js';
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
@@ -16,9 +16,9 @@ export function initializeButtonEvents() {
  * Closes the select list when clicking outside of it.
  */
 function closeSelectListOnOutsideClick() {
-  $(document).on("click", function () {
-    $(".select-list ul").removeClass("is-active");
-    $(".content-wrapper").removeClass("overlay");
+  $(document).on('click', function () {
+    $('.select-list ul').removeClass('is-active');
+    $('.content-wrapper').removeClass('overlay');
   });
 }
 
@@ -27,9 +27,9 @@ function closeSelectListOnOutsideClick() {
  * Otherwise, clear the information related to github.
  */
 const handleGithubAuthenticationBtn = () => {
-  $("#github-authentication").on("click", (e) => {
-    if (!$(e.currentTarget).hasClass("delete")) {
-      Util.sendMessage("github", "openOauthPage");
+  $('#github-authentication').on('click', (e) => {
+    if (!$(e.currentTarget).hasClass('delete')) {
+      Util.sendMessage('github', 'openOauthPage');
       return;
     }
 
@@ -45,9 +45,9 @@ const handleGithubAuthenticationBtn = () => {
  * Otherwise, clear the information related to notion.
  */
 const handleNotionAuthenticationBtn = () => {
-  $("#notion-authentication").on("click", (e) => {
-    if (!$(e.currentTarget).hasClass("delete")) {
-      Util.sendMessage("notion", "openOauthPage");
+  $('#notion-authentication').on('click', (e) => {
+    if (!$(e.currentTarget).hasClass('delete')) {
+      Util.sendMessage('notion', 'openOauthPage');
       return;
     }
 
@@ -65,14 +65,14 @@ const handleNotionAuthenticationBtn = () => {
  * It then updates the UI to display the selected database name and stores both the name and ID in Chrome storage.
  */
 function handleUploadedDatabaseSelection() {
-  $(document).on("click", "#notion-database-list li p", function (e) {
+  $(document).on('click', '#notion-database-list li p', function (e) {
     const uploadedDatabase = $(this).text();
-    const uploadedDatabaseId = $(this).attr("database-id");
+    const uploadedDatabaseId = $(this).attr('database-id');
 
-    $("#uploaded-database").text(uploadedDatabase);
+    $('#uploaded-database').text(uploadedDatabase);
 
-    Util.setChromeStorage("notionUploadedDatabase", uploadedDatabase);
-    Util.setChromeStorage("notionUploadedDatabaseId", uploadedDatabaseId);
+    Util.setChromeStorage('notionUploadedDatabase', uploadedDatabase);
+    Util.setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
   });
 }
 
@@ -81,12 +81,12 @@ function handleUploadedDatabaseSelection() {
  * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
  */
 function handleUploadedRepositorySelection() {
-  $(document).on("click", "#repository-list li p", function (e) {
+  $(document).on('click', '#repository-list li p', function (e) {
     const uploadedRepository = e.target.innerHTML;
 
-    $("#uploaded-repository").text(uploadedRepository);
+    $('#uploaded-repository').text(uploadedRepository);
 
-    Util.setChromeStorage("githubUploadedRepository", uploadedRepository);
+    Util.setChromeStorage('githubUploadedRepository', uploadedRepository);
   });
 }
 
@@ -94,24 +94,24 @@ function handleUploadedRepositorySelection() {
  * Handles click event to display the list of databases for Notion.
  */
 const showDatabases = () => {
-  $("#uploaded-database").on("click", async () => {
-    const response = await Util.sendMessage("notion", "getDatabases");
+  $('#uploaded-database').on('click', async () => {
+    const response = await Util.sendMessage('notion', 'getDatabases');
 
     if (!Array.isArray(response)) {
       alert(response.message);
       return;
     }
 
-    $("#notion-database-list li").remove();
+    $('#notion-database-list li').remove();
 
     response.forEach((database) => {
-      $("#notion-database-list").append(
-        `<li><p database-id=${database.id}>${database.title[0].plain_text}</p></li>`
+      $('#notion-database-list').append(
+        `<li><p database-id=${database.id}>${database.title[0].plain_text}</p></li>`,
       );
     });
 
-    $("#notion-database-list").addClass("is-active");
-    $(".content-wrapper").addClass("overlay");
+    $('#notion-database-list').addClass('is-active');
+    $('.content-wrapper').addClass('overlay');
   });
 };
 
@@ -119,22 +119,22 @@ const showDatabases = () => {
  * Handles click event to display the list of repositories for GitHub.
  */
 const showRepositories = () => {
-  $("#uploaded-repository").on("click", async () => {
-    const response = await Util.sendMessage("github", GET_REPOSITORIES);
+  $('#uploaded-repository').on('click', async () => {
+    const response = await Util.sendMessage('github', GET_REPOSITORIES);
 
     if (!Array.isArray(response)) {
       alert(response.message);
       return;
     }
 
-    $("#repository-list li").remove();
+    $('#repository-list li').remove();
 
     response.forEach((repository) => {
-      $("#repository-list").append(`<li><p>${repository.name}</p></li>`);
+      $('#repository-list').append(`<li><p>${repository.name}</p></li>`);
     });
 
-    $("#repository-list").addClass("is-active");
-    $(".content-wrapper").addClass("overlay");
+    $('#repository-list').addClass('is-active');
+    $('.content-wrapper').addClass('overlay');
   });
 };
 
@@ -144,8 +144,8 @@ const showRepositories = () => {
  * Stops event propagation to prevent further event handling.
  */
 function toggleDarkMode() {
-  $(".dark-light").on("click", function (e) {
-    $("body").toggleClass("light-mode");
+  $('.dark-light').on('click', function (e) {
+    $('body').toggleClass('light-mode');
     e.stopPropagation();
   });
 }

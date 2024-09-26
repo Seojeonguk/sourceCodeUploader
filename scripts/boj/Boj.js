@@ -4,12 +4,12 @@ let util;
  * Attach the icon according to the code theme.
  */
 (async () => {
-  const src = chrome.runtime.getURL("scripts/util.js");
+  const src = chrome.runtime.getURL('scripts/util.js');
   util = await import(src);
 
   const currentUrl = window.location.href;
 
-  if (currentUrl.includes("status")) {
+  if (currentUrl.includes('status')) {
     statusPage();
   } else {
     sourcePage();
@@ -21,8 +21,8 @@ const sourcePage = () => {
   const theme = parsingCodeMirrorTheme();
   const isDark = darkTheme[theme];
   const githubIconPath = isDark
-    ? "icon/githubIcon.png"
-    : "icon/githubDarkIcon.png";
+    ? 'icon/githubIcon.png'
+    : 'icon/githubDarkIcon.png';
 
   createButton(buttonWrapper, githubIconPath, async () => {
     try {
@@ -31,11 +31,11 @@ const sourcePage = () => {
       const extension = parsingExtension();
       const title = parsingTitle();
 
-      const response = await util.sendMessage("github", "commit", {
+      const response = await util.sendMessage('github', 'commit', {
         extension,
         problemId,
         sourceCode,
-        type: "BOJ",
+        type: 'BOJ',
         title,
       });
 
@@ -46,8 +46,8 @@ const sourcePage = () => {
   });
 
   const notionIconPath = isDark
-    ? "icon/notionIcon.png"
-    : "icon/notionDarkIcon.png";
+    ? 'icon/notionIcon.png'
+    : 'icon/notionDarkIcon.png';
   createButton(buttonWrapper, notionIconPath, async () => {
     try {
       const problemId = parsingProblemID();
@@ -55,11 +55,11 @@ const sourcePage = () => {
       const extension = parsingExtension();
       const title = parsingTitle();
 
-      const response = await util.sendMessage("notion", "upload", {
+      const response = await util.sendMessage('notion', 'upload', {
         extension,
         problemId,
         sourceCode,
-        type: "BOJ",
+        type: 'BOJ',
         title,
       });
 
@@ -69,12 +69,12 @@ const sourcePage = () => {
     }
   });
 
-  const codeMirror = $(".CodeMirror");
+  const codeMirror = $('.CodeMirror');
   codeMirror.append(buttonWrapper);
 };
 
 const statusPage = () => {
-  console.log("SCU START PARSE TABLE!");
+  console.log('SCU START PARSE TABLE!');
   try {
     const loginID = parsingLoginID();
     const statusTable = parsingStatusTable();
@@ -101,33 +101,33 @@ const statusPage = () => {
         const extension = languages[submitLanguage];
 
         const buttonWrapper = createButtonWrapper();
-        const githubIconPath = "icon/githubIcon.png";
+        const githubIconPath = 'icon/githubIcon.png';
         createButton(buttonWrapper, githubIconPath, async () => {
           const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
 
-          const response = await util.sendMessage("github", "commit", {
+          const response = await util.sendMessage('github', 'commit', {
             extension,
             problemId,
             sourceCode,
-            type: "BOJ",
+            type: 'BOJ',
             title,
           });
 
           alert(response.message);
         });
 
-        const notionIconPath = "icon/notionIcon.png";
+        const notionIconPath = 'icon/notionIcon.png';
         createButton(buttonWrapper, notionIconPath, async () => {
           try {
             const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
 
             console.log(problemId);
 
-            const response = await util.sendMessage("notion", "upload", {
+            const response = await util.sendMessage('notion', 'upload', {
               extension,
               problemId,
               sourceCode,
-              type: "BOJ",
+              type: 'BOJ',
               title,
             });
 
@@ -138,7 +138,7 @@ const statusPage = () => {
         });
 
         resultTag.appendChild(buttonWrapper);
-      }
+      },
     );
   } catch (e) {
     console.error(e);

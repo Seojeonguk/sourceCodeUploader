@@ -1,11 +1,11 @@
-import * as Notion from "./constants.js";
-import { createPage } from "./endpoints/pages.js";
-import { createPageProperty } from "./objects/page.js";
-import { createBlock } from "./objects/block.js";
-import * as SolvedAC from "../solvedAC/SolvedAC.js";
-import * as Util from "../util.js";
-import { PROPERTY_TYPE } from "./objects/constants/pageConstants.js";
-import { BLOCK_TYPE } from "./objects/constants/blockConstants.js";
+import * as Notion from './constants.js';
+import { createPage } from './endpoints/pages.js';
+import { createPageProperty } from './objects/page.js';
+import { createBlock } from './objects/block.js';
+import * as SolvedAC from '../solvedAC/SolvedAC.js';
+import * as Util from '../util.js';
+import { PROPERTY_TYPE } from './objects/constants/pageConstants.js';
+import { BLOCK_TYPE } from './objects/constants/blockConstants.js';
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
@@ -27,7 +27,7 @@ async function dispatch(action, payload) {
 }
 
 async function getDatabases() {
-  const accessToken = await Util.getChromeStorage("notionAccessToken");
+  const accessToken = await Util.getChromeStorage('notionAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
   }
@@ -36,18 +36,18 @@ async function getDatabases() {
 
   const headers = {
     Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
-    "Notion-Version": "2022-06-28",
+    'Content-Type': 'application/json',
+    'Notion-Version': '2022-06-28',
   };
 
   const body = JSON.stringify({
     filter: {
-      value: "database",
-      property: "object",
+      value: 'database',
+      property: 'object',
     },
   });
 
-  const response = await Util.request(url, "POST", headers, body);
+  const response = await Util.request(url, 'POST', headers, body);
   if (!response.ok) {
     throw new Error(Notion.ERROR[Notion.FETCH_API_FAILED]);
   }
@@ -95,20 +95,20 @@ async function requestAndSaveAccessToken(payload) {
   const url = `${Notion.API_BASE_URL}/v1/oauth/token`;
 
   const data = JSON.stringify({
-    grant_type: "authorization_code",
+    grant_type: 'authorization_code',
     code: code,
-    redirect_uri: "https://github.com",
+    redirect_uri: 'https://github.com',
   });
 
   const encoded = btoa(`${Notion.CLIENT_ID}:${Notion.CLIENT_SECRET}`);
 
   const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
     Authorization: `Basic ${encoded}`,
   };
 
-  const response = await Util.request(url, "POST", headers, data);
+  const response = await Util.request(url, 'POST', headers, data);
   if (!response.ok) {
     throw new Error(Notion.ERROR[Notion.FETCH_API_FAILED]);
   }
@@ -120,7 +120,7 @@ async function requestAndSaveAccessToken(payload) {
     throw new Error(Notion.ERROR[Notion.NOT_FOUND_ACCESS_TOKEN]);
   }
 
-  Util.setChromeStorage("notionAccessToken", accessToken);
+  Util.setChromeStorage('notionAccessToken', accessToken);
 
   Util.closeLatestTab();
 
@@ -129,9 +129,9 @@ async function requestAndSaveAccessToken(payload) {
 
 async function upload(
   { problemId, type, extension, sourceCode },
-  { title, level, tags }
+  { title, level, tags },
 ) {
-  const databaseId = await Util.getChromeStorage("notionUploadedDatabaseId");
+  const databaseId = await Util.getChromeStorage('notionUploadedDatabaseId');
 
   const properties = {
     title: createPageProperty(PROPERTY_TYPE.TITLE, {
@@ -159,10 +159,10 @@ async function upload(
   };
 
   const children = [
-    createBlock(BLOCK_TYPE.HEADING_LARGE, { text: "How to resolve?" }),
-    createBlock(BLOCK_TYPE.PARAGRAPH, { text: "" }),
-    createBlock(BLOCK_TYPE.HEADING_LARGE, { text: "Source Code" }),
-    createBlock(BLOCK_TYPE.CODE, { text: sourceCode, language: "java" }),
+    createBlock(BLOCK_TYPE.HEADING_LARGE, { text: 'How to resolve?' }),
+    createBlock(BLOCK_TYPE.PARAGRAPH, { text: '' }),
+    createBlock(BLOCK_TYPE.HEADING_LARGE, { text: 'Source Code' }),
+    createBlock(BLOCK_TYPE.CODE, { text: sourceCode, language: 'java' }),
   ];
 
   const data = {

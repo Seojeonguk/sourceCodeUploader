@@ -5,13 +5,13 @@
  * @returns {Object} An object containing extracted data from the row.
  */
 const extractRowData = (row) => {
-  const submitNum = $(row).find("td:eq(0)").text();
-  const submitId = $(row).find("td:eq(1)").text();
-  const problemId = $(row).find("td:eq(2) a").text();
-  const isCorrect = $(row).find("td:eq(3) span").hasClass("result-ac");
-  const submitLanguage = $(row).find("td:eq(6) a:eq(0)").text();
-  const resultTag = $(row).find("td:eq(3)")?.[0];
-  const title = $(row).find("td:eq(2) a").attr("data-original-title");
+  const submitNum = $(row).find('td:eq(0)').text();
+  const submitId = $(row).find('td:eq(1)').text();
+  const problemId = $(row).find('td:eq(2) a').text();
+  const isCorrect = $(row).find('td:eq(3) span').hasClass('result-ac');
+  const submitLanguage = $(row).find('td:eq(6) a:eq(0)').text();
+  const resultTag = $(row).find('td:eq(3)')?.[0];
+  const title = $(row).find('td:eq(2) a').attr('data-original-title');
 
   return {
     submitNum,
@@ -26,7 +26,7 @@ const extractRowData = (row) => {
 
 const fetchSourceCodeBySubmitNum = async (submitNum) => {
   const response = await fetch(
-    `https://www.acmicpc.net/source/download/${submitNum}`
+    `https://www.acmicpc.net/source/download/${submitNum}`,
   );
 
   const text = await response.text();
@@ -41,9 +41,9 @@ const fetchSourceCodeBySubmitNum = async (submitNum) => {
  * @returns {string} The file extension corresponding to the language.
  */
 function parsingExtension() {
-  const resultTable = $("table tbody tr td");
+  const resultTable = $('table tbody tr td');
   if (util.isEmpty(resultTable)) {
-    throw new Error("Not found result table");
+    throw new Error('Not found result table');
   }
 
   const language = resultTable[7].innerHTML;
@@ -62,9 +62,9 @@ function parsingExtension() {
  * @throws {Error} If the login ID is not found.
  */
 const parsingLoginID = () => {
-  const loginID = $(".username").text();
+  const loginID = $('.username').text();
   if (util.isEmpty(loginID)) {
-    throw new Error("Not found login ID");
+    throw new Error('Not found login ID');
   }
 
   return loginID;
@@ -79,7 +79,7 @@ const parsingLoginID = () => {
 function parsingSourceCode() {
   const textarea = $("textarea[name='source']");
   if (util.isEmpty(textarea)) {
-    throw new Error("Not found source code");
+    throw new Error('Not found source code');
   }
 
   return textarea[0].value;
@@ -92,18 +92,18 @@ function parsingSourceCode() {
  * @throws {Error} If the status table is not found.
  */
 const parsingStatusTable = () => {
-  const statusTable = $("#status-table")?.[0];
+  const statusTable = $('#status-table')?.[0];
   if (!statusTable) {
-    throw new Error("Not found status table");
+    throw new Error('Not found status table');
   }
 
   return statusTable;
 };
 
 function parsingTitle() {
-  const resultTable = $("table tbody tr td");
+  const resultTable = $('table tbody tr td');
   if (util.isEmpty(resultTable)) {
-    throw new Error("Not found result table");
+    throw new Error('Not found result table');
   }
 
   return resultTable[3].innerHTML;
@@ -118,7 +118,7 @@ function parsingTitle() {
 function parsingProblemID() {
   const a = $("table a[href^='/problem/']");
   if (util.isEmpty(a)) {
-    throw new Error("Not found problem ID");
+    throw new Error('Not found problem ID');
   }
 
   return a[0].innerHTML;
@@ -131,18 +131,18 @@ function parsingProblemID() {
  * @throws {Error} Throws an error if CodeMirror element is not found.
  */
 function parsingCodeMirrorTheme() {
-  const codeMirror = $(".CodeMirror");
+  const codeMirror = $('.CodeMirror');
   if (util.isEmpty(codeMirror)) {
-    throw new Error("Not found codemirror");
+    throw new Error('Not found codemirror');
   }
 
   codeMirror[0].classList.forEach((className) => {
-    if (className.startsWith("cm-s")) {
+    if (className.startsWith('cm-s')) {
       return className;
     }
   });
 
-  return "cm-s-default";
+  return 'cm-s-default';
 }
 
 /**
@@ -152,7 +152,7 @@ function parsingCodeMirrorTheme() {
  * @returns {Array} An array of objects containing extracted data from each row.
  */
 const processRows = (statusTable) => {
-  const rows = $(statusTable).find("tbody tr").toArray();
+  const rows = $(statusTable).find('tbody tr').toArray();
   const rowData = rows.map(extractRowData);
   return rowData;
 };

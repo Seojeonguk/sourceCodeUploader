@@ -1,5 +1,5 @@
-import * as Github from "./constants.js";
-import * as Util from "../util.js";
+import * as Github from './constants.js';
+import * as Util from '../util.js';
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
@@ -21,7 +21,7 @@ async function dispatch(action, payload) {
       return {
         ok: false,
         message:
-          "The upload source code and the existing content are the same.",
+          'The upload source code and the existing content are the same.',
       };
     }
     return await commit({ ...payload, sha: response.sha });
@@ -42,18 +42,18 @@ async function dispatch(action, payload) {
  */
 
 async function commit(payload) {
-  const accessToken = await Util.getChromeStorage("githubAccessToken");
+  const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
-  const githubID = await Util.getChromeStorage("githubID");
+  const githubID = await Util.getChromeStorage('githubID');
   if (Util.isEmpty(githubID)) {
     throw new Error(Github.ERROR[Github.INVALID_GITHUB_ID]);
   }
 
   const uploadedRepository = await Util.getChromeStorage(
-    "githubUploadedRepository"
+    'githubUploadedRepository',
   );
   if (Util.isEmpty(uploadedRepository)) {
     throw new Error(Github.ERROR[Github.INVALID_UPLOADED_REPOSITORY]);
@@ -63,7 +63,7 @@ async function commit(payload) {
   const path = `${type}/${problemId}.${extension}`;
   const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
   const headers = {
-    accept: "application/vnd.github+json",
+    accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
   };
 
@@ -73,7 +73,7 @@ async function commit(payload) {
     sha,
   });
 
-  const response = await Util.request(url, "PUT", headers, body);
+  const response = await Util.request(url, 'PUT', headers, body);
   const text = await response.json();
   const message = text.commit.html_url ?? text.message;
 
@@ -90,18 +90,18 @@ async function commit(payload) {
  * @throws {Error} If the access token is falsy or if the API request fails.
  */
 async function getAuthenticatedUserRepositories() {
-  const accessToken = await Util.getChromeStorage("githubAccessToken");
+  const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
   const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
   const headers = {
-    accept: "application/vnd.github+json",
+    accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const response = await Util.request(url, "GET", headers, undefined);
+  const response = await Util.request(url, 'GET', headers, undefined);
   if (!response.ok) {
     throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
@@ -125,7 +125,7 @@ async function getAuthenticatedUserInfo(accessToken) {
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const response = await Util.request(url, "GET", headers, undefined);
+  const response = await Util.request(url, 'GET', headers, undefined);
   if (!response.ok) {
     throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
@@ -149,18 +149,18 @@ async function getAuthenticatedUserInfo(accessToken) {
  * @returns {Promise<{sha: string, content: string}>} A promise that resolves with the SHA and sanitized content of the file.
  */
 async function getShaForExistingFile(payload) {
-  const accessToken = await Util.getChromeStorage("githubAccessToken");
+  const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
-  const githubID = await Util.getChromeStorage("githubID");
+  const githubID = await Util.getChromeStorage('githubID');
   if (Util.isEmpty(githubID)) {
     throw new Error(Github.ERROR[Github.INVALID_GITHUB_ID]);
   }
 
   const uploadedRepository = await Util.getChromeStorage(
-    "githubUploadedRepository"
+    'githubUploadedRepository',
   );
   if (Util.isEmpty(uploadedRepository)) {
     throw new Error(Github.ERROR[Github.INVALID_UPLOADED_REPOSITORY]);
@@ -170,15 +170,15 @@ async function getShaForExistingFile(payload) {
   const path = `${type}/${problemId}.${extension}`;
   const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
   const headers = {
-    accept: "application/vnd.github+json",
+    accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const response = await Util.request(url, "GET", headers, undefined);
+  const response = await Util.request(url, 'GET', headers, undefined);
   const text = await response.json();
 
   const { sha, content } = text;
-  const sanitizedContent = content?.replaceAll(/\n/g, "");
+  const sanitizedContent = content?.replaceAll(/\n/g, '');
 
   return {
     sha,
@@ -225,11 +225,11 @@ async function requestAndSaveAccessToken(payload) {
   const url = `${Github.BASE_URL}/login/oauth/access_token`;
 
   const data = new FormData();
-  data.append("client_id", Github.CLIENT_ID);
-  data.append("client_secret", Github.CLIENT_SECRET);
-  data.append("code", code);
+  data.append('client_id', Github.CLIENT_ID);
+  data.append('client_secret', Github.CLIENT_SECRET);
+  data.append('code', code);
 
-  const response = await Util.request(url, "POST", undefined, data);
+  const response = await Util.request(url, 'POST', undefined, data);
   if (!response.ok) {
     throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
   }
