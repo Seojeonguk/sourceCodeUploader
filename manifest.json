@@ -11,19 +11,23 @@
   },
   "action": {
     "default_title": "Source Code Uploader",
-    "default_popup": "popup.html"
+    "default_popup": "popup/html/index.html"
   },
   "author": {
     "email": "junguk7880@naver.com"
   },
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "scripts/background.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.acmicpc.net/*"],
-      "css": ["scripts/boj/boj.css"],
+      "matches": [
+        "https://www.acmicpc.net/*"
+      ],
+      "css": [
+        "scripts/boj/boj.css"
+      ],
       "js": [
         "library/jquery-3.6.2.min.js",
         "scripts/boj/constants.js",
@@ -32,11 +36,18 @@
         "scripts/boj/Boj.js"
       ],
       "run_at": "document_idle",
-      "include_globs": ["*/source/*", "*/status*"]
+      "include_globs": [
+        "*/source/*",
+        "*/status*"
+      ]
     },
     {
-      "matches": ["https://github.com/*"],
-      "js": ["scripts/github/githubEvents.js"],
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "scripts/github/githubEvents.js"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -65,12 +76,20 @@
   "short_name": "SCU",
   "web_accessible_resources": [
     {
-      "resources": ["icon/*.png"],
-      "matches": ["https://www.acmicpc.net/*"]
+      "resources": [
+        "icon/*.png"
+      ],
+      "matches": [
+        "https://www.acmicpc.net/*"
+      ]
     },
     {
-      "resources": ["scripts/util.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "scripts/util.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

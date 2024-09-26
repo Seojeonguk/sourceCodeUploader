@@ -1,5 +1,5 @@
-import * as Util from "./scripts/util.js";
-import { GET_REPOSITORIES } from "./scripts/github/constants.js";
+import * as Util from "../../scripts/util.js";
+import { GET_REPOSITORIES } from "../../scripts/github/constants.js";
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
