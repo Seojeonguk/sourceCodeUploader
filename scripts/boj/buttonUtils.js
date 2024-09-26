@@ -4,8 +4,8 @@
  * @returns {HTMLElement} The div element wrapping buttons.
  */
 function createButtonWrapper() {
-  const div = document.createElement("div");
-  div.className = "btnWrapper";
+  const div = document.createElement('div');
+  div.className = 'btnWrapper';
   return div;
 }
 
@@ -17,14 +17,14 @@ function createButtonWrapper() {
  * @param {function} clickHandler - The function to be executed when the button is clicked.
  */
 function createButton(buttonWrapper, imageUrl, clickHandler) {
-  const button = document.createElement("button");
-  button.classList.add("uploadBtn");
+  const button = document.createElement('button');
+  button.classList.add('uploadBtn');
 
-  const img = document.createElement("img");
+  const img = document.createElement('img');
   img.src = util.getResourceURL(imageUrl);
 
   button.appendChild(img);
-  button.addEventListener("click", clickHandler);
+  button.addEventListener('click', clickHandler);
 
   buttonWrapper.appendChild(button);
 }

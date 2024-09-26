@@ -1,5 +1,5 @@
-import { PROPERTY_TYPE } from "./constants/pageConstants.js";
-import { createRichTextArray } from "./block.js";
+import { PROPERTY_TYPE } from './constants/pageConstants.js';
+import { createRichTextArray } from './block.js';
 
 /**
  * Create a page property.

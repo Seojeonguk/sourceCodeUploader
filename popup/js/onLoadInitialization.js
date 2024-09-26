@@ -1,4 +1,4 @@
-import * as Util from "../../scripts/util.js";
+import * as Util from '../../scripts/util.js';
 
 export function initializeOnLoad() {
   checkPlatformsAuthentication();
@@ -14,14 +14,14 @@ export function initializeOnLoad() {
  */
 
 async function checkPlatformsAuthentication() {
-  const platforms = ["github", "notion"];
+  const platforms = ['github', 'notion'];
 
   platforms.forEach(async (platform) => {
     const accessToken = await Util.getChromeStorage(`${platform}AccessToken`);
     if (accessToken) {
-      $(`.${platform} .status`).addClass("green");
-      $(`.${platform} .authentication-btn`).html("Remove");
-      $(`.${platform} .authentication-btn`).addClass("delete");
+      $(`.${platform} .status`).addClass('green');
+      $(`.${platform} .authentication-btn`).html('Remove');
+      $(`.${platform} .authentication-btn`).addClass('delete');
     }
   });
 }
@@ -31,11 +31,11 @@ async function checkPlatformsAuthentication() {
  */
 async function loadCachedDatabaseList() {
   const uploadedDatabase = await Util.getChromeStorage(
-    "notionUploadedDatabase"
+    'notionUploadedDatabase',
   );
 
   if (!Util.isEmpty(uploadedDatabase)) {
-    $("#uploaded-database").text(uploadedDatabase);
+    $('#uploaded-database').text(uploadedDatabase);
   }
 }
 
@@ -44,10 +44,10 @@ async function loadCachedDatabaseList() {
  */
 async function loadCachedRepositoryList() {
   const uploadedRepository = await Util.getChromeStorage(
-    "githubUploadedRepository"
+    'githubUploadedRepository',
   );
 
   if (!Util.isEmpty(uploadedRepository)) {
-    $("#uploaded-repository").text(uploadedRepository);
+    $('#uploaded-repository').text(uploadedRepository);
   }
 }

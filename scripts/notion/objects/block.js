@@ -1,4 +1,4 @@
-import { BLOCK_TYPE, COLORS, LANGUAGES } from "./constants/blockConstants.js";
+import { BLOCK_TYPE, COLORS, LANGUAGES } from './constants/blockConstants.js';
 
 /**
  * Create a block based on the specified type and payload.
@@ -148,9 +148,9 @@ export const createRichText = ({
  * @returns {Object[]} An array of rich text objects
  */
 export const createRichTextArray = (text) => {
-  return text.split("\n").map((value, index, array) => {
+  return text.split('\n').map((value, index, array) => {
     return createRichText({
-      text: array.length - 1 === index ? value : value + "\n",
+      text: array.length - 1 === index ? value : value + '\n',
     });
   });
 };
@@ -167,7 +167,7 @@ export const createRichTextArrayByLength = (text) => {
     array.push(
       createRichText({
         text: text.slice(i, i + 2000),
-      })
+      }),
     );
   }
 
