@@ -1,4 +1,4 @@
-import * as Util from "./scripts/util.js";
+import * as Util from "../../scripts/util.js";
 
 export function initializeOnLoad() {
   checkPlatformsAuthentication();
