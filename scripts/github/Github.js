@@ -7,7 +7,7 @@ import * as Util from '../util.js';
  * @param {string} action - The action to be dispatched.
  * @param {Object} payload - The optional payload associated with the action.
  */
-async function dispatch(action, payload) {
+const dispatch = async (action, payload) => {
   if (action === Github.OPEN_OAUTH_PAGE) {
     openOauthPage();
   } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
@@ -26,7 +26,7 @@ async function dispatch(action, payload) {
     }
     return await commit({ ...payload, sha: response.sha });
   }
-}
+};
 
 /**
  * Commits the source code to the GitHub repository.
@@ -41,7 +41,7 @@ async function dispatch(action, payload) {
  * @returns {Promise<object>} A promise that resolves with the result of the commit operation.
  */
 
-async function commit(payload) {
+const commit = async (payload) => {
   const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
@@ -81,7 +81,7 @@ async function commit(payload) {
     ok: response.ok,
     message,
   };
-}
+};
 
 /**
  * Retrieves repository list owned by the authenticated user.
@@ -89,7 +89,7 @@ async function commit(payload) {
  * @returns {Promise<Array>} A promise that resolves to an array of repositories.
  * @throws {Error} If the access token is falsy or if the API request fails.
  */
-async function getAuthenticatedUserRepositories() {
+const getAuthenticatedUserRepositories = async () => {
   const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
@@ -107,7 +107,7 @@ async function getAuthenticatedUserRepositories() {
   }
 
   return await response.json();
-}
+};
 
 /**
  * Retrieves authenticated user information.
@@ -115,7 +115,7 @@ async function getAuthenticatedUserRepositories() {
  * @param {string} accessToken - The access token for authentication.
  * @throws {Error} If the access token is falsy or if the API request fails.
  */
-async function getAuthenticatedUserInfo(accessToken) {
+const getAuthenticatedUserInfo = async (accessToken) => {
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
@@ -137,7 +137,7 @@ async function getAuthenticatedUserInfo(accessToken) {
   }
 
   chrome.storage.local.set({ githubID: githubID });
-}
+};
 
 /**
  * Retrieves the SHA and sanitized content for an existing file from the GitHub repository.
@@ -148,7 +148,7 @@ async function getAuthenticatedUserInfo(accessToken) {
  * @param {string} payload.type - The type of the file.
  * @returns {Promise<{sha: string, content: string}>} A promise that resolves with the SHA and sanitized content of the file.
  */
-async function getShaForExistingFile(payload) {
+const getShaForExistingFile = async (payload) => {
   const accessToken = await Util.getChromeStorage('githubAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
@@ -184,12 +184,12 @@ async function getShaForExistingFile(payload) {
     sha,
     content: sanitizedContent,
   };
-}
+};
 
 /**
  * Opens the GitHub OAuth authorization page in a new browser tab.
  */
-function openOauthPage() {
+const openOauthPage = () => {
   let parameters = `client_id=${Github.CLIENT_ID}`;
   if (Github.REDIRECT_URL) {
     parameters += `&redirect_url=${Github.REDIRECT_URL}`;
@@ -200,7 +200,7 @@ function openOauthPage() {
   const url = `${Github.BASE_URL}/login/oauth/authorize?${parameters}`;
 
   chrome.tabs.create({ url: url });
-}
+};
 
 /**
  * Requests and saves an access token.
@@ -212,7 +212,7 @@ function openOauthPage() {
  * @throws {Error} If the payload object is invalid or if the code is missing or invalid.
  * @throws {Error} If the API request fails or if the access token is not found in the response.
  */
-async function requestAndSaveAccessToken(payload) {
+const requestAndSaveAccessToken = async (payload) => {
   if (Util.isEmpty(payload)) {
     throw new Error(Github.ERROR[Github.INVALID_PAYLOAD]);
   }
@@ -247,6 +247,6 @@ async function requestAndSaveAccessToken(payload) {
   Util.closeLatestTab();
 
   return accessToken;
-}
+};
 
 export { dispatch };

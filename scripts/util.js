@@ -3,13 +3,13 @@
  * @param {*} value - The value to be checked.
  * @returns {boolean} True if the value is empty, otherwise false.
  */
-export function isEmpty(value) {
+export const isEmpty = (value) => {
   return (
     !value ||
     (Array.isArray(value) && value.length === 0) ||
     (typeof value === 'object' && Object.keys(value).length === 0)
   );
-}
+};
 
 /**
  * Sends a request to the specified URL with the given method, headers, and body.
@@ -19,13 +19,13 @@ export function isEmpty(value) {
  * @param {any} body - The body of the request.
  * @returns {Promise<Response>} A promise that resolves with the response from the server.
  */
-export async function request(url, method, headers, body) {
+export const request = async (url, method, headers, body) => {
   return await fetch(url, {
     method: method,
     headers: headers,
     body: body,
   });
-}
+};
 
 /**
  * Sends a message to the background script.
@@ -34,7 +34,7 @@ export async function request(url, method, headers, body) {
  * @param {any} payload - The payload data to be sent along with the message.
  * @returns {Promise<any>} A promise that resolves with the response from the background script.
  */
-export function sendMessage(platform, action, payload) {
+export const sendMessage = (platform, action, payload) => {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage(
       {
@@ -47,52 +47,52 @@ export function sendMessage(platform, action, payload) {
       },
     );
   });
-}
+};
 
 /**
  * Reads a value from local storage asynchronously.
  * @param {string} key - The key of the value to be read from local storage.
  * @returns {Promise<any>} A promise that resolves with the value from local storage.
  */
-export async function getChromeStorage(key) {
+export const getChromeStorage = async (key) => {
   return new Promise((resolve) => {
     chrome.storage.local.get([key], (res) => {
       resolve(res[key]);
     });
   });
-}
+};
 
 /**
  * Removes a value from Chrome local storage.
  * @param {string} key - The key used to remove the value from storage.
  */
-export function removeChromeStorage(key) {
+export const removeChromeStorage = (key) => {
   chrome.storage.local.remove([key]);
-}
+};
 
 /**
  * Sets a value in Chrome local storage.
  * @param {string} key - The key used to set the value in storage.
  * @param {any} value - The value to be stored in local storage.
  */
-export function setChromeStorage(key, value) {
+export const setChromeStorage = (key, value) => {
   chrome.storage.local.set({ [key]: value });
-}
+};
 
-export function getResourceURL(path) {
+export const getResourceURL = (path) => {
   return chrome.runtime.getURL(path);
-}
+};
 
-export function closeLatestTab() {
+export const closeLatestTab = () => {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     tabs.forEach((tab) => {
       chrome.tabs.remove(tab.id);
     });
   });
-}
+};
 
-export function encodeBase64Unicode(str) {
+export const encodeBase64Unicode = (str) => {
   const utf8Array = new TextEncoder().encode(str);
   const binaryString = String.fromCharCode(...utf8Array);
   return btoa(binaryString);
-}
+};

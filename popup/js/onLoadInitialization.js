@@ -1,10 +1,9 @@
 import * as Util from '../../scripts/util.js';
-
-export function initializeOnLoad() {
+export const initializeOnLoad = () => {
   checkPlatformsAuthentication();
   loadCachedDatabaseList();
   loadCachedRepositoryList();
-}
+};
 
 /**
  * Checks authentication status for various platforms (e.g., GitHub, Notion).
@@ -13,7 +12,7 @@ export function initializeOnLoad() {
  * and changing the text and style of the authentication button to indicate removal.
  */
 
-async function checkPlatformsAuthentication() {
+const checkPlatformsAuthentication = () => {
   const platforms = ['github', 'notion'];
 
   platforms.forEach(async (platform) => {
@@ -24,12 +23,12 @@ async function checkPlatformsAuthentication() {
       $(`.${platform} .authentication-btn`).addClass('delete');
     }
   });
-}
+};
 
 /**
  * Load the database to upload to notion from chrome storage and display it on the popup page.
  */
-async function loadCachedDatabaseList() {
+const loadCachedDatabaseList = async () => {
   const uploadedDatabase = await Util.getChromeStorage(
     'notionUploadedDatabase',
   );
@@ -37,12 +36,13 @@ async function loadCachedDatabaseList() {
   if (!Util.isEmpty(uploadedDatabase)) {
     $('#uploaded-database').text(uploadedDatabase);
   }
-}
+};
 
 /**
  * Load the repository to upload to github from Chrome storage and display it on the popup page.
  */
-async function loadCachedRepositoryList() {
+
+const loadCachedRepositoryList = async () => {
   const uploadedRepository = await Util.getChromeStorage(
     'githubUploadedRepository',
   );
@@ -50,4 +50,4 @@ async function loadCachedRepositoryList() {
   if (!Util.isEmpty(uploadedRepository)) {
     $('#uploaded-repository').text(uploadedRepository);
   }
-}
+};

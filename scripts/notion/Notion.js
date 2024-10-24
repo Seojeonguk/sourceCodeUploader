@@ -13,7 +13,7 @@ import { BLOCK_TYPE } from './objects/constants/blockConstants.js';
  * @param {string} action - The action to be dispatched.
  * @param {Object} payload - The optional payload associated with the action.
  */
-async function dispatch(action, payload) {
+const dispatch = async (action, payload) => {
   if (action === Notion.OPEN_OAUTH_PAGE) {
     openOauthPage();
   } else if (action === Notion.REQUEST_AND_SAVE_ACCESS_TOKEN) {
@@ -24,9 +24,9 @@ async function dispatch(action, payload) {
     const problemInfo = await SolvedAC.fetchProblemByID(payload);
     return await upload(payload, problemInfo);
   }
-}
+};
 
-async function getDatabases() {
+const getDatabases = async () => {
   const accessToken = await Util.getChromeStorage('notionAccessToken');
   if (Util.isEmpty(accessToken)) {
     throw new Error(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
@@ -56,12 +56,12 @@ async function getDatabases() {
   const results = json.results;
 
   return results;
-}
+};
 
 /**
  * Opens the Notion OAuth page in a new tab.
  */
-function openOauthPage() {
+const openOauthPage = () => {
   let parameters = `owner=user&client_id=${Notion.CLIENT_ID}&response_type=code`;
   if (Notion.REDIRECT_URL) {
     parameters += `&redirect_uri=${Notion.REDIRECT_URL}`;
@@ -70,7 +70,7 @@ function openOauthPage() {
   const url = `${Notion.API_BASE_URL}/v1/oauth/authorize?${parameters}`;
 
   chrome.tabs.create({ url: url });
-}
+};
 
 /**
  * Requests and saves an access token.
@@ -82,7 +82,7 @@ function openOauthPage() {
  * @throws {Error} If the payload object is invalid or if the code is missing or invalid.
  * @throws {Error} If the API request fails or if the access token is not found in the response.
  */
-async function requestAndSaveAccessToken(payload) {
+const requestAndSaveAccessToken = async (payload) => {
   if (Util.isEmpty(payload)) {
     throw new Error(Notion.ERROR[Notion.INVALID_PAYLOAD]);
   }
@@ -125,12 +125,12 @@ async function requestAndSaveAccessToken(payload) {
   Util.closeLatestTab();
 
   return accessToken;
-}
+};
 
-async function upload(
+const upload = async (
   { problemId, type, extension, sourceCode },
   { title, level, tags },
-) {
+) => {
   const databaseId = await Util.getChromeStorage('notionUploadedDatabaseId');
 
   const properties = {
@@ -175,6 +175,6 @@ async function upload(
   const message = result.public_url;
 
   return { ok: true, message };
-}
+};
 
 export { dispatch };
