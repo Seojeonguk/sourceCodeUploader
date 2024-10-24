@@ -15,12 +15,12 @@ export function initializeButtonEvents() {
 /**
  * Closes the select list when clicking outside of it.
  */
-function closeSelectListOnOutsideClick() {
+const closeSelectListOnOutsideClick = () => {
   $(document).on('click', function () {
     $('.select-list ul').removeClass('is-active');
     $('.content-wrapper').removeClass('overlay');
   });
-}
+};
 
 /**
  * If the delete class does not exist on github authentication button, open the github oauth page.
@@ -64,7 +64,7 @@ const handleNotionAuthenticationBtn = () => {
  * When a database is clicked, it retrieves the database name and ID from the clicked element.
  * It then updates the UI to display the selected database name and stores both the name and ID in Chrome storage.
  */
-function handleUploadedDatabaseSelection() {
+const handleUploadedDatabaseSelection = () => {
   $(document).on('click', '#notion-database-list li p', function (e) {
     const uploadedDatabase = $(this).text();
     const uploadedDatabaseId = $(this).attr('database-id');
@@ -74,13 +74,13 @@ function handleUploadedDatabaseSelection() {
     Util.setChromeStorage('notionUploadedDatabase', uploadedDatabase);
     Util.setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
   });
-}
+};
 
 /**
  * Handles click event on the repository list items to select the repository for upload.
  * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
  */
-function handleUploadedRepositorySelection() {
+const handleUploadedRepositorySelection = () => {
   $(document).on('click', '#repository-list li p', function (e) {
     const uploadedRepository = e.target.innerHTML;
 
@@ -88,7 +88,7 @@ function handleUploadedRepositorySelection() {
 
     Util.setChromeStorage('githubUploadedRepository', uploadedRepository);
   });
-}
+};
 
 /**
  * Handles click event to display the list of databases for Notion.
@@ -143,9 +143,9 @@ const showRepositories = () => {
  * Adds or removes the "light-mode" class from the body element based on its current state.
  * Stops event propagation to prevent further event handling.
  */
-function toggleDarkMode() {
+const toggleDarkMode = () => {
   $('.dark-light').on('click', function (e) {
     $('body').toggleClass('light-mode');
     e.stopPropagation();
   });
-}
+};

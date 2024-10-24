@@ -1,7 +1,7 @@
 import { dispatch as githubDispatch } from './github/Github.js';
 import { dispatch as notionDispatch } from './notion/Notion.js';
 
-function handleMessage(request, sender, sendResponse) {
+const handleMessage = (request, sender, sendResponse) => {
   try {
     const { platform, action, payload } = request;
     if (platform === 'github') {
@@ -20,6 +20,6 @@ function handleMessage(request, sender, sendResponse) {
   } finally {
     return true;
   }
-}
+};
 
 chrome.runtime.onMessage.addListener(handleMessage);

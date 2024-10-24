@@ -40,7 +40,7 @@ const fetchSourceCodeBySubmitNum = async (submitNum) => {
  * @throws {Error} If the result table is not found or the language is not supported.
  * @returns {string} The file extension corresponding to the language.
  */
-function parsingExtension() {
+const parsingExtension = () => {
   const resultTable = $('table tbody tr td');
   if (util.isEmpty(resultTable)) {
     throw new Error('Not found result table');
@@ -53,7 +53,7 @@ function parsingExtension() {
   }
 
   return extension;
-}
+};
 
 /**
  * Parse the login ID.
@@ -76,14 +76,14 @@ const parsingLoginID = () => {
  * @returns {string} The parsed source code.
  * @throws {Error} If the textarea element with the name 'source' is not found.
  */
-function parsingSourceCode() {
+const parsingSourceCode = () => {
   const textarea = $("textarea[name='source']");
   if (util.isEmpty(textarea)) {
     throw new Error('Not found source code');
   }
 
   return textarea[0].value;
-}
+};
 
 /**
  * Prase the status table from the status page.
@@ -115,14 +115,14 @@ function parsingTitle() {
  * @returns {string} The problem ID parsed from the anchor tag.
  * @throws {Error} If no anchor tag with a href attribute starting with '/problem/' is found.
  */
-function parsingProblemID() {
+const parsingProblemID = () => {
   const a = $("table a[href^='/problem/']");
   if (util.isEmpty(a)) {
     throw new Error('Not found problem ID');
   }
 
   return a[0].innerHTML;
-}
+};
 
 /**
  * Parse the CodeMirror theme from CodeMirror.
@@ -130,7 +130,7 @@ function parsingProblemID() {
  * @returns {string} The name of the CodeMirror theme.
  * @throws {Error} Throws an error if CodeMirror element is not found.
  */
-function parsingCodeMirrorTheme() {
+const parsingCodeMirrorTheme = () => {
   const codeMirror = $('.CodeMirror');
   if (util.isEmpty(codeMirror)) {
     throw new Error('Not found codemirror');
@@ -143,7 +143,7 @@ function parsingCodeMirrorTheme() {
   });
 
   return 'cm-s-default';
-}
+};
 
 /**
  * Processes rows of a status table.

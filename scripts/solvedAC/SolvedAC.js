@@ -8,7 +8,7 @@ import * as Util from '../util.js';
  *                    - { level: string, problemId: string, tags: Array<string>, title: string }
  * @throws {Error} - Throws an error if the problem ID is empty.
  */
-export async function fetchProblemByID({ problemId }) {
+export const fetchProblemByID = async ({ problemId }) => {
   if (Util.isEmpty(problemId)) {
     throw new Error('Invalid problem ID for requesting solvedAC.');
   }
@@ -33,4 +33,4 @@ export async function fetchProblemByID({ problemId }) {
     ),
     title: data.titleKo,
   };
-}
+};
