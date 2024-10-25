@@ -24,16 +24,6 @@ const extractRowData = (row) => {
   };
 };
 
-const fetchSourceCodeBySubmitNum = async (submitNum) => {
-  const response = await fetch(
-    `https://www.acmicpc.net/source/download/${submitNum}`,
-  );
-
-  const text = await response.text();
-
-  return text;
-};
-
 /**
  * Get the file extension to the language parsing the result table.
  *
