@@ -33,13 +33,13 @@ const extractRowData = (row) => {
 const parsingExtension = () => {
   const resultTable = $('table tbody tr td');
   if (util.isEmpty(resultTable)) {
-    throw new Error('Not found result table');
+    throw new parseException('Result table not found.');
   }
 
   const language = resultTable[7].innerHTML;
   const extension = languages[language];
   if (!extension) {
-    throw new Error(`Not supported language (${language})`);
+    throw new undefinedException(`${language} is not defined.`);
   }
 
   return extension;
@@ -54,7 +54,9 @@ const parsingExtension = () => {
 const parsingLoginID = () => {
   const loginID = $('.username').text();
   if (util.isEmpty(loginID)) {
-    throw new Error('Not found login ID');
+    throw new parseException(
+      'Login ID not found. Please log in and try again.',
+    );
   }
 
   return loginID;
@@ -69,7 +71,7 @@ const parsingLoginID = () => {
 const parsingSourceCode = () => {
   const textarea = $("textarea[name='source']");
   if (util.isEmpty(textarea)) {
-    throw new Error('Not found source code');
+    throw new parseException('Source code not found.');
   }
 
   return textarea[0].value;
@@ -84,7 +86,7 @@ const parsingSourceCode = () => {
 const parsingStatusTable = () => {
   const statusTable = $('#status-table')?.[0];
   if (!statusTable) {
-    throw new Error('Not found status table');
+    throw new parseException('Status table not found.');
   }
 
   return statusTable;
@@ -93,7 +95,7 @@ const parsingStatusTable = () => {
 function parsingTitle() {
   const resultTable = $('table tbody tr td');
   if (util.isEmpty(resultTable)) {
-    throw new Error('Not found result table');
+    throw new parseException('Result table not found.');
   }
 
   return resultTable[3].innerHTML;
@@ -108,7 +110,7 @@ function parsingTitle() {
 const parsingProblemID = () => {
   const a = $("table a[href^='/problem/']");
   if (util.isEmpty(a)) {
-    throw new Error('Not found problem ID');
+    throw new parseException('Problem ID not found.');
   }
 
   return a[0].innerHTML;
@@ -123,7 +125,7 @@ const parsingProblemID = () => {
 const parsingCodeMirrorTheme = () => {
   const codeMirror = $('.CodeMirror');
   if (util.isEmpty(codeMirror)) {
-    throw new Error('Not found codemirror');
+    throw new parseException('Codemirror not found.');
   }
 
   codeMirror[0].classList.forEach((className) => {

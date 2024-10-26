@@ -2,18 +2,7 @@ const statusPage = () => {
   console.debug('[SCU] Start Parse Table!');
   try {
     const loginID = parsingLoginID();
-
-    if (!loginID) {
-      console.log('Please login.');
-      return;
-    }
-
     const statusTable = parsingStatusTable();
-    if (!statusTable) {
-      console.warn('Not found status table.');
-      return;
-    }
-
     const rowSubmitInfos = processRows(statusTable);
     console.debug('Select Row Count : ', rowSubmitInfos.length);
 
@@ -62,6 +51,10 @@ const statusPage = () => {
       },
     );
   } catch (e) {
-    console.error(e);
+    if (e instanceof parseException || e instanceof undefinedException) {
+      console.warn(e);
+    } else {
+      console.error(e);
+    }
   }
 };

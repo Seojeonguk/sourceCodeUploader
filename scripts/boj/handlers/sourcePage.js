@@ -20,7 +20,11 @@ const sourcePage = () => {
 
       alert(response?.message);
     } catch (e) {
-      console.error(e);
+      if (e instanceof parseException || e instanceof undefinedException) {
+        console.warn(e);
+      } else {
+        console.error(e);
+      }
     }
   };
 
