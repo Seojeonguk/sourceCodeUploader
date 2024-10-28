@@ -31,12 +31,13 @@ const extractRowData = (row) => {
  * @returns {string} The file extension corresponding to the language.
  */
 const parsingExtension = () => {
+  const LANGUAGE_COLUMN_INDEX = 7;
   const resultTable = $('table tbody tr td');
-  if (util.isEmpty(resultTable)) {
-    throw new parseException('Result table not found.');
+  const language = resultTable?.[LANGUAGE_COLUMN_INDEX]?.innerHTML;
+  if (util.isEmpty(language)) {
+    throw new parseException('Result table or column not found.');
   }
 
-  const language = resultTable[7].innerHTML;
   const extension = languages[language];
   if (!extension) {
     throw new undefinedException(`${language} is not defined.`);
@@ -52,7 +53,8 @@ const parsingExtension = () => {
  * @throws {Error} If the login ID is not found.
  */
 const parsingLoginID = () => {
-  const loginID = $('.username').text();
+  const username = $('.username');
+  const loginID = username?.text();
   if (util.isEmpty(loginID)) {
     throw new parseException(
       'Login ID not found. Please log in and try again.',
@@ -70,11 +72,12 @@ const parsingLoginID = () => {
  */
 const parsingSourceCode = () => {
   const textarea = $("textarea[name='source']");
-  if (util.isEmpty(textarea)) {
+  const sourceCode = textarea?.[0]?.value;
+  if (util.isEmpty(sourceCode)) {
     throw new parseException('Source code not found.');
   }
 
-  return textarea[0].value;
+  return sourceCode;
 };
 
 /**
@@ -84,7 +87,7 @@ const parsingSourceCode = () => {
  * @throws {Error} If the status table is not found.
  */
 const parsingStatusTable = () => {
-  const statusTable = $('#status-table')?.[0];
+  const statusTable = $('#status-table');
   if (!statusTable) {
     throw new parseException('Status table not found.');
   }
@@ -92,14 +95,16 @@ const parsingStatusTable = () => {
   return statusTable;
 };
 
-function parsingTitle() {
+const parsingTitle = () => {
+  const TITLE_COLUMN_INDEX = 3;
   const resultTable = $('table tbody tr td');
-  if (util.isEmpty(resultTable)) {
+  const title = resultTable?.[TITLE_COLUMN_INDEX]?.innerHTML;
+  if (util.isEmpty(title)) {
     throw new parseException('Result table not found.');
   }
 
-  return resultTable[3].innerHTML;
-}
+  return title;
+};
 
 /**
  * Parse the problem ID from result table.
@@ -109,11 +114,12 @@ function parsingTitle() {
  */
 const parsingProblemID = () => {
   const a = $("table a[href^='/problem/']");
-  if (util.isEmpty(a)) {
+  const problemId = a?.[0]?.innerHTML;
+  if (util.isEmpty(problemId)) {
     throw new parseException('Problem ID not found.');
   }
 
-  return a[0].innerHTML;
+  return problemId;
 };
 
 /**
@@ -143,8 +149,10 @@ const parsingCodeMirrorTheme = () => {
  * @param {HTMLElement} statusTable The DOM element representing the status table.
  * @returns {Array} An array of objects containing extracted data from each row.
  */
-const processRows = (statusTable) => {
+const processRows = (statusTable, loginID) => {
   const rows = $(statusTable).find('tbody tr').toArray();
-  const rowData = rows.map(extractRowData);
+  const rowData = rows
+    .map(extractRowData)
+    .filter((row) => row.isCorrect && row.submitId == loginID);
   return rowData;
 };

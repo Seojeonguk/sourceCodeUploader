@@ -3,23 +3,11 @@ const statusPage = () => {
   try {
     const loginID = parsingLoginID();
     const statusTable = parsingStatusTable();
-    const rowSubmitInfos = processRows(statusTable);
+    const rowSubmitInfos = processRows(statusTable, loginID);
     console.debug('Select Row Count : ', rowSubmitInfos.length);
 
     rowSubmitInfos.forEach(
-      ({
-        submitNum,
-        submitId,
-        problemId,
-        isCorrect,
-        submitLanguage,
-        resultTag,
-        title,
-      }) => {
-        if (!isCorrect || submitId !== loginID) {
-          return;
-        }
-
+      ({ submitNum, problemId, submitLanguage, resultTag, title }) => {
         const extension = languages[submitLanguage];
         const buttonWrapper = createButtonWrapper();
 
@@ -27,7 +15,7 @@ const statusPage = () => {
           try {
             const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
 
-            const response = await util.sendMessage(platform, 'upload', {
+            const response = await util.sendMessage(platform, 'commit', {
               extension,
               problemId,
               sourceCode,
