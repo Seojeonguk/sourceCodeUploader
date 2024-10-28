@@ -1,4 +1,4 @@
-const statusPage = () => {
+const initStatusPage = () => {
   console.debug('[SCU] Start Parse Table!');
   try {
     const loginID = parsingLoginID();
@@ -8,34 +8,17 @@ const statusPage = () => {
 
     rowSubmitInfos.forEach(
       ({ submitNum, problemId, submitLanguage, resultTag, title }) => {
-        const extension = languages[submitLanguage];
-        const buttonWrapper = createButtonWrapper();
-
-        const handler = async (platform) => {
-          try {
-            const sourceCode = await fetchSourceCodeBySubmitNum(submitNum);
-
-            const response = await util.sendMessage(platform, 'commit', {
-              extension,
-              problemId,
-              sourceCode,
-              type: 'BOJ',
-              title,
-            });
-
-            alert(response?.message);
-          } catch (e) {
-            console.error(e);
-          }
+        const payload = {
+          extension: languages[submitLanguage],
+          problemId,
+          type: 'BOJ',
+          title,
         };
 
-        const githubIconPath = GITHUB_ICON_PATH;
-        const notionIconPath = NOTION_ICON_DARK_PATH;
-
-        createButton(buttonWrapper, githubIconPath, () => handler('github'));
-        createButton(buttonWrapper, notionIconPath, () => handler('notion'));
-
-        resultTag.appendChild(buttonWrapper);
+        const buttons = createButtons(true, payload, () =>
+          fetchSourceCodeBySubmitNum(submitNum),
+        );
+        resultTag.appendChild(buttons);
       },
     );
   } catch (e) {

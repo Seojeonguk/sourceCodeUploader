@@ -28,3 +28,35 @@ const createButton = (buttonWrapper, imageUrl, clickHandler) => {
 
   buttonWrapper.appendChild(button);
 };
+
+const createButtons = (isDark = false, payload, getSourceCode) => {
+  const buttonWrapper = createButtonWrapper();
+
+  Object.entries(PLATFROMS).forEach(([key, value]) => {
+    const name = value.name;
+    const action = value.action;
+    const iconPath = isDark ? value.icon : value.darkIcon;
+
+    createButton(buttonWrapper, iconPath, async () =>
+      buttonHandler(name, action, {
+        ...payload,
+        sourceCode: await getSourceCode(),
+      }),
+    );
+  });
+
+  return buttonWrapper;
+};
+
+const buttonHandler = async (platform, action, payload) => {
+  try {
+    const response = await util.sendMessage(platform, action, payload);
+    alert(response?.message);
+  } catch (e) {
+    if (e instanceof parseException || e instanceof undefinedException) {
+      console.warn(e);
+    } else {
+      console.error(e);
+    }
+  }
+};

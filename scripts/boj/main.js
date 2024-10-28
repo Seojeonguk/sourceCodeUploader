@@ -10,8 +10,8 @@ let util;
   const currentUrl = window.location.href;
 
   if (currentUrl.includes('status')) {
-    statusPage();
+    initStatusPage();
   } else {
-    sourcePage();
+    initSourcePage();
   }
 })();

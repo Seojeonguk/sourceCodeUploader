@@ -28,6 +28,7 @@
         "library/jquery-3.6.2.min.js",
         "scripts/boj/customExceptions/parseException.js",
         "scripts/boj/customExceptions/undefinedException.js",
+        "scripts/boj/constants/platforms.js",
         "scripts/boj/constants/icons.js",
         "scripts/boj/constants/languages.js",
         "scripts/boj/constants/themes.js",
