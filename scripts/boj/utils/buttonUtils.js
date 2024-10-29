@@ -1,18 +1,16 @@
 /**
- * Creates a div element to wrap buttons.
- *
- * @returns {HTMLElement} The div element wrapping buttons.
+ * Creates a wrapper div element to contain action buttons.
+ * @returns {HTMLElement} The div element containing the buttons.
  */
 const createActionButtonContainer = () => {
   return createElement('div', { className: 'btnWrapper' });
 };
 
 /**
- * Creates a button element with an image and attaches a click event handler.
- *
- * @param {HTMLElement} buttonWrapper - The div element wrapping buttons.
- * @param {string} imageUrl - The URL of the image to be displayed on the button.
- * @param {function} clickHandler - The function to be executed when the button is clicked.
+ * Creates a button with an image and attaches a click event handler.
+ * @param {HTMLElement} buttonWrapper - The div element containing the buttons.
+ * @param {string} imageUrl - The URL of the image to display on the button.
+ * @param {function} clickHandler - The function to execute when the button is clicked.
  */
 const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
   const button = createElement('button', { className: 'uploadBtn' });
@@ -25,6 +23,13 @@ const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
   buttonWrapper.appendChild(button);
 };
 
+/**
+ * Initializes platform action buttons with click handlers.
+ * @param {boolean} isDark - Determines whether to use dark or light icons.
+ * @param {object} payload - The data to pass to the platform action handler.
+ * @param {function} getSourceCode - A function to retrieve the source code.
+ * @returns {HTMLElement} The div element containing the platform buttons.
+ */
 const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
   const buttonWrapper = createActionButtonContainer();
 
@@ -43,6 +48,12 @@ const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
   return buttonWrapper;
 };
 
+/**
+ * Handles a platform action by sending a message to the specified platform.
+ * @param {string} platform - The name of the platform.
+ * @param {string} action - The action to perform.
+ * @param {object} payload - The data to send with the message.
+ */
 const handlePlatformAction = async (platform, action, payload) => {
   try {
     const response = await util.sendMessage(platform, action, payload);

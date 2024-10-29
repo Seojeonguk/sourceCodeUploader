@@ -1,3 +1,6 @@
+/**
+ * Initializes the source page with the necessary functionality.
+ */
 const initSourcePage = () => {
   const theme = getActiveEditorTheme();
   const isDark = DARK_THEMES[theme];

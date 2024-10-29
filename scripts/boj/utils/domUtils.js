@@ -1,8 +1,9 @@
 /**
- * 안전하게 DOM 요소를 선택하는 함수
- * @param {string} selector - CSS 선택자
- * @param {Document|Element} context - 검색 컨텍스트 (기본값: document)
- * @throws {parseException} 요소를 찾지 못한 경우
+ * Safely selects a DOM element using a CSS selector.
+ * @param {string} selector - The CSS selector to find the element.
+ * @param {Document|Element} context - The search context (default: document).
+ * @throws {parseException} If the element is not found.
+ * @returns {JQuery<HTMLElement>} The selected DOM element.
  */
 const safeQuerySelector = (selector, context = document) => {
   const element = $(selector, context);
@@ -13,10 +14,11 @@ const safeQuerySelector = (selector, context = document) => {
 };
 
 /**
- * 안전하게 요소의 텍스트를 가져오는 함수
- * @param {JQuery<HTMLElement>} element - jQuery 요소
- * @param {string} errorMessage - 실패 시 에러 메시지
- * @throws {parseException} 텍스트가 비어있는 경우
+ * Safely retrieves the text content of a DOM element.
+ * @param {JQuery<HTMLElement>} element - The jQuery-wrapped DOM element.
+ * @param {string} errorMessage - The error message to throw if the text is empty.
+ * @throws {parseException} If the text is empty.
+ * @returns {string} The text content of the element.
  */
 const safeGetText = (element, errorMessage) => {
   const text = element.text();
@@ -27,10 +29,11 @@ const safeGetText = (element, errorMessage) => {
 };
 
 /**
- * DOM 요소 생성 함수
- * @param {string} tag - HTML 태그명
- * @param {Object} attributes - 요소 속성
- * @param {Array|Element} children - 자식 요소들
+ * Creates a DOM element with the specified tag, attributes, and children.
+ * @param {string} tag - The HTML tag name.
+ * @param {Object} attributes - The attributes to set on the element.
+ * @param {Array|Element} children - The child elements to append.
+ * @returns {HTMLElement} The created DOM element.
  */
 const createElement = (tag, attributes = {}, children = []) => {
   const element = document.createElement(tag);

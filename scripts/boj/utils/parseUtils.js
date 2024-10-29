@@ -1,8 +1,7 @@
 /**
- * Extracts row data from a table row element.
- *
- * @param {HTMLElement} row The table row element.
- * @returns {Object} An object containing extracted data from the row.
+ * Extracts data from a table row element.
+ * @param {HTMLElement} row - The table row element.
+ * @returns {Object} An object containing the extracted data.
  */
 const parseSubmissionRowData = (row) => {
   const getData = (index) => $(row).find(`td:eq(${index})`);
@@ -25,10 +24,9 @@ const parseSubmissionRowData = (row) => {
 };
 
 /**
- * Get the file extension to the language parsing the result table.
- *
+ * Gets the file extension for the submission language.
  * @throws {Error} If the result table is not found or the language is not supported.
- * @returns {string} The file extension corresponding to the language.
+ * @returns {string} The file extension for the submission language.
  */
 const getSubmissionLanguageFileExtension = () => {
   const LANGUAGE_COLUMN_INDEX = 7;
@@ -47,8 +45,7 @@ const getSubmissionLanguageFileExtension = () => {
 };
 
 /**
- * Parse the login ID.
- *
+ * Parses the current user's login ID.
  * @returns {string} The parsed login ID.
  * @throws {Error} If the login ID is not found.
  */
@@ -61,10 +58,9 @@ const getCurrentLoginId = () => {
 };
 
 /**
- * Parse the source code from a textarea element.
- *
+ * Parses the source code from a textarea element.
  * @returns {string} The parsed source code.
- * @throws {Error} If the textarea element with the name 'source' is not found.
+ * @throws {Error} If the textarea element is not found.
  */
 const getSubmissionSourceCode = () => {
   const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
@@ -76,15 +72,19 @@ const getSubmissionSourceCode = () => {
 };
 
 /**
- * Prase the status table from the status page.
- *
- * @returns {HTMLElement} The dom element of the status table.
+ * Parses the status table from the status page.
+ * @returns {HTMLElement} The DOM element of the status table.
  * @throws {Error} If the status table is not found.
  */
 const getSubmissionStatusTable = () => {
   return safeQuerySelector(SELECTORS.STATUS_TABLE);
 };
 
+/**
+ * Parses the problem title from the result table.
+ * @returns {string} The problem title.
+ * @throws {Error} If the result table is not found.
+ */
 const getProblemTitle = () => {
   const TITLE_COLUMN_INDEX = 3;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
@@ -96,10 +96,9 @@ const getProblemTitle = () => {
 };
 
 /**
- * Parse the problem ID from result table.
- *
+ * Parses the problem ID from the result table.
  * @returns {string} The problem ID parsed from the anchor tag.
- * @throws {Error} If no anchor tag with a href attribute starting with '/problem/' is found.
+ * @throws {Error} If the anchor tag is not found.
  */
 const getProblemId = () => {
   const a = safeQuerySelector(SELECTORS.PROBLEM_LINK);
@@ -107,10 +106,9 @@ const getProblemId = () => {
 };
 
 /**
- * Parse the CodeMirror theme from CodeMirror.
- *
+ * Parses the CodeMirror theme from the CodeMirror element.
  * @returns {string} The name of the CodeMirror theme.
- * @throws {Error} Throws an error if CodeMirror element is not found.
+ * @throws {Error} If the CodeMirror element is not found.
  */
 const getActiveEditorTheme = () => {
   const codeMirror = safeQuerySelector(SELECTORS.CODE_MIRROR);
@@ -126,10 +124,10 @@ const getActiveEditorTheme = () => {
 };
 
 /**
- * Processes rows of a status table.
- *
- * @param {HTMLElement} statusTable The DOM element representing the status table.
- * @returns {Array} An array of objects containing extracted data from each row.
+ * Filters the status table for correct user submissions.
+ * @param {HTMLElement} statusTable - The DOM element of the status table.
+ * @param {string} loginID - The login ID of the user.
+ * @returns {Array} An array of objects containing the extracted row data.
  */
 const filterCorrectUserSubmissions = (statusTable, loginID) => {
   const rows = $(statusTable).find('tbody tr').toArray();

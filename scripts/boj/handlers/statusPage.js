@@ -1,3 +1,6 @@
+/**
+ * Initializes the status page with the necessary functionality.
+ */
 const initStatusPage = () => {
   console.debug('[SCU] Start Parse Table!');
   try {

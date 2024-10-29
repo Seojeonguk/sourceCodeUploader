@@ -1,7 +1,6 @@
 let util;
 /**
- * Load the util function dynamically.
- * Attach the icon according to the code theme.
+ * Dynamically loads the util function and initializes the page based on the current URL.
  */
 (async () => {
   const src = chrome.runtime.getURL('scripts/util.js');
