@@ -4,4 +4,5 @@ const SELECTORS = {
   STATUS_TABLE: '#status-table',
   CODE_MIRROR: '.CodeMirror',
   PROBLEM_LINK: "table a[href^='/problem/']",
+  RESULT_TABLE: 'table tbody tr td',
 };
