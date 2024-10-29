@@ -31,6 +31,7 @@ const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
  * @returns {HTMLElement} The div element containing the platform buttons.
  */
 const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
+  console.debug('[SCU] Initializing platform buttons');
   const buttonWrapper = createActionButtonContainer();
 
   Object.entries(PLATFROMS).forEach(([key, value]) => {
@@ -56,6 +57,7 @@ const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
  */
 const handlePlatformAction = async (platform, action, payload) => {
   try {
+    console.debug(`[SCU] Handling platform action for ${platform} (${action})`);
     const response = await util.sendMessage(platform, action, payload);
     alert(response?.message);
   } catch (e) {

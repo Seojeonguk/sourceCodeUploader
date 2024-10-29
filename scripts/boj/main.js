@@ -4,6 +4,7 @@ let util;
  */
 (async () => {
   const src = chrome.runtime.getURL('scripts/util.js');
+  console.debug('[SCU] Loading util.js');
   util = await import(src);
 
   const currentUrl = window.location.href;
