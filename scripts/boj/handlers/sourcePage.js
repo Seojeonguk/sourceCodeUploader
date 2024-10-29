@@ -1,6 +1,6 @@
 const initSourcePage = () => {
   const theme = getActiveEditorTheme();
-  const isDark = darkTheme[theme];
+  const isDark = DARK_THEMES[theme];
   const payload = {
     extension: getSubmissionLanguageFileExtension(),
     problemId: getProblemId(),

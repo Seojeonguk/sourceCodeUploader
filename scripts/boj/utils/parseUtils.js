@@ -38,7 +38,7 @@ const getSubmissionLanguageFileExtension = () => {
     throw new parseException('Result table or column not found.');
   }
 
-  const extension = languages[language];
+  const extension = LANGUAGES[language];
   if (!extension) {
     throw new undefinedException(`${language} is not defined.`);
   }

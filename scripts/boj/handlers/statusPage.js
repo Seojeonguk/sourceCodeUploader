@@ -9,7 +9,7 @@ const initStatusPage = () => {
     rowSubmitInfos.forEach(
       ({ submitNum, problemId, submitLanguage, resultTag, title }) => {
         const payload = {
-          extension: languages[submitLanguage],
+          extension: LANGUAGES[submitLanguage],
           problemId,
           type: 'BOJ',
           title,

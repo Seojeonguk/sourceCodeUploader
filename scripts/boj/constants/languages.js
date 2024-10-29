@@ -1,4 +1,4 @@
-const languages = {
+const LANGUAGES = {
   아희: 'aheui',
   엄준식: 'umm',
   Ada: 'ada',

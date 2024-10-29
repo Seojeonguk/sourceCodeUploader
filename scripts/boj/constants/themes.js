@@ -1,4 +1,4 @@
-const darkTheme = {
+const DARK_THEMES = {
   'cm-s-default': false,
   'cm-s-3024-day': false,
   'cm-s-3024-night': true,
