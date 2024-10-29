@@ -5,22 +5,22 @@
  * @returns {Object} An object containing extracted data from the row.
  */
 const parseSubmissionRowData = (row) => {
-  const submitNum = $(row).find('td:eq(0)').text();
-  const submitId = $(row).find('td:eq(1)').text();
-  const problemId = $(row).find('td:eq(2) a').text();
-  const isCorrect = $(row).find('td:eq(3) span').hasClass('result-ac');
-  const submitLanguage = $(row).find('td:eq(6) a:eq(0)').text();
-  const resultTag = $(row).find('td:eq(3)')?.[0];
-  const title = $(row).find('td:eq(2) a').attr('data-original-title');
+  const getData = (index) => $(row).find(`td:eq(${index})`);
 
   return {
-    submitNum,
-    submitId,
-    problemId,
-    isCorrect,
-    submitLanguage,
-    resultTag,
-    title,
+    submitNum: getData(STATUS_TABLE_INDICES.SUBMIT_NUM).text(),
+    submitId: getData(STATUS_TABLE_INDICES.SUBMIT_ID).text(),
+    problemId: getData(STATUS_TABLE_INDICES.PROBLEM_ID).find('a').text(),
+    isCorrect: getData(STATUS_TABLE_INDICES.RESULT)
+      .find('span')
+      .hasClass('result-ac'),
+    submitLanguage: getData(STATUS_TABLE_INDICES.LANGUAGE)
+      .find('a:eq(0)')
+      .text(),
+    resultTag: getData(STATUS_TABLE_INDICES.RESULT)[0],
+    title: getData(STATUS_TABLE_INDICES.PROBLEM_ID)
+      .find('a')
+      .attr('data-original-title'),
   };
 };
 
@@ -86,8 +86,9 @@ const getSubmissionStatusTable = () => {
 };
 
 const getProblemTitle = () => {
+  const TITLE_COLUMN_INDEX = 3;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
-  const title = resultTable[INDICES.TITLE_COLUMN]?.innerHTML;
+  const title = resultTable[TITLE_COLUMN_INDEX]?.innerHTML;
   if (util.isEmpty(title)) {
     throw new parseException('Result table not found.');
   }
