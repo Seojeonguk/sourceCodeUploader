@@ -1,5 +1,3 @@
-import { createElement } from './domUtils';
-
 /**
  * Creates a div element to wrap buttons.
  *
@@ -17,8 +15,8 @@ const createActionButtonContainer = () => {
  * @param {function} clickHandler - The function to be executed when the button is clicked.
  */
 const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
-  const button = DOMUtils.createElement('button', { className: 'uploadBtn' });
-  const img = DOMUtils.createElement('img', {
+  const button = createElement('button', { className: 'uploadBtn' });
+  const img = createElement('img', {
     src: util.getResourceURL(imageUrl),
   });
 
