@@ -3,7 +3,7 @@
  *
  * @returns {HTMLElement} The div element wrapping buttons.
  */
-const createButtonWrapper = () => {
+const createActionButtonContainer = () => {
   const div = document.createElement('div');
   div.className = 'btnWrapper';
   return div;
@@ -16,7 +16,7 @@ const createButtonWrapper = () => {
  * @param {string} imageUrl - The URL of the image to be displayed on the button.
  * @param {function} clickHandler - The function to be executed when the button is clicked.
  */
-const createButton = (buttonWrapper, imageUrl, clickHandler) => {
+const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
   const button = document.createElement('button');
   button.classList.add('uploadBtn');
 
@@ -29,16 +29,16 @@ const createButton = (buttonWrapper, imageUrl, clickHandler) => {
   buttonWrapper.appendChild(button);
 };
 
-const createButtons = (isDark = false, payload, getSourceCode) => {
-  const buttonWrapper = createButtonWrapper();
+const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
+  const buttonWrapper = createActionButtonContainer();
 
   Object.entries(PLATFROMS).forEach(([key, value]) => {
     const name = value.name;
     const action = value.action;
     const iconPath = isDark ? value.icon : value.darkIcon;
 
-    createButton(buttonWrapper, iconPath, async () =>
-      buttonHandler(name, action, {
+    createPlatformActionButton(buttonWrapper, iconPath, async () =>
+      handlePlatformAction(name, action, {
         ...payload,
         sourceCode: await getSourceCode(),
       }),
@@ -48,7 +48,7 @@ const createButtons = (isDark = false, payload, getSourceCode) => {
   return buttonWrapper;
 };
 
-const buttonHandler = async (platform, action, payload) => {
+const handlePlatformAction = async (platform, action, payload) => {
   try {
     const response = await util.sendMessage(platform, action, payload);
     alert(response?.message);

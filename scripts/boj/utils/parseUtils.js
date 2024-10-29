@@ -4,7 +4,7 @@
  * @param {HTMLElement} row The table row element.
  * @returns {Object} An object containing extracted data from the row.
  */
-const extractRowData = (row) => {
+const parseSubmissionRowData = (row) => {
   const submitNum = $(row).find('td:eq(0)').text();
   const submitId = $(row).find('td:eq(1)').text();
   const problemId = $(row).find('td:eq(2) a').text();
@@ -30,7 +30,7 @@ const extractRowData = (row) => {
  * @throws {Error} If the result table is not found or the language is not supported.
  * @returns {string} The file extension corresponding to the language.
  */
-const parsingExtension = () => {
+const getSubmissionLanguageFileExtension = () => {
   const LANGUAGE_COLUMN_INDEX = 7;
   const resultTable = $('table tbody tr td');
   const language = resultTable?.[LANGUAGE_COLUMN_INDEX]?.innerHTML;
@@ -52,7 +52,7 @@ const parsingExtension = () => {
  * @returns {string} The parsed login ID.
  * @throws {Error} If the login ID is not found.
  */
-const parsingLoginID = () => {
+const getCurrentLoginId = () => {
   const username = $('.username');
   const loginID = username?.text();
   if (util.isEmpty(loginID)) {
@@ -70,7 +70,7 @@ const parsingLoginID = () => {
  * @returns {string} The parsed source code.
  * @throws {Error} If the textarea element with the name 'source' is not found.
  */
-const parsingSourceCode = () => {
+const getSubmissionSourceCode = () => {
   const textarea = $("textarea[name='source']");
   const sourceCode = textarea?.[0]?.value;
   if (util.isEmpty(sourceCode)) {
@@ -86,7 +86,7 @@ const parsingSourceCode = () => {
  * @returns {HTMLElement} The dom element of the status table.
  * @throws {Error} If the status table is not found.
  */
-const parsingStatusTable = () => {
+const getSubmissionStatusTable = () => {
   const statusTable = $('#status-table');
   if (!statusTable) {
     throw new parseException('Status table not found.');
@@ -95,7 +95,7 @@ const parsingStatusTable = () => {
   return statusTable;
 };
 
-const parsingTitle = () => {
+const getProblemTitle = () => {
   const TITLE_COLUMN_INDEX = 3;
   const resultTable = $('table tbody tr td');
   const title = resultTable?.[TITLE_COLUMN_INDEX]?.innerHTML;
@@ -112,7 +112,7 @@ const parsingTitle = () => {
  * @returns {string} The problem ID parsed from the anchor tag.
  * @throws {Error} If no anchor tag with a href attribute starting with '/problem/' is found.
  */
-const parsingProblemID = () => {
+const getProblemId = () => {
   const a = $("table a[href^='/problem/']");
   const problemId = a?.[0]?.innerHTML;
   if (util.isEmpty(problemId)) {
@@ -128,7 +128,7 @@ const parsingProblemID = () => {
  * @returns {string} The name of the CodeMirror theme.
  * @throws {Error} Throws an error if CodeMirror element is not found.
  */
-const parsingCodeMirrorTheme = () => {
+const getActiveEditorTheme = () => {
   const codeMirror = $('.CodeMirror');
   if (util.isEmpty(codeMirror)) {
     throw new parseException('Codemirror not found.');
@@ -149,10 +149,10 @@ const parsingCodeMirrorTheme = () => {
  * @param {HTMLElement} statusTable The DOM element representing the status table.
  * @returns {Array} An array of objects containing extracted data from each row.
  */
-const processRows = (statusTable, loginID) => {
+const filterCorrectUserSubmissions = (statusTable, loginID) => {
   const rows = $(statusTable).find('tbody tr').toArray();
   const rowData = rows
-    .map(extractRowData)
+    .map(parseSubmissionRowData)
     .filter((row) => row.isCorrect && row.submitId == loginID);
   return rowData;
 };

@@ -1,9 +1,9 @@
 const initStatusPage = () => {
   console.debug('[SCU] Start Parse Table!');
   try {
-    const loginID = parsingLoginID();
-    const statusTable = parsingStatusTable();
-    const rowSubmitInfos = processRows(statusTable, loginID);
+    const loginID = getCurrentLoginId();
+    const statusTable = getSubmissionStatusTable();
+    const rowSubmitInfos = filterCorrectUserSubmissions(statusTable, loginID);
     console.debug('Select Row Count : ', rowSubmitInfos.length);
 
     rowSubmitInfos.forEach(
@@ -15,7 +15,7 @@ const initStatusPage = () => {
           title,
         };
 
-        const buttons = createButtons(true, payload, () =>
+        const buttons = initializePlatformButtons(true, payload, () =>
           fetchSourceCodeBySubmitNum(submitNum),
         );
         resultTag.appendChild(buttons);
