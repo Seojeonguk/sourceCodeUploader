@@ -32,8 +32,8 @@ const parseSubmissionRowData = (row) => {
  */
 const getSubmissionLanguageFileExtension = () => {
   const LANGUAGE_COLUMN_INDEX = 7;
-  const resultTable = $('table tbody tr td');
-  const language = resultTable?.[LANGUAGE_COLUMN_INDEX]?.innerHTML;
+  const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
+  const language = resultTable[LANGUAGE_COLUMN_INDEX]?.innerHTML;
   if (util.isEmpty(language)) {
     throw new parseException('Result table or column not found.');
   }
@@ -53,15 +53,11 @@ const getSubmissionLanguageFileExtension = () => {
  * @throws {Error} If the login ID is not found.
  */
 const getCurrentLoginId = () => {
-  const username = $('.username');
-  const loginID = username?.text();
-  if (util.isEmpty(loginID)) {
-    throw new parseException(
-      'Login ID not found. Please log in and try again.',
-    );
-  }
-
-  return loginID;
+  const loginId = safeQuerySelector(SELECTORS.LOGIN_ID);
+  return safeGetText(
+    loginId,
+    'Login ID not found. Please log in and try again.',
+  );
 };
 
 /**
@@ -71,12 +67,11 @@ const getCurrentLoginId = () => {
  * @throws {Error} If the textarea element with the name 'source' is not found.
  */
 const getSubmissionSourceCode = () => {
-  const textarea = $("textarea[name='source']");
-  const sourceCode = textarea?.[0]?.value;
+  const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
+  const sourceCode = textarea[0]?.value;
   if (util.isEmpty(sourceCode)) {
     throw new parseException('Source code not found.');
   }
-
   return sourceCode;
 };
 
@@ -87,22 +82,15 @@ const getSubmissionSourceCode = () => {
  * @throws {Error} If the status table is not found.
  */
 const getSubmissionStatusTable = () => {
-  const statusTable = $('#status-table');
-  if (!statusTable) {
-    throw new parseException('Status table not found.');
-  }
-
-  return statusTable;
+  return safeQuerySelector(SELECTORS.STATUS_TABLE);
 };
 
 const getProblemTitle = () => {
-  const TITLE_COLUMN_INDEX = 3;
-  const resultTable = $('table tbody tr td');
-  const title = resultTable?.[TITLE_COLUMN_INDEX]?.innerHTML;
+  const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
+  const title = resultTable[INDICES.TITLE_COLUMN]?.innerHTML;
   if (util.isEmpty(title)) {
     throw new parseException('Result table not found.');
   }
-
   return title;
 };
 
@@ -113,13 +101,8 @@ const getProblemTitle = () => {
  * @throws {Error} If no anchor tag with a href attribute starting with '/problem/' is found.
  */
 const getProblemId = () => {
-  const a = $("table a[href^='/problem/']");
-  const problemId = a?.[0]?.innerHTML;
-  if (util.isEmpty(problemId)) {
-    throw new parseException('Problem ID not found.');
-  }
-
-  return problemId;
+  const a = safeQuerySelector(SELECTORS.PROBLEM_LINK);
+  return safeGetText(a, 'Problem ID not found.');
 };
 
 /**
@@ -129,18 +112,16 @@ const getProblemId = () => {
  * @throws {Error} Throws an error if CodeMirror element is not found.
  */
 const getActiveEditorTheme = () => {
-  const codeMirror = $('.CodeMirror');
-  if (util.isEmpty(codeMirror)) {
-    throw new parseException('Codemirror not found.');
-  }
+  const codeMirror = safeQuerySelector(SELECTORS.CODE_MIRROR);
+  let theme = 'cm-s-default';
 
   codeMirror[0].classList.forEach((className) => {
     if (className.startsWith('cm-s')) {
-      return className;
+      theme = className;
     }
   });
 
-  return 'cm-s-default';
+  return theme;
 };
 
 /**

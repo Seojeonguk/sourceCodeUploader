@@ -1,12 +1,12 @@
+import { createElement } from './domUtils';
+
 /**
  * Creates a div element to wrap buttons.
  *
  * @returns {HTMLElement} The div element wrapping buttons.
  */
 const createActionButtonContainer = () => {
-  const div = document.createElement('div');
-  div.className = 'btnWrapper';
-  return div;
+  return createElement('div', { className: 'btnWrapper' });
 };
 
 /**
@@ -17,15 +17,13 @@ const createActionButtonContainer = () => {
  * @param {function} clickHandler - The function to be executed when the button is clicked.
  */
 const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
-  const button = document.createElement('button');
-  button.classList.add('uploadBtn');
-
-  const img = document.createElement('img');
-  img.src = util.getResourceURL(imageUrl);
+  const button = DOMUtils.createElement('button', { className: 'uploadBtn' });
+  const img = DOMUtils.createElement('img', {
+    src: util.getResourceURL(imageUrl),
+  });
 
   button.appendChild(img);
   button.addEventListener('click', clickHandler);
-
   buttonWrapper.appendChild(button);
 };
 
@@ -33,9 +31,8 @@ const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
   const buttonWrapper = createActionButtonContainer();
 
   Object.entries(PLATFROMS).forEach(([key, value]) => {
-    const name = value.name;
-    const action = value.action;
-    const iconPath = isDark ? value.icon : value.darkIcon;
+    const { name, action, icon, darkIcon } = value;
+    const iconPath = isDark ? icon : darkIcon;
 
     createPlatformActionButton(buttonWrapper, iconPath, async () =>
       handlePlatformAction(name, action, {
