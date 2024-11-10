@@ -1,5 +1,6 @@
-import * as Github from './constants.js';
-import * as Util from '../util.js';
+import * as Github from "./constants.js";
+import * as Util from "../util.js";
+import { GITHUB_CONFIG } from "./config/config.js";
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
@@ -61,7 +62,7 @@ const commit = async (payload) => {
 
   const { extension, problemId, sha, sourceCode, type, title } = payload;
   const path = `${type}/${problemId}.${extension}`;
-  const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
+  const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
   const headers = {
     accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
@@ -95,7 +96,7 @@ const getAuthenticatedUserRepositories = async () => {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
-  const url = `${Github.API_BASE_URL}/user/repos?type=owner`;
+  const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
   const headers = {
     accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
@@ -120,7 +121,7 @@ const getAuthenticatedUserInfo = async (accessToken) => {
     throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
   }
 
-  const url = `${Github.API_BASE_URL}/user`;
+  const url = `${GITHUB_CONFIG.API_BASE_URL}/user`;
   const headers = {
     Authorization: `Bearer ${accessToken}`,
   };
@@ -168,7 +169,7 @@ const getShaForExistingFile = async (payload) => {
 
   const { extension, problemId, type } = payload;
   const path = `${type}/${problemId}.${extension}`;
-  const url = `${Github.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
+  const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
   const headers = {
     accept: 'application/vnd.github+json',
     Authorization: `Bearer ${accessToken}`,
@@ -190,14 +191,14 @@ const getShaForExistingFile = async (payload) => {
  * Opens the GitHub OAuth authorization page in a new browser tab.
  */
 const openOauthPage = () => {
-  let parameters = `client_id=${Github.CLIENT_ID}`;
-  if (Github.REDIRECT_URL) {
-    parameters += `&redirect_url=${Github.REDIRECT_URL}`;
+  let parameters = `client_id=${GITHUB_CONFIG.CLIENT_ID}`;
+  if (GITHUB_CONFIG.REDIRECT_URL) {
+    parameters += `&redirect_url=${GITHUB_CONFIG.REDIRECT_URL}`;
   }
-  if (Github.SCOPES) {
-    parameters += `&scope=${Github.SCOPES[0]}`;
+  if (GITHUB_CONFIG.SCOPES) {
+    parameters += `&scope=${GITHUB_CONFIG.SCOPES[0]}`;
   }
-  const url = `${Github.BASE_URL}/login/oauth/authorize?${parameters}`;
+  const url = `${GITHUB_CONFIG.BASE_URL}/login/oauth/authorize?${parameters}`;
 
   chrome.tabs.create({ url: url });
 };
@@ -222,11 +223,11 @@ const requestAndSaveAccessToken = async (payload) => {
     throw new Error(Github.ERROR[Github.INVALID_CODE]);
   }
 
-  const url = `${Github.BASE_URL}/login/oauth/access_token`;
+  const url = `${GITHUB_CONFIG.BASE_URL}/login/oauth/access_token`;
 
   const data = new FormData();
-  data.append('client_id', Github.CLIENT_ID);
-  data.append('client_secret', Github.CLIENT_SECRET);
+  data.append('client_id', GITHUB_CONFIG.CLIENT_ID);
+  data.append('client_secret', GITHUB_CONFIG.CLIENT_SECRET);
   data.append('code', code);
 
   const response = await Util.request(url, 'POST', undefined, data);
