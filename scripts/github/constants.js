@@ -1,5 +1,3 @@
-export const COMMIT = 'commit';
-
 // 오류 코드 정의
 export const SUCCESS_CODE = 'S200';
 
