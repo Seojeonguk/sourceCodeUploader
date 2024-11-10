@@ -22,7 +22,7 @@ const safeQuerySelector = (selector, context = document) => {
  */
 const safeGetText = (element, errorMessage) => {
   const text = element.text();
-  if (util.isEmpty(text)) {
+  if (!text) {
     throw new parseException(errorMessage);
   }
   return text;

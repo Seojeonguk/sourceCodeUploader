@@ -32,7 +32,7 @@ const getSubmissionLanguageFileExtension = () => {
   const LANGUAGE_COLUMN_INDEX = 7;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const language = resultTable[LANGUAGE_COLUMN_INDEX]?.innerHTML;
-  if (util.isEmpty(language)) {
+  if (!language) {
     throw new parseException('Result table or column not found.');
   }
 
@@ -65,7 +65,7 @@ const getCurrentLoginId = () => {
 const getSubmissionSourceCode = () => {
   const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
   const sourceCode = textarea[0]?.value;
-  if (util.isEmpty(sourceCode)) {
+  if (!sourceCode) {
     throw new parseException('Source code not found.');
   }
   return sourceCode;
@@ -89,7 +89,7 @@ const getProblemTitle = () => {
   const TITLE_COLUMN_INDEX = 3;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const title = resultTable[TITLE_COLUMN_INDEX]?.innerHTML;
-  if (util.isEmpty(title)) {
+  if (!title) {
     throw new parseException('Result table not found.');
   }
   return title;

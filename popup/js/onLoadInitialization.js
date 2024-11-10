@@ -1,4 +1,5 @@
-import * as Util from '../../scripts/util.js';
+import * as Util from "../../scripts/util.js";
+
 export const initializeOnLoad = () => {
   checkPlatformsAuthentication();
   loadCachedDatabaseList();
@@ -33,7 +34,7 @@ const loadCachedDatabaseList = async () => {
     'notionUploadedDatabase',
   );
 
-  if (!Util.isEmpty(uploadedDatabase)) {
+  if (uploadedDatabase) {
     $('#uploaded-database').text(uploadedDatabase);
   }
 };
@@ -47,7 +48,7 @@ const loadCachedRepositoryList = async () => {
     'githubUploadedRepository',
   );
 
-  if (!Util.isEmpty(uploadedRepository)) {
+  if (uploadedRepository) {
     $('#uploaded-repository').text(uploadedRepository);
   }
 };

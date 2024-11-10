@@ -98,7 +98,6 @@ const showDatabases = () => {
     const response = await Util.sendMessage('notion', 'getDatabases');
 
     if (!Array.isArray(response)) {
-      console.log(response);
       alert(response.message);
       return;
     }
