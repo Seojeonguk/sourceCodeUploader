@@ -1,5 +1,6 @@
 import * as Github from "../constants/errors.js";
 import * as Util from "../../util.js";
+import { request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
 import { AUTH_REQUIREMENTS } from "../constants/storage.js";
 import { authService } from "./authService.js";
@@ -16,12 +17,8 @@ export const repoService = {
       Authorization: `Bearer ${githubAccessToken}`,
     };
 
-    const response = await Util.request(url, 'GET', headers, undefined);
-    if (!response.ok) {
-      throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
-    }
-
-    return await response.json();
+    const response = await request(url, 'GET', headers, undefined);
+    return response;
   },
 
   async commit(payload) {
@@ -42,9 +39,8 @@ export const repoService = {
       sha,
     });
 
-    const response = await Util.request(url, 'PUT', headers, body);
-    const text = await response.json();
-    const message = text.commit.html_url ?? text.message;
+    const response = await request(url, 'PUT', headers, body);
+    const message = response.commit.html_url ?? response.message;
 
     return message;
   },

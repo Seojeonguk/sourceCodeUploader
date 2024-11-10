@@ -1,5 +1,6 @@
 import * as Github from "../constants/errors.js";
 import * as Util from "../../util.js";
+import { request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
 import { AUTH_REQUIREMENTS, STORAGE_KEYS } from "../constants/storage.js";
 
@@ -27,13 +28,8 @@ export const authService = {
     data.append('client_secret', GITHUB_CONFIG.CLIENT_SECRET);
     data.append('code', payload.code);
 
-    const response = await Util.request(url, 'POST', undefined, data);
-    if (!response.ok) {
-      throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
-    }
-
-    const text = await response.text();
-    const accessToken = text.match(/access_token=([^&]*)/)?.[1];
+    const response = await request(url, 'POST', undefined, data);
+    const accessToken = response.match(/access_token=([^&]*)/)?.[1];
     if (!accessToken) {
       throw new Error(Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN]);
     }
@@ -49,13 +45,8 @@ export const authService = {
       Authorization: `Bearer ${accessToken}`,
     };
 
-    const userResponse = await Util.request(url, 'GET', headers, undefined);
-    if (!userResponse.ok) {
-      throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
-    }
-
-    const json = await userResponse.json();
-    const githubID = json?.login;
+    const response = await request(url, 'GET', headers, undefined);
+    const githubID = response?.login;
     if (!githubID) {
       throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
     }

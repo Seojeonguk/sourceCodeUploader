@@ -1,4 +1,4 @@
-import * as Util from "../../util.js";
+import { request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
 import { AUTH_REQUIREMENTS } from "../constants/storage.js";
 import { authService } from "./authService.js";
@@ -16,10 +16,8 @@ export const fileService = {
       Authorization: `Bearer ${githubAccessToken}`,
     };
 
-    const response = await Util.request(url, 'GET', headers, undefined);
-    const text = await response.json();
-
-    const { sha, content } = text;
+    const response = await request(url, 'GET', headers, undefined);
+    const { sha, content } = response;
     const sanitizedContent = content?.replaceAll(/\n/g, '');
 
     return {

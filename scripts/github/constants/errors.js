@@ -8,8 +8,6 @@ export const INVALID_UPLOADED_REPOSITORY = 'G103';
 export const NOT_FOUND_ACCESS_TOKEN = 'G200';
 export const NOT_FOUND_GITHUB_ID = 'G201';
 
-export const FETCH_API_FAILED = 'G300';
-
 export const ERROR = {
   [SUCCESS_CODE]: 'Operation completed successfully.',
   [INVALID_CODE]:
@@ -22,6 +20,4 @@ export const ERROR = {
 
   [NOT_FOUND_ACCESS_TOKEN]: 'Access token could not be found in the response.',
   [NOT_FOUND_GITHUB_ID]: 'GitHub ID not found in the response.',
-
-  [FETCH_API_FAILED]: 'Failed to fetch data from the GitHub API.',
 };
