@@ -9,9 +9,7 @@ import { GITHUB_CONFIG } from "./config/config.js";
  * @param {Object} payload - The optional payload associated with the action.
  */
 const dispatch = async (action, payload) => {
-  if (action === Github.OPEN_OAUTH_PAGE) {
-    openOauthPage();
-  } else if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
+  if (action === Github.REQUEST_AND_SAVE_ACCESS_TOKEN) {
     const accessToken = await requestAndSaveAccessToken(payload);
     getAuthenticatedUserInfo(accessToken);
   } else if (action === Github.GET_REPOSITORIES) {
@@ -185,22 +183,6 @@ const getShaForExistingFile = async (payload) => {
     sha,
     content: sanitizedContent,
   };
-};
-
-/**
- * Opens the GitHub OAuth authorization page in a new browser tab.
- */
-const openOauthPage = () => {
-  let parameters = `client_id=${GITHUB_CONFIG.CLIENT_ID}`;
-  if (GITHUB_CONFIG.REDIRECT_URL) {
-    parameters += `&redirect_url=${GITHUB_CONFIG.REDIRECT_URL}`;
-  }
-  if (GITHUB_CONFIG.SCOPES) {
-    parameters += `&scope=${GITHUB_CONFIG.SCOPES[0]}`;
-  }
-  const url = `${GITHUB_CONFIG.BASE_URL}/login/oauth/authorize?${parameters}`;
-
-  chrome.tabs.create({ url: url });
 };
 
 /**
