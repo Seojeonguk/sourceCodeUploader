@@ -14,9 +14,9 @@ const handleMessage = (request, sender, sendResponse) => {
         throw new Error(`No dispatcher found for ${platform} platform.`);
       }
 
-      dispatcher(action, payload).then((res) =>
-        sendResponse({ ok: true, message: res }),
-      );
+      dispatcher(action, payload)
+        .then((res) => sendResponse({ ok: true, message: res }))
+        .catch((err) => sendResponse({ ok: false, message: err.message }));
     } else if (platform === 'notion') {
       notionDispatch(action, payload).then((res) => {
         sendResponse(res);
