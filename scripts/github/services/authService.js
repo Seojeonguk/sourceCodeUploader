@@ -16,7 +16,7 @@ export const authService = {
     });
   },
 
-  async requestAndSaveAccessToken(payload) {
+  async getAccessToken(payload) {
     if (!payload?.code) {
       throw new Error(Github.ERROR[Github.INVALID_CODE]);
     }
@@ -38,15 +38,18 @@ export const authService = {
       throw new Error(Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN]);
     }
 
-    Util.setChromeStorage(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
     Util.closeLatestTab();
 
-    const userRrl = `${GITHUB_CONFIG.API_BASE_URL}/user`;
+    return accessToken;
+  },
+
+  async getUserInfo(accessToken) {
+    const url = `${GITHUB_CONFIG.API_BASE_URL}/user`;
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
 
-    const userResponse = await Util.request(userRrl, 'GET', headers, undefined);
+    const userResponse = await Util.request(url, 'GET', headers, undefined);
     if (!userResponse.ok) {
       throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
     }
@@ -57,7 +60,7 @@ export const authService = {
       throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
     }
 
-    Util.setChromeStorage(STORAGE_KEYS.GITHUB_ID, githubID);
+    return githubID;
   },
 
   async checkAuthRequirements(requirements = AUTH_REQUIREMENTS.ALL) {
@@ -78,5 +81,10 @@ export const authService = {
     }
 
     return result;
+  },
+
+  saveInfo(accessToken, githubID) {
+    Util.setChromeStorage(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+    Util.setChromeStorage(STORAGE_KEYS.GITHUB_ID, githubID);
   },
 };

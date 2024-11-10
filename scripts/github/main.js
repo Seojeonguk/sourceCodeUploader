@@ -7,8 +7,11 @@ import { repoService } from "./services/repoService.js";
 export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => authService.openOauthPage(),
-    [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () =>
-      await authService.requestAndSaveAccessToken(payload),
+    [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
+      const accessToken = await authService.getAccessToken(payload);
+      const githubID = await authService.getUserInfo(accessToken);
+      authService.saveInfo(accessToken, githubID);
+    },
     [ACTIONS.GET_REPOSITORIES]: async () => {
       return await repoService.getAuthenticatedUserRepositories();
     },
