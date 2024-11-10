@@ -1,4 +1,3 @@
-// 오류 코드 정의
 export const SUCCESS_CODE = 'S200';
 
 export const INVALID_PAYLOAD = 'G100';
@@ -12,7 +11,6 @@ export const NOT_FOUND_GITHUB_ID = 'G201';
 
 export const FETCH_API_FAILED = 'G300';
 
-// 오류 메시지 정의
 export const ERROR = {
   [SUCCESS_CODE]: 'Operation completed successfully.',
 
