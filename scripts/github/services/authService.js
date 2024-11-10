@@ -21,14 +21,11 @@ export const authService = {
       throw new Error(Github.ERROR[Github.INVALID_CODE]);
     }
 
-    const { code } = payload;
-
     const url = `${GITHUB_CONFIG.BASE_URL}/login/oauth/access_token`;
-
     const data = new FormData();
     data.append('client_id', GITHUB_CONFIG.CLIENT_ID);
     data.append('client_secret', GITHUB_CONFIG.CLIENT_SECRET);
-    data.append('code', code);
+    data.append('code', payload.code);
 
     const response = await Util.request(url, 'POST', undefined, data);
     if (!response.ok) {
@@ -36,21 +33,13 @@ export const authService = {
     }
 
     const text = await response.text();
-    const matchResult = text.match(/access_token=([^&]*)/);
-
-    if (!matchResult || matchResult.length < 2) {
+    const accessToken = text.match(/access_token=([^&]*)/)?.[1];
+    if (!accessToken) {
       throw new Error(Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN]);
     }
 
-    const accessToken = matchResult[1];
-
     Util.setChromeStorage(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-
     Util.closeLatestTab();
-
-    if (!accessToken) {
-      throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
-    }
 
     const userRrl = `${GITHUB_CONFIG.API_BASE_URL}/user`;
     const headers = {
@@ -63,7 +52,7 @@ export const authService = {
     }
 
     const json = await userResponse.json();
-    const githubID = json.login;
+    const githubID = json?.login;
     if (!githubID) {
       throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
     }
