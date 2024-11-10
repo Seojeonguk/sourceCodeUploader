@@ -1,32 +1,19 @@
-import * as Github from "../constants/errors.js";
 import * as Util from "../../util.js";
 import { GITHUB_CONFIG } from "../config/config.js";
+import { AUTH_REQUIREMENTS } from "../constants/storage.js";
+import { authService } from "./authService.js";
 
 export const fileService = {
   async getShaForExistingFile(payload) {
-    const accessToken = await Util.getChromeStorage('githubAccessToken');
-    if (Util.isEmpty(accessToken)) {
-      throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
-    }
-
-    const githubID = await Util.getChromeStorage('githubID');
-    if (Util.isEmpty(githubID)) {
-      throw new Error(Github.ERROR[Github.INVALID_GITHUB_ID]);
-    }
-
-    const uploadedRepository = await Util.getChromeStorage(
-      'githubUploadedRepository',
-    );
-    if (Util.isEmpty(uploadedRepository)) {
-      throw new Error(Github.ERROR[Github.INVALID_UPLOADED_REPOSITORY]);
-    }
+    const { githubAccessToken, githubID, githubUploadedRepository } =
+      await authService.checkAuthRequirements(AUTH_REQUIREMENTS.ALL);
 
     const { extension, problemId, type } = payload;
     const path = `${type}/${problemId}.${extension}`;
-    const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${uploadedRepository}/contents/${path}`;
+    const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
     const headers = {
       accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${githubAccessToken}`,
     };
 
     const response = await Util.request(url, 'GET', headers, undefined);

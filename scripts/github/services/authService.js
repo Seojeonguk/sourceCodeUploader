@@ -1,6 +1,7 @@
 import * as Github from "../constants/errors.js";
 import * as Util from "../../util.js";
 import { GITHUB_CONFIG } from "../config/config.js";
+import { AUTH_REQUIREMENTS, STORAGE_KEYS } from "../constants/storage.js";
 
 export const authService = {
   openOauthPage() {
@@ -45,7 +46,8 @@ export const authService = {
     }
 
     const accessToken = matchResult[1];
-    chrome.storage.local.set({ githubAccessToken: accessToken });
+
+    Util.setChromeStorage(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
 
     Util.closeLatestTab();
 
@@ -69,6 +71,26 @@ export const authService = {
       throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
     }
 
-    chrome.storage.local.set({ githubID: githubID });
+    Util.setChromeStorage(STORAGE_KEYS.GITHUB_ID, githubID);
+  },
+
+  async checkAuthRequirements(requirements = AUTH_REQUIREMENTS.ALL) {
+    const result = {};
+
+    for (const key of requirements) {
+      const value = await Util.getChromeStorage(STORAGE_KEYS[key]);
+      if (Util.isEmpty(value)) {
+        const errorMap = {
+          [STORAGE_KEYS.ACCESS_TOKEN]: Github.INVALID_ACCESS_TOKEN,
+          [STORAGE_KEYS.GITHUB_ID]: Github.INVALID_GITHUB_ID,
+          [STORAGE_KEYS.UPLOADED_REPOSITORY]:
+            Github.INVALID_UPLOADED_REPOSITORY,
+        };
+        throw new Error(Github.ERROR[errorMap[STORAGE_KEYS[key]]]);
+      }
+      result[STORAGE_KEYS[key]] = value;
+    }
+
+    return result;
   },
 };
