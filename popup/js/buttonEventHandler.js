@@ -1,5 +1,5 @@
-import * as Util from '../../scripts/util.js';
-import { GET_REPOSITORIES } from '../../scripts/github/constants.js';
+import * as Util from "../../scripts/util.js";
+import { ACTIONS } from "../../scripts/github/constants/actions.js";
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
@@ -98,6 +98,7 @@ const showDatabases = () => {
     const response = await Util.sendMessage('notion', 'getDatabases');
 
     if (!Array.isArray(response)) {
+      console.log(response);
       alert(response.message);
       return;
     }
@@ -120,16 +121,16 @@ const showDatabases = () => {
  */
 const showRepositories = () => {
   $('#uploaded-repository').on('click', async () => {
-    const response = await Util.sendMessage('github', GET_REPOSITORIES);
+    const response = await Util.sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
-    if (!Array.isArray(response)) {
+    if (!response.ok || !Array.isArray(response.message)) {
       alert(response.message);
       return;
     }
 
     $('#repository-list li').remove();
 
-    response.forEach((repository) => {
+    response.message.forEach((repository) => {
       $('#repository-list').append(`<li><p>${repository.name}</p></li>`);
     });
 

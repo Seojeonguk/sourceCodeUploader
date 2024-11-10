@@ -1,11 +1,15 @@
 import { ACTIONS } from "./constants/actions.js";
 import { authService } from "./services/authService.js";
+import { repoService } from "./services/repoService.js";
 
 export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => authService.openOauthPage(),
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () =>
       await authService.requestAndSaveAccessToken(payload),
+    [ACTIONS.GET_REPOSITORIES]: async () => {
+      return await repoService.getAuthenticatedUserRepositories();
+    },
   };
 
   const handler = actions[action];

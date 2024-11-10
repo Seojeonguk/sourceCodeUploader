@@ -1,5 +1,4 @@
 export const COMMIT = 'commit';
-export const GET_REPOSITORIES = 'getRepositories';
 
 // 오류 코드 정의
 export const SUCCESS_CODE = 'S200';

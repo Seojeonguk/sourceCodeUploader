@@ -9,9 +9,7 @@ import { GITHUB_CONFIG } from "./config/config.js";
  * @param {Object} payload - The optional payload associated with the action.
  */
 const dispatch = async (action, payload) => {
-  if (action === Github.GET_REPOSITORIES) {
-    return await getAuthenticatedUserRepositories(payload);
-  } else if (action === Github.COMMIT) {
+  if (action === Github.COMMIT) {
     const response = await getShaForExistingFile(payload);
     if (response.content === Util.encodeBase64Unicode(payload.sourceCode)) {
       return {
@@ -77,32 +75,6 @@ const commit = async (payload) => {
     ok: response.ok,
     message,
   };
-};
-
-/**
- * Retrieves repository list owned by the authenticated user.
- *
- * @returns {Promise<Array>} A promise that resolves to an array of repositories.
- * @throws {Error} If the access token is falsy or if the API request fails.
- */
-const getAuthenticatedUserRepositories = async () => {
-  const accessToken = await Util.getChromeStorage('githubAccessToken');
-  if (Util.isEmpty(accessToken)) {
-    throw new Error(Github.ERROR[Github.INVALID_ACCESS_TOKEN]);
-  }
-
-  const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
-  const headers = {
-    accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${accessToken}`,
-  };
-
-  const response = await Util.request(url, 'GET', headers, undefined);
-  if (!response.ok) {
-    throw new Error(Github.ERROR[Github.FETCH_API_FAILED]);
-  }
-
-  return await response.json();
 };
 
 /**
