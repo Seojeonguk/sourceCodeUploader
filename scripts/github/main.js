@@ -1,28 +1,37 @@
-import * as Util from "../util.js";
-import { ACTIONS } from "./constants/actions.js";
-import { authService } from "./services/authService.js";
-import { fileService } from "./services/fileService.js";
-import { repoService } from "./services/repoService.js";
+import * as Util from '../util.js';
+import { ACTIONS } from './constants/actions.js';
+import { getShaForExistingFile } from './services/fileService.js';
+import {
+  commit,
+  getAuthenticatedUserRepositories,
+} from './services/repoService.js';
+
+import {
+  getAccessToken,
+  getUserInfo,
+  openOauthPage,
+  saveInfo,
+} from './services/authService.js';
 
 export async function dispatch(action, payload) {
   const actions = {
-    [ACTIONS.OPEN_OAUTH_PAGE]: () => authService.openOauthPage(),
+    [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
-      const accessToken = await authService.getAccessToken(payload);
-      const githubID = await authService.getUserInfo(accessToken);
-      authService.saveInfo(accessToken, githubID);
+      const accessToken = await getAccessToken(payload);
+      const githubID = await getUserInfo(accessToken);
+      saveInfo(accessToken, githubID);
     },
     [ACTIONS.GET_REPOSITORIES]: async () => {
-      return await repoService.getAuthenticatedUserRepositories();
+      return await getAuthenticatedUserRepositories();
     },
     [ACTIONS.COMMIT]: async () => {
-      const response = await fileService.getShaForExistingFile(payload);
+      const response = await getShaForExistingFile(payload);
       if (response.content === Util.encodeBase64Unicode(payload.sourceCode)) {
         const message =
           'The upload source code and the existing content are the same.';
         return message;
       }
-      return await repoService.commit({ ...payload, sha: response.sha });
+      return await commit({ ...payload, sha: response.sha });
     },
   };
 
