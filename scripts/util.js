@@ -1,17 +1,4 @@
 /**
- * Checks if a given value is empty or not.
- * @param {*} value - The value to be checked.
- * @returns {boolean} True if the value is empty, otherwise false.
- */
-export const isEmpty = (value) => {
-  return (
-    !value ||
-    (Array.isArray(value) && value.length === 0) ||
-    (typeof value === 'object' && Object.keys(value).length === 0)
-  );
-};
-
-/**
  * Sends a request to the specified URL with the given method, headers, and body.
  * @param {string} url - The URL to send the request to.
  * @param {string} method - The HTTP method to be used (e.g., 'GET', 'POST').

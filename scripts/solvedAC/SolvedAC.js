@@ -1,5 +1,5 @@
-import * as SolvedAC from './constants.js';
-import * as Util from '../util.js';
+import * as SolvedAC from "./constants.js";
+import * as Util from "../util.js";
 
 /**
  * Asynchronous function to fetch problem information using the given problem ID.
@@ -9,7 +9,7 @@ import * as Util from '../util.js';
  * @throws {Error} - Throws an error if the problem ID is empty.
  */
 export const fetchProblemByID = async ({ problemId }) => {
-  if (Util.isEmpty(problemId)) {
+  if (!problemId) {
     throw new Error('Invalid problem ID for requesting solvedAC.');
   }
   const url = `${SolvedAC.API_BASE_URL}/problem/show?problemId=${problemId}`;

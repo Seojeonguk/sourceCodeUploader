@@ -46,7 +46,7 @@
     },
     {
       "matches": ["https://github.com/*"],
-      "js": ["scripts/github/githubEvents.js"],
+      "js": ["scripts/github/handlers/oauthHandler.js"],
       "run_at": "document_idle"
     }
   ],

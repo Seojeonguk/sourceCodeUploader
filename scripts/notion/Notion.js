@@ -1,11 +1,11 @@
-import * as Notion from './constants.js';
-import { createPage } from './endpoints/pages.js';
-import { createPageProperty } from './objects/page.js';
-import { createBlock } from './objects/block.js';
-import * as SolvedAC from '../solvedAC/SolvedAC.js';
-import * as Util from '../util.js';
-import { PROPERTY_TYPE } from './objects/constants/pageConstants.js';
-import { BLOCK_TYPE } from './objects/constants/blockConstants.js';
+import * as Notion from "./constants.js";
+import * as SolvedAC from "../solvedAC/SolvedAC.js";
+import * as Util from "../util.js";
+import { createPage } from "./endpoints/pages.js";
+import { createBlock } from "./objects/block.js";
+import { BLOCK_TYPE } from "./objects/constants/blockConstants.js";
+import { PROPERTY_TYPE } from "./objects/constants/pageConstants.js";
+import { createPageProperty } from "./objects/page.js";
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
@@ -28,7 +28,7 @@ const dispatch = async (action, payload) => {
 
 const getDatabases = async () => {
   const accessToken = await Util.getChromeStorage('notionAccessToken');
-  if (Util.isEmpty(accessToken)) {
+  if (!accessToken) {
     throw new Error(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
   }
 
@@ -83,12 +83,12 @@ const openOauthPage = () => {
  * @throws {Error} If the API request fails or if the access token is not found in the response.
  */
 const requestAndSaveAccessToken = async (payload) => {
-  if (Util.isEmpty(payload)) {
+  if (!payload) {
     throw new Error(Notion.ERROR[Notion.INVALID_PAYLOAD]);
   }
 
   const { code } = payload;
-  if (Util.isEmpty(code)) {
+  if (!code) {
     throw new Error(Notion.ERROR[Notion.INVALID_CODE]);
   }
 
@@ -116,7 +116,7 @@ const requestAndSaveAccessToken = async (payload) => {
   const json = await response.json();
 
   const accessToken = json.access_token;
-  if (Util.isEmpty(accessToken)) {
+  if (!accessToken) {
     throw new Error(Notion.ERROR[Notion.NOT_FOUND_ACCESS_TOKEN]);
   }
 
