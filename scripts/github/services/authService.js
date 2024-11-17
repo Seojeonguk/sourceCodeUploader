@@ -3,6 +3,8 @@ import * as Util from '../../util.js';
 import { request } from '../../utils/fetchUtils.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { AUTH_REQUIREMENTS, STORAGE_KEYS } from '../constants/storage.js';
+import { accessTokenNotFoundException } from '../customExceptions/AccessTokenNotFoundException.js';
+import { githubIDNotFoundException } from '../customExceptions/githubIDNotFoundException.js';
 
 export const openOauthPage = () => {
   const params = new URLSearchParams({
@@ -30,7 +32,9 @@ export const getAccessToken = async (payload) => {
   const response = await request(url, 'POST', undefined, data);
   const accessToken = response.match(/access_token=([^&]*)/)?.[1];
   if (!accessToken) {
-    throw new Error(Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN]);
+    throw new accessTokenNotFoundException(
+      Github.ERROR[Github.NOT_FOUND_ACCESS_TOKEN],
+    );
   }
 
   Util.closeLatestTab();
@@ -47,7 +51,9 @@ export const getUserInfo = async (accessToken) => {
   const response = await request(url, 'GET', headers, undefined);
   const githubID = response?.login;
   if (!githubID) {
-    throw new Error(Github.ERROR[Github.NOT_FOUND_GITHUB_ID]);
+    throw new githubIDNotFoundException(
+      Github.ERROR[Github.NOT_FOUND_GITHUB_ID],
+    );
   }
 
   return githubID;
