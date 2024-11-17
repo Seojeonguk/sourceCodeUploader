@@ -50,7 +50,7 @@ export const commit = async (payload) => {
   });
 
   const response = await request(url, 'PUT', headers, body);
-  const message = response.commit.html_url ?? response.message;
+  const message = response?.commit?.html_url ?? response.message;
 
   return message;
 };
