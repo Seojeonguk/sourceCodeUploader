@@ -2,6 +2,7 @@ import * as Util from '../../util.js';
 import { request } from '../../utils/fetchUtils.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { AUTH_REQUIREMENTS } from '../constants/storage.js';
+import { duplicateContentException } from '../customExceptions/DuplicateContentException.js';
 import { checkAuthRequirements } from './authService.js';
 
 export const getAuthenticatedUserRepositories = async () => {
@@ -23,7 +24,8 @@ export const commit = async (payload) => {
   const { githubAccessToken, githubID, githubUploadedRepository } =
     await checkAuthRequirements(AUTH_REQUIREMENTS.ALL);
 
-  const { extension, problemId, sha, sourceCode, type, title } = payload;
+  const { extension, problemId, sourceCode, type, title } = payload;
+  const encodeNewSourceCode = Util.encodeBase64Unicode(sourceCode);
   const path = `${type}/${problemId}.${extension}`;
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
   const headers = {
@@ -31,8 +33,18 @@ export const commit = async (payload) => {
     Authorization: `Bearer ${githubAccessToken}`,
   };
 
+  const existingFile = await request(url, 'GET', headers, undefined);
+  const { sha, content } = existingFile;
+  const sanitizedContent = content?.replaceAll(/\n/g, '');
+
+  if (sanitizedContent === encodeNewSourceCode) {
+    throw new duplicateContentException(
+      'The upload source code and the existing content are the same.',
+    );
+  }
+
   const body = JSON.stringify({
-    content: Util.encodeBase64Unicode(sourceCode),
+    content: encodeNewSourceCode,
     message: title,
     sha,
   });
