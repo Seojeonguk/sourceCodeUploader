@@ -45,3 +45,10 @@ export const request = async (
     throw error;
   }
 };
+
+export const createGithubAuthHeader = (token) => {
+  return {
+    Accept: 'application/vnd.github+json',
+    Authorization: `Bearer ${token}`,
+  };
+};

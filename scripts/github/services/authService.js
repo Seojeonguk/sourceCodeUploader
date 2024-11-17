@@ -1,6 +1,6 @@
 import * as Github from '../constants/errors.js';
 import * as Util from '../../util.js';
-import { request } from '../../utils/fetchUtils.js';
+import { createGithubAuthHeader, request } from '../../utils/fetchUtils.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { AUTH_REQUIREMENTS, STORAGE_KEYS } from '../constants/storage.js';
 import { accessTokenNotFoundException } from '../customExceptions/AccessTokenNotFoundException.js';
@@ -44,9 +44,7 @@ export const getAccessToken = async (payload) => {
 
 export const getUserInfo = async (accessToken) => {
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user`;
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-  };
+  const headers = createGithubAuthHeader(accessToken);
 
   const response = await request(url, 'GET', headers, undefined);
   const githubID = response?.login;

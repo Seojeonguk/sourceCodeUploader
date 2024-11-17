@@ -1,5 +1,5 @@
 import * as Util from '../../util.js';
-import { request } from '../../utils/fetchUtils.js';
+import { createGithubAuthHeader, request } from '../../utils/fetchUtils.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { AUTH_REQUIREMENTS } from '../constants/storage.js';
 import { duplicateContentException } from '../customExceptions/DuplicateContentException.js';
@@ -11,10 +11,7 @@ export const getAuthenticatedUserRepositories = async () => {
   );
 
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
-  const headers = {
-    accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${githubAccessToken}`,
-  };
+  const headers = createGithubAuthHeader(githubAccessToken);
 
   const response = await request(url, 'GET', headers, undefined);
   return response;
@@ -28,10 +25,7 @@ export const commit = async (payload) => {
   const encodeNewSourceCode = Util.encodeBase64Unicode(sourceCode);
   const path = `${type}/${problemId}.${extension}`;
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
-  const headers = {
-    accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${githubAccessToken}`,
-  };
+  const headers = createGithubAuthHeader(githubAccessToken);
 
   const existingFile = await request(url, 'GET', headers, undefined);
   const { sha, content } = existingFile;
