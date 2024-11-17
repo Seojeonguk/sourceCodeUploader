@@ -1,11 +1,12 @@
-import * as Notion from "./constants.js";
-import * as SolvedAC from "../solvedAC/SolvedAC.js";
-import * as Util from "../util.js";
-import { createPage } from "./endpoints/pages.js";
-import { createBlock } from "./objects/block.js";
-import { BLOCK_TYPE } from "./objects/constants/blockConstants.js";
-import { PROPERTY_TYPE } from "./objects/constants/pageConstants.js";
-import { createPageProperty } from "./objects/page.js";
+import * as Notion from './constants.js';
+import * as Util from '../util.js';
+import { ACTIONS } from '../solvedAC/constants/actions.js';
+import { dispatch as solvedAC } from '../solvedAC/main.js';
+import { createPage } from './endpoints/pages.js';
+import { createBlock } from './objects/block.js';
+import { BLOCK_TYPE } from './objects/constants/blockConstants.js';
+import { PROPERTY_TYPE } from './objects/constants/pageConstants.js';
+import { createPageProperty } from './objects/page.js';
 
 /**
  * Dispatches an action with an optional payload to the appropriate handler function.
@@ -21,7 +22,10 @@ const dispatch = async (action, payload) => {
   } else if (action === Notion.GET_DATABASES) {
     return await getDatabases();
   } else if (action === Notion.UPLOAD) {
-    const problemInfo = await SolvedAC.fetchProblemByID(payload);
+    const problemInfo = await solvedAC(
+      ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
+      payload,
+    );
     return await upload(payload, problemInfo);
   }
 };
