@@ -1,5 +1,6 @@
-import * as SolvedAC from "./constants.js";
-import * as Util from "../util.js";
+import { request } from '../utils/fetchUtils.js';
+import { SOLVEDAC_CONFIG } from './config/config.js';
+import { LEVELS } from './constants/levels.js';
 
 /**
  * Asynchronous function to fetch problem information using the given problem ID.
@@ -12,25 +13,20 @@ export const fetchProblemByID = async ({ problemId }) => {
   if (!problemId) {
     throw new Error('Invalid problem ID for requesting solvedAC.');
   }
-  const url = `${SolvedAC.API_BASE_URL}/problem/show?problemId=${problemId}`;
+  const url = `${SOLVEDAC_CONFIG.API_BASE_URL}/problem/show?problemId=${problemId}`;
   const headers = {
     Accept: 'application/json',
   };
 
-  const response = await Util.request(url, 'GET', headers);
-  if (!response.ok) {
-    throw new Error('Failed to fetch solvedAC.');
-  }
-  const data = await response.json();
-
+  const response = await request(url, 'GET', headers);
   return {
-    level: SolvedAC.LEVELS[data.level],
-    problemId: data.problemId,
-    tags: data.tags.map(
+    level: LEVELS[response.level],
+    problemId: response.problemId,
+    tags: response.tags.map(
       (tag) =>
         tag.displayNames.find((displayName) => displayName.language === 'ko')
           .name,
     ),
-    title: data.titleKo,
+    title: response.titleKo,
   };
 };

@@ -1,5 +1,3 @@
-export const API_BASE_URL = 'https://solved.ac/api/v3';
-
 export const LEVELS = [
   'Unrated',
   'Bronze V',
