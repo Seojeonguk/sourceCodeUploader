@@ -60,16 +60,16 @@ export const getUserInfo = async (accessToken) => {
 export const checkAuthRequirements = async (
   requirements = AUTH_REQUIREMENTS.ALL,
 ) => {
-  const result = {};
+  const errorMap = {
+    [STORAGE_KEYS.ACCESS_TOKEN]: Github.INVALID_ACCESS_TOKEN,
+    [STORAGE_KEYS.GITHUB_ID]: Github.INVALID_GITHUB_ID,
+    [STORAGE_KEYS.UPLOADED_REPOSITORY]: Github.INVALID_UPLOADED_REPOSITORY,
+  };
 
+  const result = {};
   for (const key of requirements) {
     const value = await Util.getChromeStorage(STORAGE_KEYS[key]);
     if (!value) {
-      const errorMap = {
-        [STORAGE_KEYS.ACCESS_TOKEN]: Github.INVALID_ACCESS_TOKEN,
-        [STORAGE_KEYS.GITHUB_ID]: Github.INVALID_GITHUB_ID,
-        [STORAGE_KEYS.UPLOADED_REPOSITORY]: Github.INVALID_UPLOADED_REPOSITORY,
-      };
       throw new Error(Github.ERROR[errorMap[STORAGE_KEYS[key]]]);
     }
     result[STORAGE_KEYS[key]] = value;
