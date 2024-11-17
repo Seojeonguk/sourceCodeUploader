@@ -6,6 +6,9 @@ import { AUTH_REQUIREMENTS, STORAGE_KEYS } from '../constants/storage.js';
 import { accessTokenNotFoundException } from '../customExceptions/AccessTokenNotFoundException.js';
 import { githubIDNotFoundException } from '../customExceptions/githubIDNotFoundException.js';
 
+/**
+ * Opens the OAuth authorization page for the user to grant access.
+ */
 export const openOauthPage = () => {
   const params = new URLSearchParams({
     client_id: GITHUB_CONFIG.CLIENT_ID,
@@ -18,6 +21,13 @@ export const openOauthPage = () => {
   });
 };
 
+/**
+ * Retrieves the access token using the provided authorization code.
+ * @param {Object} payload - The payload containing the authorization code.
+ * @param {string} payload.code - The authorization code.
+ * @throws {Error} If the code is invalid or the access token is not found.
+ * @returns {Promise<string>} The access token.
+ */
 export const getAccessToken = async (payload) => {
   if (!payload?.code) {
     throw new Error(Github.ERROR[Github.INVALID_CODE]);
@@ -42,6 +52,11 @@ export const getAccessToken = async (payload) => {
   return accessToken;
 };
 
+/**
+ * Saves the user's access token and GitHub ID in Chrome storage.
+ * @param {string} accessToken - The GitHub access token.
+ * @param {string} githubID - The GitHub user ID.
+ */
 export const getUserInfo = async (accessToken) => {
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user`;
   const headers = createGithubAuthHeader(accessToken);
@@ -57,6 +72,12 @@ export const getUserInfo = async (accessToken) => {
   return githubID;
 };
 
+/**
+ * Checks if the required authentication details are stored in Chrome storage.
+ * @param {string[]} [requirements=AUTH_REQUIREMENTS.ALL] - The list of authentication requirements to check.
+ * @throws {Error} If any of the required authentication details are not found.
+ * @returns {Promise<Object>} An object containing the stored authentication details.
+ */
 export const checkAuthRequirements = async (
   requirements = AUTH_REQUIREMENTS.ALL,
 ) => {

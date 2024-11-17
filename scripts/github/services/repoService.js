@@ -5,6 +5,11 @@ import { AUTH_REQUIREMENTS } from '../constants/storage.js';
 import { duplicateContentException } from '../customExceptions/DuplicateContentException.js';
 import { checkAuthRequirements } from './authService.js';
 
+/**
+ * Retrieves the repositories of the authenticated user.
+ * @throws {Error} If the access token is missing or invalid.
+ * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
+ */
 export const getAuthenticatedUserRepositories = async () => {
   const { githubAccessToken } = await checkAuthRequirements(
     AUTH_REQUIREMENTS.ACCESS_TOKEN_ONLY,
@@ -17,6 +22,18 @@ export const getAuthenticatedUserRepositories = async () => {
   return response;
 };
 
+/**
+ * Commits the provided source code to the specified GitHub repository.
+ * @param {Object} payload - The payload containing details about the commit.
+ * @param {string} payload.extension - The file extension of the source code.
+ * @param {string} payload.problemId - The unique ID of the problem or task.
+ * @param {string} payload.sourceCode - The source code to commit.
+ * @param {string} payload.type - The type or category of the problem.
+ * @param {string} payload.title - The commit message.
+ * @throws {duplicateContentException} If the new content is identical to the existing file content.
+ * @throws {Error} If authentication requirements are not met.
+ * @returns {Promise<string>} The URL of the committed file or an error message.
+ */
 export const commit = async (payload) => {
   const { githubAccessToken, githubID, githubUploadedRepository } =
     await checkAuthRequirements(AUTH_REQUIREMENTS.ALL);
