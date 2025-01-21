@@ -63,6 +63,7 @@ export const removeChromeStorage = (key) => {
  * @param {any} value - The value to be stored in local storage.
  */
 export const setChromeStorage = (key, value) => {
+  console.debug(`Save in chrome storage!`, { key, value });
   chrome.storage.local.set({ [key]: value });
 };
 

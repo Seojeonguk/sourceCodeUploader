@@ -20,6 +20,11 @@ export const request = async (
     clearTimeout(timeoutId);
 
     if (!response.ok) {
+      console.debug(`Response : `, await response.json());
+      console.debug(`Reuqest url : ${url}`);
+      console.debug(`Request method : ${method}`);
+      console.debug(`Reuqest headers : `, headers);
+      console.debug(`Reuqest body : `, body);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
