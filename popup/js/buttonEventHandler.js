@@ -97,14 +97,15 @@ const showDatabases = () => {
   $('#uploaded-database').on('click', async () => {
     const response = await Util.sendMessage('notion', 'getDatabases');
 
-    if (!Array.isArray(response)) {
+    if (!Array.isArray(response?.message)) {
+      console.debug(response);
       alert(response.message);
       return;
     }
 
     $('#notion-database-list li').remove();
 
-    response.forEach((database) => {
+    response.message.forEach((database) => {
       $('#notion-database-list').append(
         `<li><p database-id=${database.id}>${database.title[0].plain_text}</p></li>`,
       );

@@ -1,6 +1,7 @@
 import * as Util from "../util.js";
 import { ACTIONS } from "./constants/actions.js";
 import { getAccessToken, openOauthPage } from "./services/authService.js";
+import { getDatabases } from "./services/databaseService.js";
 
 /**
  * Dispatches an action and executes the corresponding handler.
@@ -15,6 +16,9 @@ export async function dispatch(action, payload) {
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
       const accessToken = await getAccessToken(payload);
       Util.setChromeStorage('notionAccessToken', accessToken);
+    },
+    [ACTIONS.GET_DATABASES]: async () => {
+      return await getDatabases();
     },
   };
 
