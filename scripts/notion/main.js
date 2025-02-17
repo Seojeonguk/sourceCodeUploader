@@ -1,7 +1,9 @@
 import * as Util from "../util.js";
+import { ACTIONS as NOTION_ACTIONS } from "../solvedAC/constants/actions.js";
+import { dispatch as solvedAC } from "../solvedAC/main.js";
 import { ACTIONS } from "./constants/actions.js";
 import { getAccessToken, openOauthPage } from "./services/authService.js";
-import { getDatabases } from "./services/databaseService.js";
+import { getDatabases, upload } from "./services/databaseService.js";
 
 /**
  * Dispatches an action and executes the corresponding handler.
@@ -16,9 +18,17 @@ export async function dispatch(action, payload) {
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
       const accessToken = await getAccessToken(payload);
       Util.setChromeStorage('notionAccessToken', accessToken);
+      return 'success';
     },
     [ACTIONS.GET_DATABASES]: async () => {
       return await getDatabases();
+    },
+    [ACTIONS.UPLOAD]: async () => {
+      const problemInfo = await solvedAC(
+        NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
+        payload,
+      );
+      return await upload(payload, problemInfo);
     },
   };
 

@@ -22,7 +22,9 @@ const handleMessage = (request, sender, sendResponse) => {
     console.debug(`platform : ${platform}, request : ${action}`);
 
     dispatcher(action, payload)
-      .then((res) => sendResponse({ ok: true, message: res }))
+      .then((res) => {
+        sendResponse({ ok: true, message: res });
+      })
       .catch((err) => sendResponse({ ok: false, message: err.message }));
   } catch (e) {
     sendResponse({ ok: false, message: e.message });
