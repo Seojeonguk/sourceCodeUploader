@@ -2,13 +2,13 @@
  * Safely selects a DOM element using a CSS selector.
  * @param {string} selector - The CSS selector to find the element.
  * @param {Document|Element} context - The search context (default: document).
- * @throws {parseException} If the element is not found.
+ * @throws {ParseException} If the element is not found.
  * @returns {JQuery<HTMLElement>} The selected DOM element.
  */
 const safeQuerySelector = (selector, context = document) => {
   const element = $(selector, context);
   if (!element || element.length === 0) {
-    throw new parseException(`Element not found for selector: ${selector}`);
+    throw new ParseException(`Element not found for selector: ${selector}`);
   }
   return element;
 };
@@ -17,13 +17,13 @@ const safeQuerySelector = (selector, context = document) => {
  * Safely retrieves the text content of a DOM element.
  * @param {JQuery<HTMLElement>} element - The jQuery-wrapped DOM element.
  * @param {string} errorMessage - The error message to throw if the text is empty.
- * @throws {parseException} If the text is empty.
+ * @throws {ParseException} If the text is empty.
  * @returns {string} The text content of the element.
  */
 const safeGetText = (element, errorMessage) => {
   const text = element.text();
   if (!text) {
-    throw new parseException(errorMessage);
+    throw new ParseException(errorMessage);
   }
   return text;
 };

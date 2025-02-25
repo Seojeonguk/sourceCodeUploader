@@ -1,10 +1,10 @@
-import { API_BASE_URL } from '../constants.js';
-import * as Util from '../../util.js';
+import * as Util from "../../util.js";
+import { NOTION_CONFIG } from "../config/config.js";
 
 export const createPage = async (data) => {
   const accessToken = await Util.getChromeStorage('notionAccessToken');
 
-  const url = `${API_BASE_URL}/v1/pages`;
+  const url = `${NOTION_CONFIG.API_BASE_URL}/v1/pages`;
 
   const headers = {
     Authorization: `Bearer ${accessToken}`,

@@ -1,6 +1,5 @@
 import * as Util from "../../scripts/util.js";
 import { ACTIONS } from "../../scripts/github/constants/actions.js";
-import { STORAGE_KEYS } from "../../scripts/github/constants/storage.js";
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
@@ -34,8 +33,8 @@ const handleGithubAuthenticationBtn = () => {
       return;
     }
 
-    Util.removeChromeStorage(STORAGE_KEYS.ACCESS_TOKEN);
-    Util.removeChromeStorage(STORAGE_KEYS.UPLOADED_REPOSITORY);
+    Util.removeChromeStorage('githubAccessToken');
+    Util.removeChromeStorage('githubUploadedRepository');
     location.reload(true);
   });
 };
@@ -86,7 +85,7 @@ const handleUploadedRepositorySelection = () => {
 
     $('#uploaded-repository').text(uploadedRepository);
 
-    Util.setChromeStorage(STORAGE_KEYS.UPLOADED_REPOSITORY, uploadedRepository);
+    Util.setChromeStorage('githubUploadedRepository', uploadedRepository);
   });
 };
 

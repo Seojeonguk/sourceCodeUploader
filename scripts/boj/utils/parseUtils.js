@@ -33,12 +33,12 @@ const getSubmissionLanguageFileExtension = () => {
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const language = resultTable[LANGUAGE_COLUMN_INDEX]?.innerHTML;
   if (!language) {
-    throw new parseException('Result table or column not found.');
+    throw new ParseException('Result table or column not found.');
   }
 
   const extension = LANGUAGES[language];
   if (!extension) {
-    throw new undefinedException(`${language} is not defined.`);
+    throw new UndefinedException(`${language} is not defined.`);
   }
 
   return extension;
@@ -66,7 +66,7 @@ const getSubmissionSourceCode = () => {
   const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
   const sourceCode = textarea[0]?.value;
   if (!sourceCode) {
-    throw new parseException('Source code not found.');
+    throw new ParseException('Source code not found.');
   }
   return sourceCode;
 };
@@ -90,7 +90,7 @@ const getProblemTitle = () => {
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const title = resultTable[TITLE_COLUMN_INDEX]?.innerHTML;
   if (!title) {
-    throw new parseException('Result table not found.');
+    throw new ParseException('Result table not found.');
   }
   return title;
 };
