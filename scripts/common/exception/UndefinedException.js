@@ -1,6 +1,6 @@
 export class UndefinedException extends Error {
-  constructor(platform, target) {
-    const message = `Not found ${target} for ${platform}.`;
+  constructor(message) {
+    const message = message;
     super(message);
     this.name = 'UndefinedException';
     this.statusCode = 401;
