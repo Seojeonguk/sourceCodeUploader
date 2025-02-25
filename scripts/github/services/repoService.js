@@ -1,5 +1,6 @@
 import * as Util from "../../util.js";
 import { DuplicateResourceException } from "../../common/exception/DuplicateResourceException.js";
+import { InvalidRequestException } from "../../common/exception/InvalidRequestException.js";
 import { createGithubAuthHeader, request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
 
@@ -10,6 +11,9 @@ import { GITHUB_CONFIG } from "../config/config.js";
  */
 export const getAuthenticatedUserRepositories = async () => {
   const githubAccessToken = await Util.getChromeStorage('githubAccessToken');
+  if (!githubAccessToken) {
+    throw new InvalidRequestException('Github', 'access token');
+  }
 
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
   const headers = createGithubAuthHeader(githubAccessToken);
