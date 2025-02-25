@@ -1,6 +1,5 @@
 export class UndefinedException extends Error {
   constructor(message) {
-    const message = message;
     super(message);
     this.name = 'UndefinedException';
     this.statusCode = 401;

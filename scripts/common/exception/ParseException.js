@@ -1,6 +1,5 @@
 export class ParseException extends Error {
   constructor(message) {
-    const message = message;
     super(message);
     this.name = 'ParseException';
     this.statusCode = 401;
