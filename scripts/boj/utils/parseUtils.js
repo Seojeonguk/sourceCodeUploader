@@ -4,6 +4,9 @@
  * @returns {Object} An object containing the extracted data.
  */
 const parseSubmissionRowData = (row) => {
+  if (!row) {
+    throw new ParseException('Invalid row data');
+  }
   const getData = (index) => $(row).find(`td:eq(${index})`);
 
   return {
