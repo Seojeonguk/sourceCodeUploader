@@ -21,10 +21,10 @@ export const request = async (
 
     if (!response.ok) {
       console.debug(`Response : `, await response.json());
-      console.debug(`Reuqest url : ${url}`);
+      console.debug(`Request url : ${url}`);
       console.debug(`Request method : ${method}`);
-      console.debug(`Reuqest headers : `, headers);
-      console.debug(`Reuqest body : `, body);
+      console.debug(`Request headers : `, headers);
+      console.debug(`Request body : `, body);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
