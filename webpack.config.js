@@ -4,6 +4,9 @@ const webpack = require('webpack');
 module.exports = {
   mode: 'production',
   devtool: 'source-map',
+  cache: {
+    type: 'filesystem',
+  },
   entry: {
     content: [
       './scripts/common/exception/DuplicateResourceException.js',
@@ -41,6 +44,8 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
+            cacheDirectory: true,
+            compact: false,
           },
         },
       },
