@@ -61,7 +61,10 @@ const handlePlatformAction = async (platform, action, payload) => {
     const response = await util.sendMessage(platform, action, payload);
     alert(response?.message);
   } catch (e) {
-    if (e instanceof ParseException || e instanceof UndefinedException) {
+    if (
+      e instanceof exceptions.ParseException ||
+      e instanceof exceptions.UndefinedException
+    ) {
       console.warn(e);
     } else {
       console.error(e);

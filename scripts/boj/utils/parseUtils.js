@@ -5,7 +5,7 @@
  */
 const parseSubmissionRowData = (row) => {
   if (!row) {
-    throw new ParseException('Invalid row data');
+    throw new exceptions.ParseException('Invalid row data');
   }
   const getData = (index) => $(row).find(`td:eq(${index})`);
 
@@ -36,12 +36,12 @@ const getSubmissionLanguageFileExtension = () => {
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const language = resultTable[LANGUAGE_COLUMN_INDEX]?.innerHTML;
   if (!language) {
-    throw new ParseException('Result table or column not found.');
+    throw new exceptions.ParseException('Result table or column not found.');
   }
 
   const extension = LANGUAGES[language];
   if (!extension) {
-    throw new UndefinedException(`${language} is not defined.`);
+    throw new exceptions.UndefinedException(`${language} is not defined.`);
   }
 
   return extension;
@@ -69,7 +69,7 @@ const getSubmissionSourceCode = () => {
   const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
   const sourceCode = textarea[0]?.value;
   if (!sourceCode) {
-    throw new ParseException('Source code not found.');
+    throw new exceptions.ParseException('Source code not found.');
   }
   return sourceCode;
 };
@@ -93,7 +93,7 @@ const getProblemTitle = () => {
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const title = resultTable[TITLE_COLUMN_INDEX]?.innerHTML;
   if (!title) {
-    throw new ParseException('Result table not found.');
+    throw new exceptions.ParseException('Result table not found.');
   }
   return title;
 };

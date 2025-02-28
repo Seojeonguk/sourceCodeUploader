@@ -1,4 +1,4 @@
-import * as Util from "../util.js";
+import { setChromeStorage } from "../common/utils/index.js";
 import { ACTIONS as NOTION_ACTIONS } from "../solvedAC/constants/actions.js";
 import { dispatch as solvedAC } from "../solvedAC/main.js";
 import { ACTIONS } from "./constants/actions.js";
@@ -17,7 +17,7 @@ export async function dispatch(action, payload) {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
       const accessToken = await getAccessToken(payload);
-      Util.setChromeStorage('notionAccessToken', accessToken);
+      setChromeStorage('notionAccessToken', accessToken);
       return 'success';
     },
     [ACTIONS.GET_DATABASES]: async () => {

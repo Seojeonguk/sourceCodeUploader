@@ -1,5 +1,10 @@
-import * as Util from "../../scripts/util.js";
 import { ACTIONS } from "../../scripts/github/constants/actions.js";
+
+import {
+  removeChromeStorage,
+  setChromeStorage,
+  sendMessage,
+} from '../../scripts/common/utils/index.js';
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
@@ -29,12 +34,12 @@ const closeSelectListOnOutsideClick = () => {
 const handleGithubAuthenticationBtn = () => {
   $('#github-authentication').on('click', (e) => {
     if (!$(e.currentTarget).hasClass('delete')) {
-      Util.sendMessage('github', 'openOauthPage');
+      sendMessage('github', 'openOauthPage');
       return;
     }
 
-    Util.removeChromeStorage('githubAccessToken');
-    Util.removeChromeStorage('githubUploadedRepository');
+    removeChromeStorage('githubAccessToken');
+    removeChromeStorage('githubUploadedRepository');
     location.reload(true);
   });
 };
@@ -46,14 +51,14 @@ const handleGithubAuthenticationBtn = () => {
 const handleNotionAuthenticationBtn = () => {
   $('#notion-authentication').on('click', (e) => {
     if (!$(e.currentTarget).hasClass('delete')) {
-      Util.sendMessage('notion', 'openOauthPage');
+      sendMessage('notion', 'openOauthPage');
       return;
     }
 
-    Util.removeChromeStorage(`notionAccessToken`);
-    Util.removeChromeStorage(`notionUploadedDatabase`);
-    Util.removeChromeStorage(`notionUploadedDatabases`);
-    Util.removeChromeStorage(`notionUploadedDatabaseId`);
+    removeChromeStorage(`notionAccessToken`);
+    removeChromeStorage(`notionUploadedDatabase`);
+    removeChromeStorage(`notionUploadedDatabases`);
+    removeChromeStorage(`notionUploadedDatabaseId`);
     location.reload(true);
   });
 };
@@ -70,8 +75,8 @@ const handleUploadedDatabaseSelection = () => {
 
     $('#uploaded-database').text(uploadedDatabase);
 
-    Util.setChromeStorage('notionUploadedDatabase', uploadedDatabase);
-    Util.setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
+    setChromeStorage('notionUploadedDatabase', uploadedDatabase);
+    setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
   });
 };
 
@@ -85,7 +90,7 @@ const handleUploadedRepositorySelection = () => {
 
     $('#uploaded-repository').text(uploadedRepository);
 
-    Util.setChromeStorage('githubUploadedRepository', uploadedRepository);
+    setChromeStorage('githubUploadedRepository', uploadedRepository);
   });
 };
 
@@ -94,7 +99,7 @@ const handleUploadedRepositorySelection = () => {
  */
 const showDatabases = () => {
   $('#uploaded-database').on('click', async () => {
-    const response = await Util.sendMessage('notion', 'getDatabases');
+    const response = await sendMessage('notion', 'getDatabases');
 
     if (!Array.isArray(response?.message)) {
       console.debug(response);
@@ -120,7 +125,7 @@ const showDatabases = () => {
  */
 const showRepositories = () => {
   $('#uploaded-repository').on('click', async () => {
-    const response = await Util.sendMessage('github', ACTIONS.GET_REPOSITORIES);
+    const response = await sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
     if (!response.ok || !Array.isArray(response.message)) {
       alert(response.message);

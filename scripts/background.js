@@ -1,4 +1,4 @@
-import { PlatformDispatcherNotFoundException } from "./common/exception/PlatformDispatcherNotFoundException.js";
+import { PlatformDispatcherNotFoundException } from "./common/exception/index.js";
 import { dispatch as githubDispatcher } from "./github/main.js";
 import { dispatch as notionDispatcher } from "./notion/main.js";
 

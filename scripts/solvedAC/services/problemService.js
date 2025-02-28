@@ -1,5 +1,5 @@
-import { NotFoundException } from "../../common/exception/NotFoundException.js";
-import { request } from "../../utils/fetchUtils.js";
+import { NotFoundException } from "../../common/exception/index.js";
+import { request } from "../../common/utils/index.js";
 import { SOLVEDAC_CONFIG } from "../config/config.js";
 import { LEVELS } from "../constants/levels.js";
 

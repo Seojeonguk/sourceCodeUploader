@@ -1,7 +1,5 @@
-import * as Util from "../../util.js";
-import { InvalidRequestException } from "../../common/exception/InvalidRequestException.js";
-import { request } from "../../utils/fetchUtils.js";
-import { getChromeStorage } from "../../utils/storageUtils.js";
+import { InvalidRequestException } from "../../common/exception/index.js";
+import { getChromeStorage, request } from "../../common/utils/index.js";
 import { NOTION_CONFIG } from "../config/config.js";
 import { createPage } from "../endpoints/pages.js";
 import { createBlock } from "../objects/block.js";
@@ -41,7 +39,7 @@ export const upload = async (
   { problemId, type, extension, sourceCode },
   { title, level, tags },
 ) => {
-  const databaseId = await Util.getChromeStorage('notionUploadedDatabaseId');
+  const databaseId = await getChromeStorage('notionUploadedDatabaseId');
 
   const properties = {
     title: createPageProperty(PROPERTY_TYPE.TITLE, {

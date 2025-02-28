@@ -8,7 +8,9 @@
 const safeQuerySelector = (selector, context = document) => {
   const element = $(selector, context);
   if (!element || element.length === 0) {
-    throw new ParseException(`Element not found for selector: ${selector}`);
+    throw new exceptions.ParseException(
+      `Element not found for selector: ${selector}`,
+    );
   }
   return element;
 };
@@ -23,7 +25,7 @@ const safeQuerySelector = (selector, context = document) => {
 const safeGetText = (element, errorMessage) => {
   const text = element.text();
   if (!text) {
-    throw new ParseException(errorMessage);
+    throw new exceptions.ParseException(errorMessage);
   }
   return text;
 };

@@ -1,8 +1,16 @@
-import * as Util from "../../util.js";
-import { DuplicateResourceException } from "../../common/exception/DuplicateResourceException.js";
-import { InvalidRequestException } from "../../common/exception/InvalidRequestException.js";
-import { createGithubAuthHeader, request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
+
+import {
+  DuplicateResourceException,
+  InvalidRequestException,
+} from '../../common/exception/index.js';
+
+import {
+  createGithubAuthHeader,
+  request,
+  getChromeStorage,
+  encodeBase64Unicode,
+} from '../../common/utils/index.js';
 
 /**
  * Retrieves the repositories of the authenticated user.
@@ -10,7 +18,7 @@ import { GITHUB_CONFIG } from "../config/config.js";
  * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
  */
 export const getAuthenticatedUserRepositories = async () => {
-  const githubAccessToken = await Util.getChromeStorage('githubAccessToken');
+  const githubAccessToken = await getChromeStorage('githubAccessToken');
   if (!githubAccessToken) {
     throw new InvalidRequestException('Github', 'access token');
   }
@@ -35,14 +43,14 @@ export const getAuthenticatedUserRepositories = async () => {
  * @returns {Promise<string>} The URL of the committed file or an error message.
  */
 export const commit = async (payload) => {
-  const githubAccessToken = await Util.getChromeStorage('githubAccessToken');
-  const githubID = await Util.getChromeStorage('githubID');
-  const githubUploadedRepository = await Util.getChromeStorage(
+  const githubAccessToken = await getChromeStorage('githubAccessToken');
+  const githubID = await getChromeStorage('githubID');
+  const githubUploadedRepository = await getChromeStorage(
     'githubUploadedRepository',
   );
 
   const { extension, problemId, sourceCode, type, title } = payload;
-  const encodeNewSourceCode = Util.encodeBase64Unicode(sourceCode);
+  const encodeNewSourceCode = encodeBase64Unicode(sourceCode);
   const path = `${type}/${problemId}.${extension}`;
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
   const headers = createGithubAuthHeader(githubAccessToken);

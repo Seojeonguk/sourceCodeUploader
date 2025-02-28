@@ -1,8 +1,17 @@
-import * as Util from "../../util.js";
-import { InvalidRequestException } from "../../common/exception/InvalidRequestException.js";
-import { NotFoundException } from "../../common/exception/NotFoundException.js";
-import { createGithubAuthHeader, request } from "../../utils/fetchUtils.js";
 import { GITHUB_CONFIG } from "../config/config.js";
+
+import {
+  InvalidRequestException,
+  NotFoundException,
+} from '../../common/exception/index.js';
+
+
+import {
+  createGithubAuthHeader,
+  request,
+  setChromeStorage,
+  closeLatestTab,
+} from '../../common/utils/index.js';
 
 /**
  * Opens the OAuth authorization page for the user to grant access.
@@ -43,7 +52,7 @@ export const getAccessToken = async (payload) => {
     throw new NotFoundException('Github', 'access token');
   }
 
-  Util.closeLatestTab();
+  closeLatestTab();
 
   return accessToken;
 };
@@ -67,6 +76,6 @@ export const getUserInfo = async (accessToken) => {
 };
 
 export const saveInfo = (accessToken, githubID) => {
-  Util.setChromeStorage('githubAccessToken', accessToken);
-  Util.setChromeStorage('githubID', githubID);
+  setChromeStorage('githubAccessToken', accessToken);
+  setChromeStorage('githubID', githubID);
 };

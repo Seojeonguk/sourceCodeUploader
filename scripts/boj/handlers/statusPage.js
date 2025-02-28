@@ -28,7 +28,10 @@ const initStatusPage = () => {
       },
     );
   } catch (e) {
-    if (e instanceof ParseException || e instanceof UndefinedException) {
+    if (
+      e instanceof exceptions.ParseException ||
+      e instanceof exceptions.UndefinedException
+    ) {
       console.warn('[SCU]', e);
     } else {
       console.error('[SCU]', e);

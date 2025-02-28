@@ -1,8 +1,10 @@
-import * as Util from "../../util.js";
-import { InvalidRequestException } from "../../common/exception/InvalidRequestException.js";
-import { NotFoundException } from "../../common/exception/NotFoundException.js";
-import { request } from "../../utils/fetchUtils.js";
+import { closeLatestTab, request } from "../../common/utils/index.js";
 import { NOTION_CONFIG } from "../config/config.js";
+
+import {
+  InvalidRequestException,
+  NotFoundException,
+} from '../../common/exception/index.js';
 
 export const openOauthPage = () => {
   let parameters = `owner=user&client_id=${NOTION_CONFIG.CLIENT_ID}&response_type=code`;
@@ -45,7 +47,7 @@ export const getAccessToken = async (payload) => {
     throw new NotFoundException('Notion', 'access token');
   }
 
-  Util.closeLatestTab();
+  closeLatestTab();
 
   return accessToken;
 };
