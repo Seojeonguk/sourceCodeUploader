@@ -1,6 +1,6 @@
 import { PlatformDispatcherNotFoundException } from "./common/exception/index.js";
-import { dispatch as githubDispatcher } from "./github/main.js";
-import { dispatch as notionDispatcher } from "./notion/main.js";
+import { dispatch as githubDispatcher } from "./github/index.js";
+import { dispatch as notionDispatcher } from "./notion/index.js";
 
 const platformDispatchers = {
   github: githubDispatcher,

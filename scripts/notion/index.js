@@ -1,6 +1,6 @@
 import { setChromeStorage } from "../common/utils/index.js";
 import { ACTIONS as NOTION_ACTIONS } from "../solvedAC/constants/actions.js";
-import { dispatch as solvedAC } from "../solvedAC/main.js";
+import { dispatch as solvedAC } from "../solvedAC/index.js";
 import { ACTIONS } from "./constants/actions.js";
 import { getAccessToken, openOauthPage } from "./services/authService.js";
 import { getDatabases, upload } from "./services/databaseService.js";

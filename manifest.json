@@ -37,7 +37,7 @@
         "scripts/boj/utils/parseUtils.js",
         "scripts/boj/handlers/sourcePage.js",
         "scripts/boj/handlers/statusPage.js",
-        "scripts/boj/main.js"
+        "scripts/boj/index.js"
       ],
       "run_at": "document_idle",
       "include_globs": ["*/source/*", "*/status*"]
