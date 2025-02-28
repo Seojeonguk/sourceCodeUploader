@@ -1,7 +1,23 @@
+import { LANGUAGES } from "../constants/index.js";
+
+import {
+  ParseException,
+  UndefinedException,
+} from '../../common/exception/index.js';
+
+import {
+  getCurrentLoginId,
+  getSubmissionStatusTable,
+  filterCorrectUserSubmissions,
+  initializePlatformButtons,
+  fetchSourceCodeBySubmitNum,
+} from '../utils/index.js';
+
+
 /**
  * Initializes the status page with the necessary functionality.
  */
-const initStatusPage = () => {
+export const initStatusPage = () => {
   console.debug('[SCU] Start parsing submission status table...');
   try {
     const loginID = getCurrentLoginId();
@@ -28,10 +44,7 @@ const initStatusPage = () => {
       },
     );
   } catch (e) {
-    if (
-      e instanceof exceptions.ParseException ||
-      e instanceof exceptions.UndefinedException
-    ) {
+    if (e instanceof ParseException || e instanceof UndefinedException) {
       console.warn('[SCU]', e);
     } else {
       console.error('[SCU]', e);

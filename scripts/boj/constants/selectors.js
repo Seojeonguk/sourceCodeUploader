@@ -1,4 +1,4 @@
-const SELECTORS = {
+export const SELECTORS = {
   LOGIN_ID: '.username',
   SOURCE_TEXTAREA: "textarea[name='source']",
   STATUS_TABLE: '#status-table',

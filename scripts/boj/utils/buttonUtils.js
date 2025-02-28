@@ -1,8 +1,17 @@
+import { getResourceURL, sendMessage } from "../../common/utils/index.js";
+import { PLATFORMS } from "../constants/index.js";
+import { createElement } from "../utils/index.js";
+
+import {
+  ParseException,
+  UndefinedException,
+} from '../../common/exception/index.js';
+
 /**
  * Creates a wrapper div element to contain action buttons.
  * @returns {HTMLElement} The div element containing the buttons.
  */
-const createActionButtonContainer = () => {
+export const createActionButtonContainer = () => {
   return createElement('div', { className: 'btnWrapper' });
 };
 
@@ -12,10 +21,14 @@ const createActionButtonContainer = () => {
  * @param {string} imageUrl - The URL of the image to display on the button.
  * @param {function} clickHandler - The function to execute when the button is clicked.
  */
-const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
+export const createPlatformActionButton = (
+  buttonWrapper,
+  imageUrl,
+  clickHandler,
+) => {
   const button = createElement('button', { className: 'uploadBtn' });
   const img = createElement('img', {
-    src: util.getResourceURL(imageUrl),
+    src: getResourceURL(imageUrl),
   });
 
   button.appendChild(img);
@@ -30,11 +43,15 @@ const createPlatformActionButton = (buttonWrapper, imageUrl, clickHandler) => {
  * @param {function} getSourceCode - A function to retrieve the source code.
  * @returns {HTMLElement} The div element containing the platform buttons.
  */
-const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
+export const initializePlatformButtons = (
+  isDark = false,
+  payload,
+  getSourceCode,
+) => {
   console.debug('[SCU] Initializing platform buttons');
   const buttonWrapper = createActionButtonContainer();
 
-  Object.entries(PLATFROMS).forEach(([key, value]) => {
+  Object.entries(PLATFORMS).forEach(([key, value]) => {
     const { name, action, icon, darkIcon } = value;
     const iconPath = isDark ? icon : darkIcon;
 
@@ -55,16 +72,13 @@ const initializePlatformButtons = (isDark = false, payload, getSourceCode) => {
  * @param {string} action - The action to perform.
  * @param {object} payload - The data to send with the message.
  */
-const handlePlatformAction = async (platform, action, payload) => {
+export const handlePlatformAction = async (platform, action, payload) => {
   try {
     console.debug(`[SCU] Handling platform action for ${platform} (${action})`);
-    const response = await util.sendMessage(platform, action, payload);
+    const response = await sendMessage(platform, action, payload);
     alert(response?.message);
   } catch (e) {
-    if (
-      e instanceof exceptions.ParseException ||
-      e instanceof exceptions.UndefinedException
-    ) {
+    if (e instanceof ParseException || e instanceof UndefinedException) {
       console.warn(e);
     } else {
       console.error(e);

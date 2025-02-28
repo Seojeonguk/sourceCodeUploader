@@ -1,3 +1,5 @@
+import { ParseException } from "../../common/exception/index.js";
+
 /**
  * Safely selects a DOM element using a CSS selector.
  * @param {string} selector - The CSS selector to find the element.
@@ -5,12 +7,10 @@
  * @throws {ParseException} If the element is not found.
  * @returns {JQuery<HTMLElement>} The selected DOM element.
  */
-const safeQuerySelector = (selector, context = document) => {
+export const safeQuerySelector = (selector, context = document) => {
   const element = $(selector, context);
   if (!element || element.length === 0) {
-    throw new exceptions.ParseException(
-      `Element not found for selector: ${selector}`,
-    );
+    throw new ParseException(`Element not found for selector: ${selector}`);
   }
   return element;
 };
@@ -22,10 +22,10 @@ const safeQuerySelector = (selector, context = document) => {
  * @throws {ParseException} If the text is empty.
  * @returns {string} The text content of the element.
  */
-const safeGetText = (element, errorMessage) => {
+export const safeGetText = (element, errorMessage) => {
   const text = element.text();
   if (!text) {
-    throw new exceptions.ParseException(errorMessage);
+    throw new ParseException(errorMessage);
   }
   return text;
 };
@@ -37,7 +37,7 @@ const safeGetText = (element, errorMessage) => {
  * @param {Array|Element} children - The child elements to append.
  * @returns {HTMLElement} The created DOM element.
  */
-const createElement = (tag, attributes = {}, children = []) => {
+export const createElement = (tag, attributes = {}, children = []) => {
   const element = document.createElement(tag);
   Object.entries(attributes).forEach(([key, value]) => {
     if (key === 'className') {

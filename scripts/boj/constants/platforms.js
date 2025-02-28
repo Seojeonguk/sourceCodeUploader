@@ -1,4 +1,4 @@
-const PLATFROMS = {
+export const PLATFORMS = {
   GITHUB: {
     name: 'github',
     action: 'commit',

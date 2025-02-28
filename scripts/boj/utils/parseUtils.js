@@ -1,11 +1,24 @@
+import { safeGetText, safeQuerySelector } from "../utils/index.js";
+
+import {
+  LANGUAGES,
+  SELECTORS,
+  STATUS_TABLE_INDICES,
+} from '../constants/index.js';
+
+import {
+  ParseException,
+  UndefinedException,
+} from '../../common/exception/index.js';
+
 /**
  * Extracts data from a table row element.
  * @param {HTMLElement} row - The table row element.
  * @returns {Object} An object containing the extracted data.
  */
-const parseSubmissionRowData = (row) => {
+export const parseSubmissionRowData = (row) => {
   if (!row) {
-    throw new exceptions.ParseException('Invalid row data');
+    throw new ParseException('Invalid row data');
   }
   const getData = (index) => $(row).find(`td:eq(${index})`);
 
@@ -31,17 +44,17 @@ const parseSubmissionRowData = (row) => {
  * @throws {Error} If the result table is not found or the language is not supported.
  * @returns {string} The file extension for the submission language.
  */
-const getSubmissionLanguageFileExtension = () => {
+export const getSubmissionLanguageFileExtension = () => {
   const LANGUAGE_COLUMN_INDEX = 7;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const language = resultTable[LANGUAGE_COLUMN_INDEX]?.innerHTML;
   if (!language) {
-    throw new exceptions.ParseException('Result table or column not found.');
+    throw new ParseException('Result table or column not found.');
   }
 
   const extension = LANGUAGES[language];
   if (!extension) {
-    throw new exceptions.UndefinedException(`${language} is not defined.`);
+    throw new UndefinedException(`${language} is not defined.`);
   }
 
   return extension;
@@ -52,7 +65,7 @@ const getSubmissionLanguageFileExtension = () => {
  * @returns {string} The parsed login ID.
  * @throws {Error} If the login ID is not found.
  */
-const getCurrentLoginId = () => {
+export const getCurrentLoginId = () => {
   const loginId = safeQuerySelector(SELECTORS.LOGIN_ID);
   return safeGetText(
     loginId,
@@ -65,11 +78,11 @@ const getCurrentLoginId = () => {
  * @returns {string} The parsed source code.
  * @throws {Error} If the textarea element is not found.
  */
-const getSubmissionSourceCode = () => {
+export const getSubmissionSourceCode = () => {
   const textarea = safeQuerySelector(SELECTORS.SOURCE_TEXTAREA);
   const sourceCode = textarea[0]?.value;
   if (!sourceCode) {
-    throw new exceptions.ParseException('Source code not found.');
+    throw new ParseException('Source code not found.');
   }
   return sourceCode;
 };
@@ -79,7 +92,7 @@ const getSubmissionSourceCode = () => {
  * @returns {HTMLElement} The DOM element of the status table.
  * @throws {Error} If the status table is not found.
  */
-const getSubmissionStatusTable = () => {
+export const getSubmissionStatusTable = () => {
   return safeQuerySelector(SELECTORS.STATUS_TABLE);
 };
 
@@ -88,12 +101,12 @@ const getSubmissionStatusTable = () => {
  * @returns {string} The problem title.
  * @throws {Error} If the result table is not found.
  */
-const getProblemTitle = () => {
+export const getProblemTitle = () => {
   const TITLE_COLUMN_INDEX = 3;
   const resultTable = safeQuerySelector(SELECTORS.RESULT_TABLE);
   const title = resultTable[TITLE_COLUMN_INDEX]?.innerHTML;
   if (!title) {
-    throw new exceptions.ParseException('Result table not found.');
+    throw new ParseException('Result table not found.');
   }
   return title;
 };
@@ -103,7 +116,7 @@ const getProblemTitle = () => {
  * @returns {string} The problem ID parsed from the anchor tag.
  * @throws {Error} If the anchor tag is not found.
  */
-const getProblemId = () => {
+export const getProblemId = () => {
   const a = safeQuerySelector(SELECTORS.PROBLEM_LINK);
   return safeGetText(a, 'Problem ID not found.');
 };
@@ -113,7 +126,7 @@ const getProblemId = () => {
  * @returns {string} The name of the CodeMirror theme.
  * @throws {Error} If the CodeMirror element is not found.
  */
-const getActiveEditorTheme = () => {
+export const getActiveEditorTheme = () => {
   const codeMirror = safeQuerySelector(SELECTORS.CODE_MIRROR);
   let theme = 'cm-s-default';
 
@@ -132,7 +145,7 @@ const getActiveEditorTheme = () => {
  * @param {string} loginID - The login ID of the user.
  * @returns {Array} An array of objects containing the extracted row data.
  */
-const filterCorrectUserSubmissions = (statusTable, loginID) => {
+export const filterCorrectUserSubmissions = (statusTable, loginID) => {
   const rows = $(statusTable).find('tbody tr').toArray();
   const rowData = rows
     .map(parseSubmissionRowData)
