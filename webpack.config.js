@@ -19,7 +19,6 @@ module.exports = {
       './scripts/common/utils/index.js',
       './scripts/boj/constants/languages.js',
       './scripts/boj/constants/platforms.js',
-      './scripts/boj/constants/selectors.js',
       './scripts/boj/constants/tables.js',
       './scripts/boj/constants/themes.js',
       './scripts/boj/utils/buttonUtils.js',
