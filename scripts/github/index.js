@@ -1,16 +1,13 @@
-import { ACTIONS } from './constants/actions.js';
+import { ACTIONS } from "./constants/actions.js";
 
 import {
   commit,
   getAuthenticatedUserRepositories,
-} from './services/repoService.js';
-
-import {
   getAccessToken,
   getUserInfo,
   openOauthPage,
   saveInfo,
-} from './services/authService.js';
+} from './services/index.js';
 
 /**
  * Dispatches an action and executes the corresponding handler.

@@ -1,4 +1,2 @@
-import { initSourcePage } from "./sourcePage.js";
-import { initStatusPage } from "./statusPage.js";
-
-export { initSourcePage, initStatusPage };
+export * from './sourcePage.js';
+export * from './statusPage.js';

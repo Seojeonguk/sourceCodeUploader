@@ -1,6 +1,5 @@
-import { LANGUAGES } from "./languages.js";
-import { PLATFORMS } from "./platforms.js";
-import { SELECTORS, STATUS_TABLE_INDICES } from "./tables.js";
-import { DARK_THEMES } from "./themes.js";
-
-export { LANGUAGES, PLATFORMS, SELECTORS, STATUS_TABLE_INDICES, DARK_THEMES };
+// 현재 추정되는 구조
+export * from './languages.js';
+export * from './platforms.js';
+export * from './tables.js';
+export * from './themes.js';
