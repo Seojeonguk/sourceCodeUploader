@@ -13,7 +13,5 @@ export const createPage = async (data) => {
   };
 
   const response = await request(url, 'POST', headers, JSON.stringify(data));
-
-  const json = await response.json();
-  return json;
+  return response;
 };
