@@ -1,11 +1,11 @@
-let util;
+import { initSourcePage, initStatusPage } from "./handlers/index.js";
+
 /**
  * Dynamically loads the util function and initializes the page based on the current URL.
  */
+
 (async () => {
-  const src = chrome.runtime.getURL('scripts/util.js');
   console.debug('[SCU] Loading util.js');
-  util = await import(src);
 
   const currentUrl = window.location.href;
 

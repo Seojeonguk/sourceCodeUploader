@@ -1,7 +1,5 @@
-import * as Notion from "../constants/errors.js";
-import * as Util from "../../util.js";
-import { request } from "../../utils/fetchUtils.js";
-import { getChromeStorage } from "../../utils/storaageUtils.js";
+import { InvalidRequestException } from "../../common/exception/index.js";
+import { getChromeStorage, request } from "../../common/utils/index.js";
 import { NOTION_CONFIG } from "../config/config.js";
 import { createPage } from "../endpoints/pages.js";
 import { createBlock } from "../objects/block.js";
@@ -12,8 +10,7 @@ import { createPageProperty } from "../objects/page.js";
 export const getDatabases = async () => {
   const accessToken = await getChromeStorage('notionAccessToken');
   if (!accessToken) {
-    console.debug(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
-    throw new Error(Notion.ERROR[Notion.INVALID_ACCESS_TOKEN]);
+    throw new InvalidRequestException('Notion', 'access token');
   }
 
   const url = `${NOTION_CONFIG.API_BASE_URL}/v1/search`;
@@ -42,7 +39,7 @@ export const upload = async (
   { problemId, type, extension, sourceCode },
   { title, level, tags },
 ) => {
-  const databaseId = await Util.getChromeStorage('notionUploadedDatabaseId');
+  const databaseId = await getChromeStorage('notionUploadedDatabaseId');
 
   const properties = {
     title: createPageProperty(PROPERTY_TYPE.TITLE, {

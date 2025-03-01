@@ -1,5 +1,6 @@
-import { dispatch as githubDispatcher } from "./github/main.js";
-import { dispatch as notionDispatcher } from "./notion/main.js";
+import { PlatformDispatcherNotFoundException } from "./common/exception/index.js";
+import { dispatch as githubDispatcher } from "./github/index.js";
+import { dispatch as notionDispatcher } from "./notion/index.js";
 
 const platformDispatchers = {
   github: githubDispatcher,
@@ -10,13 +11,9 @@ const handleMessage = (request, sender, sendResponse) => {
   try {
     const { platform, action, payload } = request;
 
-    if (!platformDispatchers[platform]) {
-      throw new Error(`No dispatcher found for ${platform} platform.`);
-    }
-
     const dispatcher = platformDispatchers[platform];
     if (!dispatcher) {
-      throw new Error(`No dispatcher found for ${platform} platform.`);
+      throw new PlatformDispatcherNotFoundException(platform);
     }
 
     console.debug(`platform : ${platform}, request : ${action}`);

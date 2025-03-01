@@ -1,9 +1,16 @@
-import * as Util from '../../util.js';
-import { createGithubAuthHeader, request } from '../../utils/fetchUtils.js';
-import { GITHUB_CONFIG } from '../config/config.js';
-import { AUTH_REQUIREMENTS } from '../constants/storage.js';
-import { duplicateContentException } from '../customExceptions/DuplicateContentException.js';
-import { checkAuthRequirements } from './authService.js';
+import { GITHUB_CONFIG } from "../config/config.js";
+
+import {
+  DuplicateResourceException,
+  InvalidRequestException,
+} from '../../common/exception/index.js';
+
+import {
+  createGithubAuthHeader,
+  request,
+  getChromeStorage,
+  encodeBase64Unicode,
+} from '../../common/utils/index.js';
 
 /**
  * Retrieves the repositories of the authenticated user.
@@ -11,9 +18,10 @@ import { checkAuthRequirements } from './authService.js';
  * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
  */
 export const getAuthenticatedUserRepositories = async () => {
-  const { githubAccessToken } = await checkAuthRequirements(
-    AUTH_REQUIREMENTS.ACCESS_TOKEN_ONLY,
-  );
+  const githubAccessToken = await getChromeStorage('githubAccessToken');
+  if (!githubAccessToken) {
+    throw new InvalidRequestException('Github', 'access token');
+  }
 
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
   const headers = createGithubAuthHeader(githubAccessToken);
@@ -30,16 +38,19 @@ export const getAuthenticatedUserRepositories = async () => {
  * @param {string} payload.sourceCode - The source code to commit.
  * @param {string} payload.type - The type or category of the problem.
  * @param {string} payload.title - The commit message.
- * @throws {duplicateContentException} If the new content is identical to the existing file content.
+ * @throws {DuplicateResourceException} If the new content is identical to the existing file content.
  * @throws {Error} If authentication requirements are not met.
  * @returns {Promise<string>} The URL of the committed file or an error message.
  */
 export const commit = async (payload) => {
-  const { githubAccessToken, githubID, githubUploadedRepository } =
-    await checkAuthRequirements(AUTH_REQUIREMENTS.ALL);
+  const githubAccessToken = await getChromeStorage('githubAccessToken');
+  const githubID = await getChromeStorage('githubID');
+  const githubUploadedRepository = await getChromeStorage(
+    'githubUploadedRepository',
+  );
 
   const { extension, problemId, sourceCode, type, title } = payload;
-  const encodeNewSourceCode = Util.encodeBase64Unicode(sourceCode);
+  const encodeNewSourceCode = encodeBase64Unicode(sourceCode);
   const path = `${type}/${problemId}.${extension}`;
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
   const headers = createGithubAuthHeader(githubAccessToken);
@@ -49,9 +60,7 @@ export const commit = async (payload) => {
   const sanitizedContent = content?.replaceAll(/\n/g, '');
 
   if (sanitizedContent === encodeNewSourceCode) {
-    throw new duplicateContentException(
-      'The upload source code and the existing content are the same.',
-    );
+    throw new DuplicateResourceException('Github', 'content');
   }
 
   const body = JSON.stringify({

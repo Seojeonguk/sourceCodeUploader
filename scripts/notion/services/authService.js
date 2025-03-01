@@ -1,7 +1,10 @@
-import * as Notion from "../constants/errors.js";
-import * as Util from "../../util.js";
-import { request } from "../../utils/fetchUtils.js";
+import { closeLatestTab, request } from "../../common/utils/index.js";
 import { NOTION_CONFIG } from "../config/config.js";
+
+import {
+  InvalidRequestException,
+  NotFoundException,
+} from '../../common/exception/index.js';
 
 export const openOauthPage = () => {
   let parameters = `owner=user&client_id=${NOTION_CONFIG.CLIENT_ID}&response_type=code`;
@@ -16,7 +19,7 @@ export const openOauthPage = () => {
 
 export const getAccessToken = async (payload) => {
   if (!payload?.code) {
-    throw new Error(Notion.ERROR[Notion.INVALID_code]);
+    throw new InvalidRequestException('Notion', 'code');
   }
 
   const { code } = payload;
@@ -41,11 +44,10 @@ export const getAccessToken = async (payload) => {
   const response = await request(url, 'POST', headers, data);
   const accessToken = response?.access_token;
   if (!accessToken) {
-    console.debug(Notion.ERROR[Notion.NOT_FOUND_ACCESS_TOKEN]);
-    throw new Error(Notion.ERROR[Notion.NOT_FOUND_ACCESS_TOKEN]);
+    throw new NotFoundException('Notion', 'access token');
   }
 
-  Util.closeLatestTab();
+  closeLatestTab();
 
   return accessToken;
 };

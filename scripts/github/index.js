@@ -1,9 +1,13 @@
-import * as Util from "../util.js";
-import { ACTIONS as NOTION_ACTIONS } from "../solvedAC/constants/actions.js";
-import { dispatch as solvedAC } from "../solvedAC/main.js";
 import { ACTIONS } from "./constants/actions.js";
-import { getAccessToken, openOauthPage } from "./services/authService.js";
-import { getDatabases, upload } from "./services/databaseService.js";
+
+import {
+  commit,
+  getAuthenticatedUserRepositories,
+  getAccessToken,
+  getUserInfo,
+  openOauthPage,
+  saveInfo,
+} from './services/index.js';
 
 /**
  * Dispatches an action and executes the corresponding handler.
@@ -17,18 +21,14 @@ export async function dispatch(action, payload) {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
     [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
       const accessToken = await getAccessToken(payload);
-      Util.setChromeStorage('notionAccessToken', accessToken);
-      return 'success';
+      const githubID = await getUserInfo(accessToken);
+      saveInfo(accessToken, githubID);
     },
-    [ACTIONS.GET_DATABASES]: async () => {
-      return await getDatabases();
+    [ACTIONS.GET_REPOSITORIES]: async () => {
+      return await getAuthenticatedUserRepositories();
     },
-    [ACTIONS.UPLOAD]: async () => {
-      const problemInfo = await solvedAC(
-        NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
-        payload,
-      );
-      return await upload(payload, problemInfo);
+    [ACTIONS.COMMIT]: async () => {
+      return await commit(payload);
     },
   };
 

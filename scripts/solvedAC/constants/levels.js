@@ -1,4 +1,4 @@
-export const LEVELS = [
+export const LEVELS = Object.freeze([
   'Unrated',
   'Bronze V',
   'Bronze IV',
@@ -30,4 +30,4 @@ export const LEVELS = [
   'Ruby III',
   'Ruby II',
   'Ruby I',
-];
+]);
