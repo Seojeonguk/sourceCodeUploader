@@ -1,3 +1,4 @@
+import { getChromeStorage } from "../../common/utils/index.js";
 import { LANGUAGES } from "../constants/index.js";
 
 import {
@@ -39,10 +40,6 @@ export const initStatusPage = () => {
 };
 
 export const observeJudgingResults = () => {
-  // const targetElements = document.querySelectorAll(
-  //   '.result-judging, .result-compile, .result-wait',
-  // );
-
   const targetElements = document.querySelectorAll('.result-text');
 
   if (targetElements.length === 0) {
@@ -50,9 +47,16 @@ export const observeJudgingResults = () => {
     return;
   }
 
-  console.log(targetElements);
   targetElements.forEach((element) => {
-    const observer = new MutationObserver((mutations) => {
+    if (
+      !element.classList.contains('result-compile') &&
+      !element.classList.contains('result-judging') &&
+      !element.classList.contains('result-wait')
+    ) {
+      return;
+    }
+
+    const observer = new MutationObserver(async (mutations) => {
       const acceptedResults = mutations.find(
         (mutation) =>
           mutation.type === 'attributes' &&
@@ -62,21 +66,39 @@ export const observeJudgingResults = () => {
 
       if (acceptedResults) {
         const loginID = getCurrentLoginId();
-
         const changedAcceptedResults = acceptedResults?.target;
-
-        console.debug('[SCU] Change detected: ', changedAcceptedResults);
-
         const trElement = changedAcceptedResults.closest('tr');
-        console.debug('[SCU] closest: ', trElement);
-
         const rowData = parseSubmissionRowData(trElement);
+
         if (rowData?.submitId === loginID) {
           appendPlatformButtons(rowData);
+
+          const uploadButtons = trElement.querySelectorAll('.uploadBtn');
+
+          uploadButtons.forEach(async (uploadButton) => {
+            const uploadButtonId = uploadButton.id;
+            const autoUpload = await getChromeStorage(
+              `${uploadButtonId}AutoUpload`,
+            );
+            if (autoUpload) {
+              if (uploadButton) {
+                uploadButton.click();
+              }
+            }
+          });
         }
       }
 
-      observer.disconnect();
+      const isJudging = mutations.find(
+        (mutation) =>
+          mutation.target.classList.contains('result-judging') ||
+          mutation.target.classList.contains('result-compile'),
+      );
+
+      if (!isJudging) {
+        console.debug('disconnect this element : ', element);
+        observer.disconnect();
+      }
     });
 
     observer.observe(element, {

@@ -55,7 +55,12 @@ export const commit = async (payload) => {
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
   const headers = createGithubAuthHeader(githubAccessToken);
 
-  const existingFile = await request(url, 'GET', headers, undefined);
+  let existingFile = { sha: null, content: null };
+  try {
+    existingFile = await request(url, 'GET', headers, undefined);
+  } catch (e) {
+    // 오류 처리 로직이 필요할 수 있습니다.
+  }
   const { sha, content } = existingFile;
   const sanitizedContent = content?.replaceAll(/\n/g, '');
 
