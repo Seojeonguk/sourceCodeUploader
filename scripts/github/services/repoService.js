@@ -59,7 +59,11 @@ export const commit = async (payload) => {
   try {
     existingFile = await request(url, 'GET', headers, undefined);
   } catch (e) {
-    // 오류 처리 로직이 필요할 수 있습니다.
+    if (e instanceof Error && e.message.includes('404')) {
+      console.warn('File not found. Creating a new file.');
+    } else {
+      throw e;
+    }
   }
   const { sha, content } = existingFile;
   const sanitizedContent = content?.replaceAll(/\n/g, '');
