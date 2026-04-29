@@ -24,9 +24,11 @@ export const createActionButtonContainer = () => {
 export const createPlatformActionButton = (
   buttonWrapper,
   imageUrl,
+  name,
   clickHandler,
 ) => {
-  const button = createElement('button', { className: 'uploadBtn' });
+  const button = createElement('button', { className: 'uploadBtn', id: name });
+
   const img = createElement('img', {
     src: getResourceURL(imageUrl),
   });
@@ -55,7 +57,7 @@ export const initializePlatformButtons = (
     const { name, action, icon, darkIcon } = value;
     const iconPath = isDark ? icon : darkIcon;
 
-    createPlatformActionButton(buttonWrapper, iconPath, async () =>
+    createPlatformActionButton(buttonWrapper, iconPath, name, async () =>
       handlePlatformAction(name, action, {
         ...payload,
         sourceCode: await getSourceCode(),

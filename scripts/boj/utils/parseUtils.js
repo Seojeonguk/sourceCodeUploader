@@ -147,6 +147,7 @@ export const getActiveEditorTheme = () => {
  */
 export const filterCorrectUserSubmissions = (statusTable, loginID) => {
   const rows = $(statusTable).find('tbody tr').toArray();
+  console.debug('Before filtering', rows);
   const rowData = rows
     .map(parseSubmissionRowData)
     .filter((row) => row.isCorrect && row.submitId == loginID);

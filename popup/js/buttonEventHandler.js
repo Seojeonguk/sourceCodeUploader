@@ -8,6 +8,7 @@ import {
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
+  handleAutoUploadBtn();
   handleGithubAuthenticationBtn();
   handleNotionAuthenticationBtn();
   handleUploadedDatabaseSelection();
@@ -24,6 +25,18 @@ const closeSelectListOnOutsideClick = () => {
   $(document).on('click', function () {
     $('.select-list ul').removeClass('is-active');
     $('.content-wrapper').removeClass('overlay');
+  });
+};
+
+/**
+ *
+ */
+const handleAutoUploadBtn = () => {
+  $('.auto-upload-opt').on('click', (e) => {
+    const platform = $(e.currentTarget).closest('li').attr('platform');
+
+    const isChecked = $(`#${platform}-auto-upload`).prop('checked');
+    setChromeStorage(`${platform}AutoUpload`, isChecked);
   });
 };
 

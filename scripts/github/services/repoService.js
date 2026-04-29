@@ -55,7 +55,16 @@ export const commit = async (payload) => {
   const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
   const headers = createGithubAuthHeader(githubAccessToken);
 
-  const existingFile = await request(url, 'GET', headers, undefined);
+  let existingFile = { sha: null, content: null };
+  try {
+    existingFile = await request(url, 'GET', headers, undefined);
+  } catch (e) {
+    if (e instanceof Error && e.message.includes('404')) {
+      console.warn('File not found. Creating a new file.');
+    } else {
+      throw e;
+    }
+  }
   const { sha, content } = existingFile;
   const sanitizedContent = content?.replaceAll(/\n/g, '');
 

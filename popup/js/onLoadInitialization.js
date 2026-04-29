@@ -1,7 +1,7 @@
 import { getChromeStorage } from "../../scripts/common/utils/index.js";
 
 export const initializeOnLoad = () => {
-  checkPlatformsAuthentication();
+  checkPlatformInfos();
   loadCachedDatabaseList();
   loadCachedRepositoryList();
 };
@@ -13,7 +13,7 @@ export const initializeOnLoad = () => {
  * and changing the text and style of the authentication button to indicate removal.
  */
 
-const checkPlatformsAuthentication = () => {
+const checkPlatformInfos = () => {
   const platforms = ['github', 'notion'];
 
   platforms.forEach(async (platform) => {
@@ -23,6 +23,9 @@ const checkPlatformsAuthentication = () => {
       $(`.${platform} .authentication-btn`).html('Remove');
       $(`.${platform} .authentication-btn`).addClass('delete');
     }
+
+    const autoUpload = await getChromeStorage(`${platform}AutoUpload`);
+    $(`#${platform}-auto-upload`).prop('checked', autoUpload);
   });
 };
 
