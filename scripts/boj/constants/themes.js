@@ -1,4 +1,4 @@
-const DARK_THEMES = {
+export const DARK_THEMES = Object.freeze({
   'cm-s-default': false,
   'cm-s-3024-day': false,
   'cm-s-3024-night': true,
@@ -56,4 +56,4 @@ const DARK_THEMES = {
   'cm-s-yeti': false,
   'cm-s-yonce': true,
   'cm-s-zenburn': true,
-};
+});

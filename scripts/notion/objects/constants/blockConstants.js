@@ -1,19 +1,19 @@
-export const BLOCK_TYPE = {
+export const BLOCK_TYPE = Object.freeze({
   CODE: 'code',
   HEADING_LARGE: 'heading_1',
   HEADING_MIDIUM: 'heading_2',
   HEADING_SMALL: 'heading_3',
   PARAGRAPH: 'paragraph',
   TEXT: 'text',
-};
+});
 
-export const HEADING = {
+export const HEADING = Object.freeze({
   LARGE: 'heading_1',
   MIDIUM: 'heading_2',
   SMALL: 'heading_3',
-};
+});
 
-export const COLORS = {
+export const COLORS = Object.freeze({
   BLUE: 'blue',
   BLUE_BACKGROUND: 'blue_background',
   BROWN: 'brown',
@@ -33,9 +33,9 @@ export const COLORS = {
   RED_BACKGROUND: 'red_background',
   YELLOW: 'yellow',
   YELLOW_BACKGROUND: 'yellow_background',
-};
+});
 
-export const CODE_LANGUAGES = {
+export const CODE_LANGUAGES = Object.freeze({
   ABAP: 'abap',
   ARDUINO: 'arduino',
   BASH: 'bash',
@@ -108,9 +108,9 @@ export const CODE_LANGUAGES = {
   XML: 'xml',
   YAML: 'yaml',
   JAVA_C_CPP_C_SHARP: 'java/c/c++/c#',
-};
+});
 
-export const LANGUAGES = {
+export const LANGUAGES = Object.freeze({
   아희: 'plain text',
   엄준식: 'plain text',
   Ada: 'plain text',
@@ -216,4 +216,4 @@ export const LANGUAGES = {
   'Visual Basic': 'visual basic',
   'Visual Basic (.NET)': 'plain text',
   Whitespace: 'plain text',
-};
+});

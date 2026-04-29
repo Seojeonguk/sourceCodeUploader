@@ -1,4 +1,4 @@
-const LANGUAGES = {
+export const LANGUAGES = Object.freeze({
   아희: 'aheui',
   엄준식: 'umm',
   Ada: 'ada',
@@ -104,4 +104,4 @@ const LANGUAGES = {
   'Visual Basic': 'vb',
   'Visual Basic (.NET)': 'vb',
   Whitespace: 'ws',
-};
+});

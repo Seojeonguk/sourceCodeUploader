@@ -1,6 +1,4 @@
-export const API_BASE_URL = 'https://solved.ac/api/v3';
-
-export const LEVELS = [
+export const LEVELS = Object.freeze([
   'Unrated',
   'Bronze V',
   'Bronze IV',
@@ -32,4 +30,4 @@ export const LEVELS = [
   'Ruby III',
   'Ruby II',
   'Ruby I',
-];
+]);

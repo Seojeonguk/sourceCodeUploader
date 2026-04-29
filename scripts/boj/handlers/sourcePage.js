@@ -1,7 +1,19 @@
+import { DARK_THEMES } from "../constants/index.js";
+
+import {
+  getActiveEditorTheme,
+  getSubmissionLanguageFileExtension,
+  getProblemId,
+  getProblemTitle,
+  initializePlatformButtons,
+  getSubmissionSourceCode,
+} from '../utils/index.js';
+
+
 /**
  * Initializes the source page with the necessary functionality.
  */
-const initSourcePage = () => {
+export const initSourcePage = () => {
   console.debug('[SCU] Initializing source page...');
   const theme = getActiveEditorTheme();
   const isDark = DARK_THEMES[theme];

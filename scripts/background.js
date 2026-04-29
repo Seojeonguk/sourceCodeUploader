@@ -1,20 +1,28 @@
-import { dispatch as githubDispatch } from './github/Github.js';
-import { dispatch as notionDispatch } from './notion/Notion.js';
+import { PlatformDispatcherNotFoundException } from "./common/exception/index.js";
+import { dispatch as githubDispatcher } from "./github/index.js";
+import { dispatch as notionDispatcher } from "./notion/index.js";
+
+const platformDispatchers = {
+  github: githubDispatcher,
+  notion: notionDispatcher,
+};
 
 const handleMessage = (request, sender, sendResponse) => {
   try {
     const { platform, action, payload } = request;
-    if (platform === 'github') {
-      githubDispatch(action, payload).then((res) => {
-        sendResponse(res);
-      });
-    } else if (platform === 'notion') {
-      notionDispatch(action, payload).then((res) => {
-        sendResponse(res);
-      });
-    } else {
-      throw new Error(`${platform} is not supported!`);
+
+    const dispatcher = platformDispatchers[platform];
+    if (!dispatcher) {
+      throw new PlatformDispatcherNotFoundException(platform);
     }
+
+    console.debug(`platform : ${platform}, request : ${action}`);
+
+    dispatcher(action, payload)
+      .then((res) => {
+        sendResponse({ ok: true, message: res });
+      })
+      .catch((err) => sendResponse({ ok: false, message: err.message }));
   } catch (e) {
     sendResponse({ ok: false, message: e.message });
   } finally {

@@ -1,4 +1,5 @@
-import * as Util from '../../scripts/util.js';
+import { getChromeStorage } from "../../scripts/common/utils/index.js";
+
 export const initializeOnLoad = () => {
   checkPlatformsAuthentication();
   loadCachedDatabaseList();
@@ -16,7 +17,7 @@ const checkPlatformsAuthentication = () => {
   const platforms = ['github', 'notion'];
 
   platforms.forEach(async (platform) => {
-    const accessToken = await Util.getChromeStorage(`${platform}AccessToken`);
+    const accessToken = await getChromeStorage(`${platform}AccessToken`);
     if (accessToken) {
       $(`.${platform} .status`).addClass('green');
       $(`.${platform} .authentication-btn`).html('Remove');
@@ -29,11 +30,9 @@ const checkPlatformsAuthentication = () => {
  * Load the database to upload to notion from chrome storage and display it on the popup page.
  */
 const loadCachedDatabaseList = async () => {
-  const uploadedDatabase = await Util.getChromeStorage(
-    'notionUploadedDatabase',
-  );
+  const uploadedDatabase = await getChromeStorage('notionUploadedDatabase');
 
-  if (!Util.isEmpty(uploadedDatabase)) {
+  if (uploadedDatabase) {
     $('#uploaded-database').text(uploadedDatabase);
   }
 };
@@ -43,11 +42,9 @@ const loadCachedDatabaseList = async () => {
  */
 
 const loadCachedRepositoryList = async () => {
-  const uploadedRepository = await Util.getChromeStorage(
-    'githubUploadedRepository',
-  );
+  const uploadedRepository = await getChromeStorage('githubUploadedRepository');
 
-  if (!Util.isEmpty(uploadedRepository)) {
+  if (uploadedRepository) {
     $('#uploaded-repository').text(uploadedRepository);
   }
 };

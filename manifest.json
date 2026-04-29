@@ -46,7 +46,7 @@
     },
     {
       "matches": ["https://github.com/*"],
-      "js": ["scripts/github/githubEvents.js"],
+      "js": ["scripts/github/handlers/oauthHandler.js"],
       "run_at": "document_idle"
     }
   ],
@@ -79,7 +79,7 @@
       "matches": ["https://www.acmicpc.net/*"]
     },
     {
-      "resources": ["scripts/util.js"],
+      "resources": ["scripts/common/*"],
       "matches": ["<all_urls>"]
     }
   ]

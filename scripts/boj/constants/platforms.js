@@ -1,4 +1,4 @@
-const PLATFROMS = {
+export const PLATFORMS = Object.freeze({
   GITHUB: {
     name: 'github',
     action: 'commit',
@@ -11,4 +11,4 @@ const PLATFROMS = {
     icon: 'icon/notionIcon.png',
     darkIcon: 'icon/notionDarkIcon.png',
   },
-};
+});
