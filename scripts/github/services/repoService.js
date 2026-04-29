@@ -1,4 +1,4 @@
-import { GITHUB_CONFIG } from "../config/config.js";
+import { GITHUB_CONFIG } from '../config/config.js';
 
 import {
   DuplicateResourceException,
@@ -30,6 +30,20 @@ export const getAuthenticatedUserRepositories = async () => {
   return response;
 };
 
+const sanitizePathSegment = (value, fallback) => {
+  const sanitized = String(value || '')
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '_')
+    .replace(/\s+/g, ' ')
+    .replace(/^\.+|\.+$/g, '')
+    .trim();
+
+  return sanitized || fallback;
+};
+
+const encodeGithubContentPath = (path) => {
+  return path.split('/').map(encodeURIComponent).join('/');
+};
+
 /**
  * Commits the provided source code to the specified GitHub repository.
  * @param {Object} payload - The payload containing details about the commit.
@@ -51,8 +65,12 @@ export const commit = async (payload) => {
 
   const { extension, problemId, sourceCode, type, title } = payload;
   const encodeNewSourceCode = encodeBase64Unicode(sourceCode);
-  const path = `${type}/${problemId}.${extension}`;
-  const url = `${GITHUB_CONFIG.API_BASE_URL}/repos/${githubID}/${githubUploadedRepository}/contents/${path}`;
+  const fileName = sanitizePathSegment(title, problemId);
+  const path = `${type}/${fileName}.${extension}`;
+  const encodedPath = encodeGithubContentPath(path);
+  const url =
+    `${GITHUB_CONFIG.API_BASE_URL}/repos/` +
+    `${githubID}/${githubUploadedRepository}/contents/${encodedPath}`;
   const headers = createGithubAuthHeader(githubAccessToken);
 
   let existingFile = { sha: null, content: null };

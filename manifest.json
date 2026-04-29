@@ -45,6 +45,15 @@
       "include_globs": ["*/source/*", "*/status*"]
     },
     {
+      "matches": [
+        "https://school.programmers.co.kr/learn/courses/*/lessons/*",
+        "https://programmers.co.kr/learn/courses/*/lessons/*"
+      ],
+      "css": ["scripts/programmers/programmers.css"],
+      "js": ["scripts/programmers/index.js"],
+      "run_at": "document_idle"
+    },
+    {
       "matches": ["https://github.com/*"],
       "js": ["scripts/github/handlers/oauthHandler.js"],
       "run_at": "document_idle"
@@ -62,6 +71,8 @@
   "host_permissions": [
     "https://api.notion.com/*",
     "https://github.com/*",
+    "https://school.programmers.co.kr/*",
+    "https://programmers.co.kr/*",
     "https://www.acmicpc.net/*",
     "https://solved.ac/*"
   ],
@@ -76,11 +87,22 @@
   "web_accessible_resources": [
     {
       "resources": ["icon/*.png"],
-      "matches": ["https://www.acmicpc.net/*"]
+      "matches": [
+        "https://www.acmicpc.net/*",
+        "https://school.programmers.co.kr/*",
+        "https://programmers.co.kr/*"
+      ]
     },
     {
       "resources": ["scripts/common/*"],
       "matches": ["<all_urls>"]
+    },
+    {
+      "resources": ["scripts/programmers/sourceExtractor.js"],
+      "matches": [
+        "https://school.programmers.co.kr/*",
+        "https://programmers.co.kr/*"
+      ]
     }
   ]
 }

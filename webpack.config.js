@@ -28,6 +28,8 @@ module.exports = {
       './scripts/boj/handlers/sourcePage.js',
       './scripts/boj/handlers/statusPage.js',
       './scripts/boj/index.js',
+      './scripts/programmers/index.js',
+      './scripts/programmers/sourceExtractor.js',
     ],
   },
   output: {
