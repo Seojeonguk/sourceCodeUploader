@@ -1,0 +1,3 @@
+# Baekjoon Online Judge has been shut down, so the BOJ scripts cannot be tested.
+# They are kept as they are and excluded from linting.
+scripts/boj/
