@@ -1,4 +1,4 @@
-import { InvalidRequestException } from '../../common/exception/index.js';
+import { SetupRequiredException } from '../../common/exception/index.js';
 import { getChromeStorage, request } from '../../common/utils/index.js';
 import { NOTION_CONFIG } from '../config/config.js';
 
@@ -7,13 +7,13 @@ import { NOTION_CONFIG } from '../config/config.js';
  * @param {string} path - The API path, such as `/v1/pages`.
  * @param {string} method - The HTTP method.
  * @param {Object} [body] - The request body. It is sent as JSON.
- * @throws {InvalidRequestException} If the access token is missing.
+ * @throws {SetupRequiredException} If the user has not logged in to Notion.
  * @returns {Promise<Object>} The response body.
  */
 export const notionRequest = async (path, method, body = undefined) => {
   const accessToken = await getChromeStorage('notionAccessToken');
   if (!accessToken) {
-    throw new InvalidRequestException('Notion', 'access token');
+    throw new SetupRequiredException('Notion', 'login');
   }
 
   const headers = {

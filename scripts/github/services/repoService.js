@@ -2,7 +2,7 @@ import { GITHUB_CONFIG } from '../config/config.js';
 
 import {
   DuplicateResourceException,
-  InvalidRequestException,
+  SetupRequiredException,
 } from '../../common/exception/index.js';
 
 import {
@@ -21,13 +21,13 @@ const REPOSITORIES_PER_PAGE = 100;
 
 /**
  * Retrieves all repositories of the authenticated user, following every page.
- * @throws {Error} If the access token is missing or invalid.
+ * @throws {SetupRequiredException} If the user has not logged in to GitHub.
  * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
  */
 export const getAuthenticatedUserRepositories = async () => {
   const githubAccessToken = await getChromeStorage('githubAccessToken');
   if (!githubAccessToken) {
-    throw new InvalidRequestException('Github', 'access token');
+    throw new SetupRequiredException('GitHub', 'login');
   }
 
   const headers = createGithubAuthHeader(githubAccessToken);
@@ -59,16 +59,24 @@ export const getAuthenticatedUserRepositories = async () => {
  * @param {string} payload.sourceCode - The source code to commit.
  * @param {string} payload.type - The type or category of the problem.
  * @param {string} payload.title - The commit message.
+ * @throws {SetupRequiredException} If the user has not logged in or selected a repository.
  * @throws {DuplicateResourceException} If the new content is identical to the existing file content.
- * @throws {Error} If authentication requirements are not met.
  * @returns {Promise<string>} The URL of the committed file or an error message.
  */
 export const commit = async (payload) => {
   const githubAccessToken = await getChromeStorage('githubAccessToken');
   const githubID = await getChromeStorage('githubID');
+  // The GitHub ID is saved with the access token, so log in again if it is missing.
+  if (!githubAccessToken || !githubID) {
+    throw new SetupRequiredException('GitHub', 'login');
+  }
+
   const githubUploadedRepository = await getChromeStorage(
     'githubUploadedRepository',
   );
+  if (!githubUploadedRepository) {
+    throw new SetupRequiredException('GitHub', 'repository');
+  }
 
   const { extension, problemId, sourceCode, type, title } = payload;
   const encodeNewSourceCode = encodeBase64Unicode(sourceCode);

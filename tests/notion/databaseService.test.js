@@ -60,18 +60,43 @@ const mockNotion = ({ existingPage, blocks = [] }) => {
   return requests;
 };
 
+const mockStorage = (storage) => {
+  globalThis.chrome = {
+    storage: {
+      local: { get: ([key], callback) => callback({ [key]: storage[key] }) },
+    },
+  };
+};
+
 describe('upload', () => {
   beforeEach(() => {
-    const storage = {
+    mockStorage({
       notionAccessToken: 'token',
       notionUploadedDatabaseId: 'database-id',
-    };
-    globalThis.chrome = {
-      storage: {
-        local: { get: ([key], callback) => callback({ [key]: storage[key] }) },
-      },
-    };
+    });
     mock.method(console, 'debug', () => {});
+  });
+
+  it('asks to log in without the access token', async () => {
+    mockStorage({ notionUploadedDatabaseId: 'database-id' });
+    const requests = mockNotion({ existingPage: null });
+
+    await assert.rejects(upload(payload, problemInfo), {
+      name: 'SetupRequiredException',
+      message: 'Log in to Notion in the extension popup first.',
+    });
+    assert.equal(requests.length, 0);
+  });
+
+  it('asks to select a database without the database', async () => {
+    mockStorage({ notionAccessToken: 'token' });
+    const requests = mockNotion({ existingPage: null });
+
+    await assert.rejects(upload(payload, problemInfo), {
+      name: 'SetupRequiredException',
+      message: 'Select a Notion database in the extension popup first.',
+    });
+    assert.equal(requests.length, 0);
   });
 
   afterEach(() => {

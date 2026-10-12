@@ -1,4 +1,7 @@
-import { DuplicateResourceException } from '../../common/exception/index.js';
+import {
+  DuplicateResourceException,
+  SetupRequiredException,
+} from '../../common/exception/index.js';
 import { fetchAllPages, getChromeStorage } from '../../common/utils/index.js';
 import {
   appendBlockChildren,
@@ -100,11 +103,16 @@ const replaceSourceCode = async (page, payload, properties) => {
  * If the problem was already uploaded, the source code of that page is replaced instead.
  * @param {Object} payload - The source code and the problem ID from the page.
  * @param {Object} problemInfo - The problem title, level, tags and URL.
+ * @throws {SetupRequiredException} If no database is selected.
  * @throws {DuplicateResourceException} If the same source code was already uploaded.
  * @returns {Promise<string>} The URL of the created or updated page.
  */
 export const upload = async (payload, problemInfo) => {
   const databaseId = await getChromeStorage('notionUploadedDatabaseId');
+  if (!databaseId) {
+    throw new SetupRequiredException('Notion', 'database');
+  }
+
   const pageData = createProblemPageData({
     databaseId,
     ...payload,
