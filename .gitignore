@@ -4,3 +4,6 @@ venv
 _metadata
 .idea
 node_modules
+
+# build output (webpack)
+dist
