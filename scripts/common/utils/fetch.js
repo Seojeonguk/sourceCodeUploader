@@ -1,3 +1,5 @@
+import { logger, maskSensitiveFields } from './logger.js';
+
 export const request = async (
   url,
   method,
@@ -20,11 +22,13 @@ export const request = async (
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      console.debug(`Response : `, await response.json());
-      console.debug(`Request url : ${url}`);
-      console.debug(`Request method : ${method}`);
-      console.debug(`Request headers : `, headers);
-      console.debug(`Request body : `, body);
+      // The request body is not logged: it can contain OAuth credentials.
+      logger.debug('Request failed', {
+        response: await response.json(),
+        url,
+        method,
+        headers: maskSensitiveFields(headers),
+      });
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -38,7 +42,7 @@ export const request = async (
       retries > 0 &&
       (error.name === 'AbortError' || error.name === 'TypeError')
     ) {
-      console.warn(`Request failed, retrying... (${retries} retries left)`);
+      logger.warn(`Request failed, retrying... (${retries} retries left)`);
       return request(url, method, headers, body, retries - 1, timeout);
     }
 
