@@ -1,4 +1,5 @@
 import { ACTIONS } from '../../scripts/github/constants/actions.js';
+import { getDatabaseTitle } from '../../scripts/notion/objects/database.js';
 
 import {
   setChromeStorage,
@@ -107,13 +108,23 @@ const handleUploadedDatabaseSelection = () => {
  */
 const handleUploadedRepositorySelection = () => {
   $(document).on('click', '#repository-list li p', (e) => {
-    const uploadedRepository = e.target.innerHTML;
+    const uploadedRepository = $(e.currentTarget).text();
 
     $('#uploaded-repository').text(uploadedRepository);
 
     setChromeStorage('githubUploadedRepository', uploadedRepository);
   });
 };
+
+/**
+ * Creates an item of the repository / database list.
+ * The text is set with `.text()`, not as HTML, since it comes from GitHub / Notion.
+ * @param {string} text - The text to show.
+ * @param {Object} [attributes={}] - The attributes of the text element.
+ * @returns {jQuery} The `<li>` element.
+ */
+const createListItem = (text, attributes = {}) =>
+  $('<li>').append($('<p>').attr(attributes).text(text));
 
 /**
  * Handles click event to display the list of databases for Notion.
@@ -132,7 +143,9 @@ const showDatabases = () => {
 
     response.message.forEach((database) => {
       $('#notion-database-list').append(
-        `<li><p database-id=${database.id}>${database.title[0].plain_text}</p></li>`,
+        createListItem(getDatabaseTitle(database), {
+          'database-id': database.id,
+        }),
       );
     });
 
@@ -156,7 +169,7 @@ const showRepositories = () => {
     $('#repository-list li').remove();
 
     response.message.forEach((repository) => {
-      $('#repository-list').append(`<li><p>${repository.name}</p></li>`);
+      $('#repository-list').append(createListItem(repository.name));
     });
 
     $('#repository-list').addClass('is-active');
