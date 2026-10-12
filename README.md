@@ -86,8 +86,10 @@ flowchart LR
 
 ```bash
 npm install
-npx eslint scripts popup      # lint (airbnb-base + prettier)
-npx prettier --check .        # format check
+npm run lint            # eslint (airbnb-base + prettier)
+npm run lint:fix        # fix auto-fixable lint errors
+npm run format:check    # prettier check
+npm run format          # format with prettier
 ```
 
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
