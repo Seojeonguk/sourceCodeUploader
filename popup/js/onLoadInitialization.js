@@ -20,7 +20,7 @@ const checkPlatformInfos = () => {
     const accessToken = await getChromeStorage(`${platform}AccessToken`);
     if (accessToken) {
       $(`.${platform} .status`).addClass('green');
-      $(`.${platform} .authentication-btn`).html('Remove');
+      $(`.${platform} .authentication-btn`).text('Remove');
       $(`.${platform} .authentication-btn`).addClass('delete');
     }
 
