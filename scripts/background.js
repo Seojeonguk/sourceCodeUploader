@@ -1,4 +1,5 @@
 import { PlatformDispatcherNotFoundException } from './common/exception/index.js';
+import { logger } from './common/utils/index.js';
 import { dispatch as githubDispatcher } from './github/index.js';
 import { dispatch as notionDispatcher } from './notion/index.js';
 
@@ -16,7 +17,7 @@ const handleMessage = (request, sender, sendResponse) => {
       throw new PlatformDispatcherNotFoundException(platform);
     }
 
-    console.debug(`platform : ${platform}, request : ${action}`);
+    logger.debug(`platform : ${platform}, request : ${action}`);
 
     dispatcher(action, payload)
       .then((res) => {
