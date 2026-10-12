@@ -36,12 +36,18 @@
   height: 24px;
 }
 
-.scu-programmers-toast {
+.scu-programmers-toasts {
   position: fixed;
   right: 24px;
   bottom: 24px;
   z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   max-width: 360px;
+}
+
+.scu-programmers-toast {
   padding: 12px 16px;
   border-radius: 8px;
   color: #ffffff;

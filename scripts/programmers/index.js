@@ -31,13 +31,22 @@
     ],
     BREADCRUMB_ITEMS: 'ol.breadcrumb > li',
     FILE_LABEL: 'div.editor > ul > li.nav-item > a',
+    // The title of the result modal shown after "제출 후 채점하기".
+    RESULT_TITLE: [
+      'div.modal-header > h4',
+      '#modal-dialog h4',
+      '.modal-header h4',
+    ],
   });
+
+  const RESULT_CHECK_INTERVAL = 1000;
 
   const {
     formatLevel,
     getCategoryTags,
     getExtensionFromFileLabel,
     getExtensionFromLanguage,
+    isAcceptedResult,
     normalizeText,
   } = globalThis.SCU_PROGRAMMERS;
 
@@ -258,9 +267,19 @@
    * @param {'info'|'success'|'error'} [options.type='info'] - The type of the message.
    * @param {?string} [options.link] - A URL to open from the message.
    */
-  const showToast = (message, { type = 'info', link = null } = {}) => {
-    document.querySelector('.scu-programmers-toast')?.remove();
+  const getToastContainer = () => {
+    let container = document.querySelector('.scu-programmers-toasts');
 
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'scu-programmers-toasts';
+      document.body.appendChild(container);
+    }
+
+    return container;
+  };
+
+  const showToast = (message, { type = 'info', link = null } = {}) => {
     const toast = document.createElement('div');
     toast.className = `scu-programmers-toast scu-programmers-toast-${type}`;
     toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
@@ -275,7 +294,7 @@
       toast.append(' ', anchor);
     }
 
-    document.body.appendChild(toast);
+    getToastContainer().appendChild(toast);
     window.setTimeout(() => toast.remove(), TOAST_DURATION);
   };
 
@@ -307,6 +326,73 @@
     }
   };
 
+  const getResultTitle = () =>
+    SELECTORS.RESULT_TITLE.map((selector) =>
+      document.querySelector(selector),
+    ).find(Boolean);
+
+  // A closed modal can stay in the DOM, so check whether it is actually rendered.
+  const isRendered = (element) =>
+    Boolean(
+      element &&
+        (element.offsetWidth ||
+          element.offsetHeight ||
+          element.getClientRects().length),
+    );
+
+  const getAutoUploadPlatforms = async () => {
+    const keys = PLATFORMS.map(({ id }) => `${id}AutoUpload`);
+    const options = await chrome.storage.local.get(keys);
+
+    return PLATFORMS.filter(({ id }) => options[`${id}AutoUpload`]);
+  };
+
+  const uploadAutomatically = async () => {
+    const platforms = await getAutoUploadPlatforms();
+
+    // Upload one by one so each result message is shown.
+    // eslint-disable-next-line no-restricted-syntax -- sequential uploads
+    for (const platform of platforms) {
+      const button = document.querySelector(
+        `.scu-programmers-upload[data-platform="${platform.id}"]`,
+      );
+
+      if (button && !button.disabled) {
+        // eslint-disable-next-line no-await-in-loop -- sequential uploads
+        await handleUploadClick(button, platform);
+      }
+    }
+  };
+
+  /**
+   * Watches the result modal and uploads once per accepted result.
+   * The check is re-armed after the modal is closed, so re-submissions are also uploaded.
+   */
+  const watchAcceptedResult = () => {
+    let handled = false;
+
+    const timer = window.setInterval(() => {
+      // The extension was reloaded or removed, so this script can no longer use chrome APIs.
+      if (!chrome.runtime?.id) {
+        window.clearInterval(timer);
+        return;
+      }
+
+      const resultTitle = getResultTitle();
+      if (!isRendered(resultTitle)) {
+        handled = false;
+        return;
+      }
+
+      if (handled || !isAcceptedResult(resultTitle.textContent)) {
+        return;
+      }
+
+      handled = true;
+      uploadAutomatically();
+    }, RESULT_CHECK_INTERVAL);
+  };
+
   const initialize = () => {
     if (document.querySelector('.scu-programmers-wrapper')) {
       return true;
@@ -336,6 +422,7 @@
   };
 
   ensureSourceExtractor();
+  watchAcceptedResult();
 
   if (!initialize()) {
     const observer = new MutationObserver(() => {
