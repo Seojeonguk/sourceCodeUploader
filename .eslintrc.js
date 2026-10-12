@@ -2,6 +2,10 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    // `chrome.*` extension APIs
+    webextensions: true,
+    // `$` from library/jquery
+    jquery: true,
   },
   extends: ['airbnb-base', 'prettier'],
   parserOptions: {
@@ -9,7 +13,9 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'no-use-before-define': false,
+    'no-use-before-define': 'off',
+    // Native ES modules in the extension need explicit `.js` extensions.
+    'import/extensions': ['error', 'always', { ignorePackages: true }],
     // 추가 규칙 설정 (필요시)
   },
 };
