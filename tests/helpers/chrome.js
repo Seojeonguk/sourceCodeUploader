@@ -22,6 +22,35 @@ export const mockChromeStorage = (initial = {}) => {
 };
 
 /**
+ * Mocks `chrome.storage.session` and `chrome.tabs` on top of `mockChromeStorage()`,
+ * for the OAuth flow.
+ * @returns {{ session: Object, createdTabs: Object[], removedTabIds: number[] }}
+ *   The session values and the tabs, which the tests can check.
+ */
+export const mockChromeSessionAndTabs = () => {
+  const session = {};
+  const createdTabs = [];
+  const removedTabIds = [];
+
+  globalThis.chrome.storage.session = {
+    get: async (key) => ({ [key]: structuredClone(session[key]) }),
+    set: async (values) => Object.assign(session, structuredClone(values)),
+  };
+  globalThis.chrome.tabs = {
+    create: async ({ url }) => {
+      const tab = { id: 100 + createdTabs.length, url };
+      createdTabs.push(tab);
+      return tab;
+    },
+    remove: async (tabId) => {
+      removedTabIds.push(tabId);
+    },
+  };
+
+  return { session, createdTabs, removedTabIds };
+};
+
+/**
  * Creates a JSON response for a mocked `fetch`.
  * @param {Object} body - The response body.
  * @param {number} [status=200] - The HTTP status code.

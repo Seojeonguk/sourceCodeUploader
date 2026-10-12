@@ -5,11 +5,8 @@ import {
   clearExpiredLogin,
   commit,
   getAuthenticatedUserRepositories,
-  getAccessToken,
-  getUserInfo,
   logout,
   openOauthPage,
-  saveInfo,
 } from './services/index.js';
 
 /**
@@ -23,11 +20,6 @@ import {
 export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
-    [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
-      const accessToken = await getAccessToken(payload);
-      const githubID = await getUserInfo(accessToken);
-      saveInfo(accessToken, githubID);
-    },
     [ACTIONS.GET_REPOSITORIES]: async () => getAuthenticatedUserRepositories(),
     [ACTIONS.COMMIT]: async () => commit(payload),
     [ACTIONS.LOGOUT]: async () => logout(),

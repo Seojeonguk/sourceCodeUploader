@@ -1,11 +1,21 @@
-const currentUri = window.location.href;
-const code = currentUri.match(/code=([^&]*)/);
-if (code) {
-  const payload = { code: code[1] };
+(() => {
+  // The OAuth redirect page is `https://github.com/?code=...&state=...`.
+  // GitHub and Notion both redirect here. Other GitHub pages are ignored.
+  if (window.location.pathname !== '/') {
+    return;
+  }
 
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const state = params.get('state');
+  if (!code || !state) {
+    return;
+  }
+
+  // The background checks the state, which also tells it the platform.
   chrome.runtime.sendMessage({
-    platform: currentUri.includes('state') ? 'notion' : 'github',
-    action: 'requestAndSaveAccessToken',
-    payload,
+    platform: 'oauth',
+    action: 'complete',
+    payload: { code, state },
   });
-}
+})();

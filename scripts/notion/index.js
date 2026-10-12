@@ -1,11 +1,9 @@
 import { SetupRequiredException } from '../common/exception/index.js';
-import { setChromeStorage } from '../common/utils/index.js';
 import { ACTIONS as NOTION_ACTIONS } from '../solvedAC/constants/actions.js';
 import { dispatch as solvedAC } from '../solvedAC/index.js';
 import { ACTIONS } from './constants/actions.js';
 import {
   clearExpiredLogin,
-  getAccessToken,
   logout,
   openOauthPage,
 } from './services/authService.js';
@@ -22,11 +20,6 @@ import { getDatabases, upload } from './services/databaseService.js';
 export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
-    [ACTIONS.REQUEST_AND_SAVE_ACCESS_TOKEN]: async () => {
-      const accessToken = await getAccessToken(payload);
-      setChromeStorage('notionAccessToken', accessToken);
-      return 'success';
-    },
     [ACTIONS.GET_DATABASES]: async () => getDatabases(),
     [ACTIONS.UPLOAD]: async () => {
       // Programmers sends the problem info from the page. BOJ problems are looked up on solved.ac.

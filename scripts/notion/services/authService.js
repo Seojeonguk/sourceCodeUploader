@@ -1,10 +1,11 @@
 import {
-  closeLatestTab,
   getChromeStorage,
   logger,
   removeChromeStorage,
   request,
+  setChromeStorage,
 } from '../../common/utils/index.js';
+import { openOAuthPage } from '../../oauth/state.js';
 import { NOTION_CONFIG } from '../config/config.js';
 
 import {
@@ -24,16 +25,18 @@ const SETTING_KEYS = Object.freeze([
 const createBasicAuthHeader = () =>
   `Basic ${btoa(`${NOTION_CONFIG.CLIENT_ID}:${NOTION_CONFIG.CLIENT_SECRET}`)}`;
 
-export const openOauthPage = () => {
-  let parameters = `owner=user&client_id=${NOTION_CONFIG.CLIENT_ID}&response_type=code`;
-  if (NOTION_CONFIG.REDIRECT_URL) {
-    parameters += `&redirect_uri=${NOTION_CONFIG.REDIRECT_URL}`;
-  }
+export const openOauthPage = () =>
+  openOAuthPage('notion', (state) => {
+    const params = new URLSearchParams({
+      owner: 'user',
+      client_id: NOTION_CONFIG.CLIENT_ID,
+      response_type: 'code',
+      redirect_uri: NOTION_CONFIG.REDIRECT_URL,
+      state,
+    });
 
-  const url = `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${parameters}`;
-
-  chrome.tabs.create({ url });
-};
+    return `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${params}`;
+  });
 
 export const getAccessToken = async (payload) => {
   if (!payload?.code) {
@@ -61,9 +64,16 @@ export const getAccessToken = async (payload) => {
     throw new NotFoundException('Notion', 'access token');
   }
 
-  closeLatestTab();
-
   return accessToken;
+};
+
+/**
+ * Logs in with the authorization code from the OAuth redirect.
+ * @param {string} code - The authorization code.
+ */
+export const login = async (code) => {
+  const accessToken = await getAccessToken({ code });
+  setChromeStorage('notionAccessToken', accessToken);
 };
 
 /**

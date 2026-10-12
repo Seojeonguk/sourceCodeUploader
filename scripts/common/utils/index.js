@@ -1,5 +1,4 @@
 import { getResourceURL, sendMessage } from './chrome/runtime.js';
-import { closeLatestTab } from './chrome/tabs.js';
 import { encodeBase64Unicode } from './encoding.js';
 import { createGithubAuthHeader, request } from './fetch.js';
 import { logger } from './logger.js';
@@ -23,7 +22,6 @@ export {
   setChromeStorage,
   getChromeStorage,
   removeChromeStorage,
-  closeLatestTab,
   getResourceURL,
   sendMessage,
   encodeBase64Unicode,

@@ -2,10 +2,12 @@ import { PlatformDispatcherNotFoundException } from './common/exception/index.js
 import { logger } from './common/utils/index.js';
 import { dispatch as githubDispatcher } from './github/index.js';
 import { dispatch as notionDispatcher } from './notion/index.js';
+import { dispatch as oauthDispatcher } from './oauth/index.js';
 
 const platformDispatchers = {
   github: githubDispatcher,
   notion: notionDispatcher,
+  oauth: oauthDispatcher,
 };
 
 const handleMessage = (request, sender, sendResponse) => {
@@ -19,7 +21,7 @@ const handleMessage = (request, sender, sendResponse) => {
 
     logger.debug(`platform : ${platform}, request : ${action}`);
 
-    dispatcher(action, payload)
+    dispatcher(action, payload, sender)
       .then((res) => {
         sendResponse({ ok: true, message: res });
       })
