@@ -1,6 +1,6 @@
 (() => {
   // The OAuth redirect page is `https://github.com/?code=...&state=...`.
-  // GitHub and Notion both redirect here. Other GitHub pages are ignored.
+  // Notion redirects here. Other GitHub pages are ignored.
   if (window.location.pathname !== '/') {
     return;
   }

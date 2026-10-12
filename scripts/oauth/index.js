@@ -1,4 +1,3 @@
-import { login as githubLogin } from '../github/services/authService.js';
 import { login as notionLogin } from '../notion/services/authService.js';
 import { consumeOAuthState } from './state.js';
 
@@ -6,8 +5,8 @@ const ACTIONS = Object.freeze({
   COMPLETE: 'complete',
 });
 
+// GitHub logs in with the device flow, so only Notion uses the redirect.
 const LOGINS = Object.freeze({
-  github: githubLogin,
   notion: notionLogin,
 });
 

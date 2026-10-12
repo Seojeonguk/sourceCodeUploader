@@ -9,18 +9,14 @@
 
 ## Authorize
 
-- Click the `Authorize` button on the popup page to grant access to GitHub.
-
-  ![Click authorize button](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/7266a962-5d57-420e-b3e3-f6d2bda2742d)
-
-- On the GitHub page, click the `Authorize` button to allow the extension to access GitHub.
-
-  ![Access github authorize](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/8ac62feb-97e0-4385-a21e-ff2a59621166)
-
-- Once authorized, the window will redirect github and close automatically.
+- Click the `Authorize` button on the popup page. A login page opens with a code.
+- Click `Open GitHub` (the code is copied as well), paste the code on GitHub and authorize Source Code Uploader.
+- The login page shows that you are logged in and closes automatically.
 - Check if the status color has turned green and if the authorize button has changed to a remove button.
 
   ![Check authorize result](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/7a48b831-c3df-4abc-9a91-d930f4d48470)
+
+The extension logs in with the GitHub [device flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow), which needs only the client ID, so no client secret is shipped in the extension. **Enable Device Flow** must be turned on in the settings of the GitHub OAuth App.
 
 ## Select Repository for Upload
 
@@ -38,7 +34,8 @@
 
 ## Remove authorize
 
-- Click the `Remove` button on the popup page.
+- Click the `Remove` button on the popup page. The saved login and repository are removed.
+- GitHub cannot revoke a token without the client secret, so the [authorized apps page](https://github.com/settings/applications) opens. Revoke Source Code Uploader there if you want to remove the access on GitHub as well.
 
   ![Remove authorize](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/50fe3dfb-ce77-40d7-8c61-b11b1e2745b2)
 

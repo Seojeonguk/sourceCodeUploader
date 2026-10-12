@@ -19,7 +19,7 @@ const isExpired = ({ createdAt }, now) => now - createdAt >= STATE_TTL;
 /**
  * Opens the OAuth authorization page with a new `state`, and remembers which platform
  * and tab it belongs to until the redirect comes back.
- * @param {'github'|'notion'} platform - The platform to log in to.
+ * @param {'notion'} platform - The platform to log in to.
  * @param {(state: string) => string} createUrl - Creates the authorization URL with the state.
  */
 export const openOAuthPage = async (platform, createUrl) => {
@@ -49,7 +49,7 @@ export const openOAuthPage = async (platform, createUrl) => {
  * @param {string} state - The state from the redirect URL.
  * @param {number} [tabId] - The tab the redirect came from.
  * @throws {InvalidRequestException} If the state is unknown, used, expired or from another tab.
- * @returns {Promise<'github'|'notion'>} The platform the state was created for.
+ * @returns {Promise<'notion'>} The platform the state was created for.
  */
 export const consumeOAuthState = async (state, tabId) => {
   const states = await getPendingStates();

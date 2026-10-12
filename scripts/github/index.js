@@ -6,7 +6,9 @@ import {
   commit,
   getAuthenticatedUserRepositories,
   logout,
-  openOauthPage,
+  openLoginPage,
+  pollDeviceLogin,
+  startDeviceLogin,
 } from './services/index.js';
 
 /**
@@ -19,7 +21,9 @@ import {
  */
 export async function dispatch(action, payload) {
   const actions = {
-    [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
+    [ACTIONS.OPEN_OAUTH_PAGE]: async () => openLoginPage(),
+    [ACTIONS.START_DEVICE_LOGIN]: async () => startDeviceLogin(),
+    [ACTIONS.POLL_DEVICE_LOGIN]: async () => pollDeviceLogin(),
     [ACTIONS.GET_REPOSITORIES]: async () => getAuthenticatedUserRepositories(),
     [ACTIONS.COMMIT]: async () => commit(payload),
     [ACTIONS.LOGOUT]: async () => logout(),

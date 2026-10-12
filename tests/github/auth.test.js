@@ -21,30 +21,20 @@ describe('GitHub logout', () => {
     delete globalThis.chrome;
   });
 
-  it('revokes the access token and removes the saved values', async () => {
+  it('removes the saved values without the client secret', async () => {
     const storage = mockChromeStorage(settings);
-    globalThis.fetch = mock.fn(async () => new Response(null, { status: 204 }));
+    globalThis.fetch = mock.fn(async () => {
+      throw new Error('fetch should not be called');
+    });
 
-    await dispatch('logout');
-
-    const [url, { method, headers, body }] =
-      globalThis.fetch.mock.calls[0].arguments;
-    assert.match(url, /\/applications\/[^/]+\/token$/);
-    assert.equal(method, 'DELETE');
-    assert.match(headers.Authorization, /^Basic /);
-    assert.deepEqual(JSON.parse(body), { access_token: 'token' });
-    assert.deepEqual(storage, {});
-  });
-
-  it('removes the saved values even if revoking fails', async () => {
-    const storage = mockChromeStorage(settings);
-    globalThis.fetch = mock.fn(async () =>
-      jsonResponse({ message: 'Not Found' }, 404),
-    );
-
-    await dispatch('logout');
+    const result = await dispatch('logout');
 
     assert.deepEqual(storage, {});
+    assert.equal(globalThis.fetch.mock.callCount(), 0);
+    // The user can revoke the access on this page.
+    assert.deepEqual(result, {
+      authorizedAppsUrl: 'https://github.com/settings/applications',
+    });
   });
 });
 

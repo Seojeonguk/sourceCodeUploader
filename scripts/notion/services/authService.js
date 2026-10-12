@@ -11,6 +11,7 @@ import { NOTION_CONFIG } from '../config/config.js';
 import {
   InvalidRequestException,
   NotFoundException,
+  SetupRequiredException,
 } from '../../common/exception/index.js';
 
 // Saved when the user logs in.
@@ -22,11 +23,40 @@ const SETTING_KEYS = Object.freeze([
   'notionUploadedDatabaseId',
 ]);
 
-const createBasicAuthHeader = () =>
-  `Basic ${btoa(`${NOTION_CONFIG.CLIENT_ID}:${NOTION_CONFIG.CLIENT_SECRET}`)}`;
+/**
+ * Sends a request to the proxy/notion-oauth worker, which adds the client secret.
+ * @param {string} path - `/token` or `/revoke`.
+ * @param {Object} body - The request body.
+ * @param {string} proxyUrl - The URL of the deployed worker.
+ * @throws {SetupRequiredException} If the proxy URL is not set.
+ * @returns {Promise<Object>} The response from Notion.
+ */
+const requestTokenProxy = (path, body, proxyUrl) => {
+  if (!proxyUrl) {
+    throw new SetupRequiredException('Notion', 'proxy');
+  }
 
-export const openOauthPage = () =>
-  openOAuthPage('notion', (state) => {
+  return request(
+    `${proxyUrl.replace(/\/+$/, '')}${path}`,
+    'POST',
+    { Accept: 'application/json', 'Content-Type': 'application/json' },
+    JSON.stringify(body),
+  );
+};
+
+/**
+ * Opens the Notion OAuth authorization page.
+ * @param {string} [proxyUrl] - The URL of the token proxy, checked before opening the page.
+ * @throws {SetupRequiredException} If the proxy URL is not set.
+ */
+export const openOauthPage = async (
+  proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL,
+) => {
+  if (!proxyUrl) {
+    throw new SetupRequiredException('Notion', 'proxy');
+  }
+
+  return openOAuthPage('notion', (state) => {
     const params = new URLSearchParams({
       owner: 'user',
       client_id: NOTION_CONFIG.CLIENT_ID,
@@ -37,28 +67,28 @@ export const openOauthPage = () =>
 
     return `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${params}`;
   });
+};
 
-export const getAccessToken = async (payload) => {
+/**
+ * Exchanges the authorization code for an access token through the token proxy.
+ * @param {Object} payload
+ * @param {string} payload.code - The authorization code.
+ * @param {string} [proxyUrl] - The URL of the token proxy.
+ * @returns {Promise<string>} The access token.
+ */
+export const getAccessToken = async (
+  payload,
+  proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL,
+) => {
   if (!payload?.code) {
     throw new InvalidRequestException('Notion', 'code');
   }
 
-  const { code } = payload;
-
-  const url = `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/token`;
-  const data = JSON.stringify({
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: NOTION_CONFIG.REDIRECT_URL,
-  });
-
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    Authorization: createBasicAuthHeader(),
-  };
-
-  const response = await request(url, 'POST', headers, data);
+  const response = await requestTokenProxy(
+    '/token',
+    { code: payload.code },
+    proxyUrl,
+  );
   const accessToken = response?.access_token;
   if (!accessToken) {
     throw new NotFoundException('Notion', 'access token');
@@ -71,36 +101,32 @@ export const getAccessToken = async (payload) => {
  * Logs in with the authorization code from the OAuth redirect.
  * @param {string} code - The authorization code.
  */
-export const login = async (code) => {
-  const accessToken = await getAccessToken({ code });
+export const login = async (code, proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL) => {
+  const accessToken = await getAccessToken({ code }, proxyUrl);
   setChromeStorage('notionAccessToken', accessToken);
 };
 
 /**
- * Revokes the access token on Notion.
+ * Revokes the access token on Notion through the token proxy.
  * @param {string} accessToken - The access token to revoke.
+ * @param {string} [proxyUrl] - The URL of the token proxy.
  */
-export const revokeAccessToken = async (accessToken) => {
-  const url = `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/revoke`;
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'Notion-Version': NOTION_CONFIG.API_VERSION,
-    Authorization: createBasicAuthHeader(),
-  };
-
-  await request(url, 'POST', headers, JSON.stringify({ token: accessToken }));
+export const revokeAccessToken = async (
+  accessToken,
+  proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL,
+) => {
+  await requestTokenProxy('/revoke', { token: accessToken }, proxyUrl);
 };
 
 /**
  * Logs out: revokes the access token and removes the login and the selected database.
  * The saved values are removed even if revoking fails, such as when the token has already expired.
  */
-export const logout = async () => {
+export const logout = async (proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL) => {
   const accessToken = await getChromeStorage('notionAccessToken');
   if (accessToken) {
     try {
-      await revokeAccessToken(accessToken);
+      await revokeAccessToken(accessToken, proxyUrl);
     } catch (e) {
       logger.warn('Failed to revoke the Notion access token.', e.message);
     }

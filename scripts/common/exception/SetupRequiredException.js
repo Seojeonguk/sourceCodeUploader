@@ -2,7 +2,7 @@ export class SetupRequiredException extends Error {
   /**
    * Thrown when the user has not finished the setup in the popup.
    * @param {string} platform - The platform, such as `GitHub`.
-   * @param {'login'|'login-expired'|'repository'|'database'} setting - The missing setting.
+   * @param {'login'|'login-expired'|'proxy'|'repository'|'database'} setting - The missing setting.
    */
   constructor(platform, setting) {
     super(SetupRequiredException.createMessage(platform, setting));
@@ -17,6 +17,8 @@ export class SetupRequiredException extends Error {
     switch (setting) {
       case 'login':
         return `Log in to ${platform} in the extension popup first.`;
+      case 'proxy':
+        return `Set the URL of the ${platform} token proxy (TOKEN_PROXY_URL) in the extension config first.`;
       case 'login-expired':
         return `Your ${platform} login has expired. Log in again in the extension popup.`;
       default:

@@ -15,7 +15,7 @@
 - **GitHub** — 선택한 저장소의 `{플랫폼}/{문제}.{확장자}`에 커밋해요. 내용이 같으면 커밋하지 않아요.
 - **Notion** — 선택한 데이터베이스에 문제 제목 · 난이도 · 태그를 속성으로, 소스 코드를 코드 블록으로 담은 페이지를 만들어요.
 - **문제 정보** — [solved.ac](https://solved.ac)에서 제목 · 난이도 · 태그를 가져와요.
-- **OAuth 로그인** — 팝업에서 GitHub · Notion에 로그인하고, 목록에서 저장소 · 데이터베이스를 골라요.
+- **로그인** — 팝업에서 GitHub(기기 코드) · Notion(OAuth)에 로그인하고, 목록에서 저장소 · 데이터베이스를 골라요. 확장 프로그램에는 client secret이 들어 있지 않아요.
 - **다크 모드** — 업로드 아이콘이 사이트 테마를 따라가요.
 
 ## 지원 플랫폼
@@ -33,11 +33,12 @@
 2. `chrome://extensions/`(**Chrome › 설정 › 확장 프로그램**)를 열어요.
 3. 오른쪽 위 **개발자 모드**를 켜요.
 4. **압축해제된 확장 프로그램을 로드합니다**를 누르고 저장소 폴더(`manifest.json`이 있는 폴더)를 선택해요.
+5. (Notion을 쓸 때만) Notion client secret을 보관하는 [Notion OAuth 프록시](proxy/notion-oauth/README.md)를 배포하고, 그 URL을 `scripts/notion/config/config.js`의 `TOKEN_PROXY_URL`에 넣어요.
 
 ## 사용 방법
 
 1. 확장 프로그램 아이콘을 눌러 팝업을 열어요.
-2. **GitHub** — `Authorize`를 누르고 접근을 허용한 뒤, 업로드할 저장소를 골라요. ([가이드](scripts/github/README.md))
+2. **GitHub** — `Authorize`를 누르면 로그인 페이지에 코드가 나와요. GitHub에서 코드를 입력하고 접근을 허용한 뒤, 업로드할 저장소를 골라요. ([가이드](scripts/github/README.md))
 3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. ([가이드](scripts/notion/README.md))
 4. (선택) 플랫폼별 **자동 업로드**를 켜요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
@@ -53,11 +54,14 @@ flowchart LR
     BG -->|host_permissions| SA["solved.ac API"]
     BG -->|host_permissions| GH["GitHub API"]
     BG -->|host_permissions| NO["Notion API"]
+    BG -->|토큰 교환 · 취소| PX["Notion OAuth 프록시<br/>(Cloudflare Worker)"]
+    PX --> NO
 ```
 
 - **Content script**가 문제 페이지에서 문제 · 언어 · 제출 정보를 파싱하고 업로드 버튼을 그려요.
 - **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion · solved.ac API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
+- **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 로그인해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. OAuth 리다이렉트는 로그인용으로 연 탭에서 보낸 `state`가 맞을 때만 받아요.
 - **백준 소스 코드 다운로드**는 `declarativeNetRequest`(`rules.json`)로 사이트가 요구하는 요청 헤더를 맞춰요.
 
 ### 권한
@@ -74,13 +78,15 @@ flowchart LR
 ```text
 ├─ manifest.json
 ├─ rules.json               # declarativeNetRequest 규칙
-├─ popup/                   # 팝업 UI (html · css · js)
+├─ popup/                   # 팝업 UI와 GitHub 로그인 페이지 (html · css · js)
+├─ proxy/notion-oauth/      # Notion client secret을 보관하는 Cloudflare Worker
 └─ scripts/
    ├─ background.js         # service worker, 메시지 라우팅
    ├─ boj/                  # 백준 content script (파싱 · 버튼 · 자동 업로드)
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
-   ├─ github/               # OAuth, 저장소 목록, 커밋
-   ├─ notion/               # OAuth, 데이터베이스 목록, 페이지 · 블록 생성
+   ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋
+   ├─ notion/               # OAuth (프록시 경유), 데이터베이스 목록, 페이지 · 블록 생성
+   ├─ oauth/                # Notion 리다이렉트의 OAuth state 확인
    ├─ solvedAC/             # 문제 정보
    └─ common/               # 예외, chrome · fetch · 인코딩 유틸
 ```

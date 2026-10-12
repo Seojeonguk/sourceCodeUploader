@@ -1,0 +1,13 @@
+name = "scu-notion-oauth"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# The redirect URI registered in the Notion integration.
+NOTION_REDIRECT_URI = "https://github.com"
+# The extension ID shown on chrome://extensions.
+ALLOWED_EXTENSION_ID = ""
+
+# Set the client ID and secret as secrets, not here:
+#   npx wrangler secret put NOTION_CLIENT_ID
+#   npx wrangler secret put NOTION_CLIENT_SECRET
