@@ -1,4 +1,4 @@
-import { ACTIONS } from "./constants/actions.js";
+import { ACTIONS } from './constants/actions.js';
 
 import {
   commit,

@@ -1,9 +1,9 @@
-import { setChromeStorage } from "../common/utils/index.js";
-import { ACTIONS as NOTION_ACTIONS } from "../solvedAC/constants/actions.js";
-import { dispatch as solvedAC } from "../solvedAC/index.js";
-import { ACTIONS } from "./constants/actions.js";
-import { getAccessToken, openOauthPage } from "./services/authService.js";
-import { getDatabases, upload } from "./services/databaseService.js";
+import { setChromeStorage } from '../common/utils/index.js';
+import { ACTIONS as NOTION_ACTIONS } from '../solvedAC/constants/actions.js';
+import { dispatch as solvedAC } from '../solvedAC/index.js';
+import { ACTIONS } from './constants/actions.js';
+import { getAccessToken, openOauthPage } from './services/authService.js';
+import { getDatabases, upload } from './services/databaseService.js';
 
 /**
  * Dispatches an action and executes the corresponding handler.

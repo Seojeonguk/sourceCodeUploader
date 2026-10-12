@@ -1,7 +1,7 @@
-import { NotFoundException } from "../../common/exception/index.js";
-import { request } from "../../common/utils/index.js";
-import { SOLVEDAC_CONFIG } from "../config/config.js";
-import { LEVELS } from "../constants/levels.js";
+import { NotFoundException } from '../../common/exception/index.js';
+import { request } from '../../common/utils/index.js';
+import { SOLVEDAC_CONFIG } from '../config/config.js';
+import { LEVELS } from '../constants/levels.js';
 
 /**
  * Asynchronous function to fetch problem information using the given problem ID.

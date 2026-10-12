@@ -1,4 +1,4 @@
-import { safeGetText, safeQuerySelector } from "../utils/index.js";
+import { safeGetText, safeQuerySelector } from '../utils/index.js';
 
 import {
   LANGUAGES,

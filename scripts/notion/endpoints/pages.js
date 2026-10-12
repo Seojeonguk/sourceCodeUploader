@@ -1,5 +1,5 @@
-import { getChromeStorage, request } from "../../common/utils/index.js";
-import { NOTION_CONFIG } from "../config/config.js";
+import { getChromeStorage, request } from '../../common/utils/index.js';
+import { NOTION_CONFIG } from '../config/config.js';
 
 export const createPage = async (data) => {
   const accessToken = await getChromeStorage('notionAccessToken');

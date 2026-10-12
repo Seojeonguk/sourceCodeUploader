@@ -1,4 +1,4 @@
-import { getChromeStorage } from "../../scripts/common/utils/index.js";
+import { getChromeStorage } from '../../scripts/common/utils/index.js';
 
 export const initializeOnLoad = () => {
   checkPlatformInfos();

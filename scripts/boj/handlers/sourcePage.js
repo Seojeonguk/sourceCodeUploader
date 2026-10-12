@@ -1,4 +1,4 @@
-import { DARK_THEMES } from "../constants/index.js";
+import { DARK_THEMES } from '../constants/index.js';
 
 import {
   getActiveEditorTheme,
@@ -8,7 +8,6 @@ import {
   initializePlatformButtons,
   getSubmissionSourceCode,
 } from '../utils/index.js';
-
 
 /**
  * Initializes the source page with the necessary functionality.

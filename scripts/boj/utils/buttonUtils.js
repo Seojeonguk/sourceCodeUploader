@@ -1,6 +1,6 @@
-import { getResourceURL, sendMessage } from "../../common/utils/index.js";
-import { PLATFORMS } from "../constants/index.js";
-import { createElement } from "../utils/index.js";
+import { getResourceURL, sendMessage } from '../../common/utils/index.js';
+import { PLATFORMS } from '../constants/index.js';
+import { createElement } from '../utils/index.js';
 
 import {
   ParseException,

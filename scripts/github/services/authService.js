@@ -1,10 +1,9 @@
-import { GITHUB_CONFIG } from "../config/config.js";
+import { GITHUB_CONFIG } from '../config/config.js';
 
 import {
   InvalidRequestException,
   NotFoundException,
 } from '../../common/exception/index.js';
-
 
 import {
   createGithubAuthHeader,

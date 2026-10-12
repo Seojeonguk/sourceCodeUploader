@@ -1,5 +1,5 @@
-import { getChromeStorage } from "../../common/utils/index.js";
-import { LANGUAGES } from "../constants/index.js";
+import { getChromeStorage } from '../../common/utils/index.js';
+import { LANGUAGES } from '../constants/index.js';
 
 import {
   ParseException,
