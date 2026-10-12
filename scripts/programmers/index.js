@@ -3,36 +3,10 @@
   const RESPONSE_EVENT = 'SCU_PROGRAMMERS_SOURCE_RESPONSE';
   const REQUEST_EVENT = 'SCU_PROGRAMMERS_SOURCE_REQUEST';
 
-  const LANGUAGE_EXTENSIONS = Object.freeze({
-    c: 'c',
-    'c#': 'cs',
-    'c++': 'cpp',
-    clang: 'c',
-    cpp: 'cpp',
-    c_cpp: 'cpp',
-    csharp: 'cs',
-    cs: 'cs',
-    go: 'go',
-    java: 'java',
-    javascript: 'js',
-    js: 'js',
-    kotlin: 'kt',
-    mysql: 'sql',
-    oracle: 'sql',
-    php: 'php',
-    python: 'py',
-    python3: 'py',
-    py: 'py',
-    ruby: 'rb',
-    scala: 'scala',
-    swift: 'swift',
-    typescript: 'ts',
-    ts: 'ts',
-  });
+  const { getExtensionFromLanguage, normalizeText } =
+    globalThis.SCU_PROGRAMMERS;
 
   let sourceExtractorReady;
-
-  const normalizeText = (value) => value?.replace(/\s+/g, ' ').trim() ?? '';
 
   const ensureSourceExtractor = () => {
     if (sourceExtractorReady) {
@@ -163,13 +137,8 @@
     return selectedLanguage?.toLowerCase() ?? 'javascript';
   };
 
-  const getFileExtension = () => {
-    const language = getLanguage();
-    const normalized = language.replace(/[^a-z0-9_+#]/g, '');
-    return (
-      LANGUAGE_EXTENSIONS[normalized] ?? LANGUAGE_EXTENSIONS[language] ?? 'txt'
-    );
-  };
+  const getFileExtension = () =>
+    getExtensionFromLanguage(getLanguage()) ?? 'txt';
 
   const getTextareaSourceCode = () => {
     const textareas = [...document.querySelectorAll('textarea')];
