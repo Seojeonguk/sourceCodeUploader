@@ -3,14 +3,13 @@
  * @param {string} key - The key of the value to be read from local storage.
  * @returns {Promise<any>} A promise that resolves with the value from local storage.
  */
-export const getChromeStorage = async (key) => {
-  return new Promise((resolve) => {
+export const getChromeStorage = async (key) =>
+  new Promise((resolve) => {
     chrome.storage.local.get([key], (res) => {
       console.debug(`[Storage] Getting key '${key}' with value '${res[key]}'`);
       resolve(res[key]);
     });
   });
-};
 
 /**
  * Removes a value from Chrome local storage.

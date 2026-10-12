@@ -32,14 +32,12 @@ export const createPageProperty = (type, payload) => {
  * @param {Date} [param.end] - The end date for the date property
  * @returns {Object} - The created date property object
  */
-export const createDate = ({ start, end }) => {
-  return {
-    [PROPERTY_TYPE.DATE]: {
-      start,
-      end,
-    },
-  };
-};
+export const createDate = ({ start, end }) => ({
+  [PROPERTY_TYPE.DATE]: {
+    start,
+    end,
+  },
+});
 
 /**
  * Create a multi-select property.
@@ -51,15 +49,13 @@ export const createDate = ({ start, end }) => {
  * @param {string} [params.selections.color] - The color of the selection
  * @returns {Object} - The created multi-select property object
  */
-export const createMultiSelect = ({ selections = [] }) => {
-  return {
-    [PROPERTY_TYPE.MULTI_SELECT]: selections.map(({ color, id, name }) => ({
-      id,
-      name,
-      color,
-    })),
-  };
-};
+export const createMultiSelect = ({ selections = [] }) => ({
+  [PROPERTY_TYPE.MULTI_SELECT]: selections.map(({ color, id, name }) => ({
+    id,
+    name,
+    color,
+  })),
+});
 
 /**
  * Create a select property.
@@ -70,15 +66,13 @@ export const createMultiSelect = ({ selections = [] }) => {
  * @param {string} params.name - The name of the select option
  * @returns {Object} - The created select property object
  */
-export const createSelect = ({ color, id, name }) => {
-  return {
-    [PROPERTY_TYPE.SELECT]: {
-      color,
-      name,
-      id,
-    },
-  };
-};
+export const createSelect = ({ color, id, name }) => ({
+  [PROPERTY_TYPE.SELECT]: {
+    color,
+    name,
+    id,
+  },
+});
 
 /**
  * Create a title property.
@@ -87,13 +81,11 @@ export const createSelect = ({ color, id, name }) => {
  * @param {string} params.text - The text content of the title
  * @returns {Object} - The created title property object
  */
-export const createTitle = ({ text }) => {
-  return {
-    id: PROPERTY_TYPE.TITLE,
-    type: PROPERTY_TYPE.TITLE,
-    title: createRichTextArray(text),
-  };
-};
+export const createTitle = ({ text }) => ({
+  id: PROPERTY_TYPE.TITLE,
+  type: PROPERTY_TYPE.TITLE,
+  title: createRichTextArray(text),
+});
 
 /**
  * Create a URL property.
@@ -102,8 +94,6 @@ export const createTitle = ({ text }) => {
  * @param {string} params.url - The URL value for the property
  * @returns {Object} - The created URL property object
  */
-export const createUrl = ({ url }) => {
-  return {
-    url,
-  };
-};
+export const createUrl = ({ url }) => ({
+  url,
+});

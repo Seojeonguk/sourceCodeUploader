@@ -59,8 +59,8 @@
     return sourceExtractorReady;
   };
 
-  const sendGithubCommitMessage = (payload) => {
-    return new Promise((resolve) => {
+  const sendGithubCommitMessage = (payload) =>
+    new Promise((resolve) => {
       chrome.runtime.sendMessage(
         {
           platform: 'github',
@@ -70,7 +70,6 @@
         (response) => resolve(response),
       );
     });
-  };
 
   const createUploadButton = () => {
     const wrapper = document.createElement('div');
@@ -107,7 +106,7 @@
   };
 
   const ensureContainerPositioning = (container) => {
-    const position = window.getComputedStyle(container).position;
+    const { position } = window.getComputedStyle(container);
     if (position === 'static') {
       container.style.position = 'relative';
     }

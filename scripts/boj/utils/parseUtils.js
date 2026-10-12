@@ -1,4 +1,4 @@
-import { safeGetText, safeQuerySelector } from '../utils/index.js';
+import { safeGetText, safeQuerySelector } from './index.js';
 
 import {
   LANGUAGES,
@@ -92,9 +92,8 @@ export const getSubmissionSourceCode = () => {
  * @returns {HTMLElement} The DOM element of the status table.
  * @throws {Error} If the status table is not found.
  */
-export const getSubmissionStatusTable = () => {
-  return safeQuerySelector(SELECTORS.STATUS_TABLE);
-};
+export const getSubmissionStatusTable = () =>
+  safeQuerySelector(SELECTORS.STATUS_TABLE);
 
 /**
  * Parses the problem title from the result table.

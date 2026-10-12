@@ -22,7 +22,7 @@ export function initializeButtonEvents() {
  * Closes the select list when clicking outside of it.
  */
 const closeSelectListOnOutsideClick = () => {
-  $(document).on('click', function () {
+  $(document).on('click', () => {
     $('.select-list ul').removeClass('is-active');
     $('.content-wrapper').removeClass('overlay');
   });
@@ -53,7 +53,7 @@ const handleGithubAuthenticationBtn = () => {
 
     removeChromeStorage('githubAccessToken');
     removeChromeStorage('githubUploadedRepository');
-    location.reload(true);
+    window.location.reload(true);
   });
 };
 
@@ -72,7 +72,7 @@ const handleNotionAuthenticationBtn = () => {
     removeChromeStorage(`notionUploadedDatabase`);
     removeChromeStorage(`notionUploadedDatabases`);
     removeChromeStorage(`notionUploadedDatabaseId`);
-    location.reload(true);
+    window.location.reload(true);
   });
 };
 
@@ -82,15 +82,19 @@ const handleNotionAuthenticationBtn = () => {
  * It then updates the UI to display the selected database name and stores both the name and ID in Chrome storage.
  */
 const handleUploadedDatabaseSelection = () => {
-  $(document).on('click', '#notion-database-list li p', function (e) {
-    const uploadedDatabase = $(this).text();
-    const uploadedDatabaseId = $(this).attr('database-id');
+  $(document).on(
+    'click',
+    '#notion-database-list li p',
+    function handleDatabaseClick() {
+      const uploadedDatabase = $(this).text();
+      const uploadedDatabaseId = $(this).attr('database-id');
 
-    $('#uploaded-database').text(uploadedDatabase);
+      $('#uploaded-database').text(uploadedDatabase);
 
-    setChromeStorage('notionUploadedDatabase', uploadedDatabase);
-    setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
-  });
+      setChromeStorage('notionUploadedDatabase', uploadedDatabase);
+      setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
+    },
+  );
 };
 
 /**
@@ -98,7 +102,7 @@ const handleUploadedDatabaseSelection = () => {
  * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
  */
 const handleUploadedRepositorySelection = () => {
-  $(document).on('click', '#repository-list li p', function (e) {
+  $(document).on('click', '#repository-list li p', (e) => {
     const uploadedRepository = e.target.innerHTML;
 
     $('#uploaded-repository').text(uploadedRepository);
@@ -162,7 +166,7 @@ const showRepositories = () => {
  * Stops event propagation to prevent further event handling.
  */
 const toggleDarkMode = () => {
-  $('.dark-light').on('click', function (e) {
+  $('.dark-light').on('click', (e) => {
     $('body').toggleClass('light-mode');
     e.stopPropagation();
   });

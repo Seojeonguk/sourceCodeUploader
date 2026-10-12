@@ -32,6 +32,7 @@ export const getAuthenticatedUserRepositories = async () => {
 
 const sanitizePathSegment = (value, fallback) => {
   const sanitized = String(value || '')
+    // eslint-disable-next-line no-control-regex -- strip control characters from file names
     .replace(/[<>:"/\\|?*\x00-\x1f]/g, '_')
     .replace(/\s+/g, ' ')
     .replace(/^\.+|\.+$/g, '')
@@ -40,9 +41,8 @@ const sanitizePathSegment = (value, fallback) => {
   return sanitized || fallback;
 };
 
-const encodeGithubContentPath = (path) => {
-  return path.split('/').map(encodeURIComponent).join('/');
-};
+const encodeGithubContentPath = (path) =>
+  path.split('/').map(encodeURIComponent).join('/');
 
 /**
  * Commits the provided source code to the specified GitHub repository.

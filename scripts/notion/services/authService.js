@@ -14,7 +14,7 @@ export const openOauthPage = () => {
 
   const url = `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${parameters}`;
 
-  chrome.tabs.create({ url: url });
+  chrome.tabs.create({ url });
 };
 
 export const getAccessToken = async (payload) => {
@@ -27,7 +27,7 @@ export const getAccessToken = async (payload) => {
   const url = `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/token`;
   const data = JSON.stringify({
     grant_type: 'authorization_code',
-    code: code,
+    code,
     redirect_uri: NOTION_CONFIG.REDIRECT_URL,
   });
 

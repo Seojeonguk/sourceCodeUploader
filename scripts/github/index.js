@@ -24,12 +24,8 @@ export async function dispatch(action, payload) {
       const githubID = await getUserInfo(accessToken);
       saveInfo(accessToken, githubID);
     },
-    [ACTIONS.GET_REPOSITORIES]: async () => {
-      return await getAuthenticatedUserRepositories();
-    },
-    [ACTIONS.COMMIT]: async () => {
-      return await commit(payload);
-    },
+    [ACTIONS.GET_REPOSITORIES]: async () => getAuthenticatedUserRepositories(),
+    [ACTIONS.COMMIT]: async () => commit(payload),
   };
 
   const handler = actions[action];
