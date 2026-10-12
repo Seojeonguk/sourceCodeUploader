@@ -10,13 +10,17 @@ import {
   request,
   getChromeStorage,
   encodeBase64Unicode,
+  fetchAllPages,
   logger,
 } from '../../common/utils/index.js';
 
 import { createUploadPath, encodeGithubContentPath } from '../utils/path.js';
 
+// The maximum page size of the GitHub REST API. The default is 30.
+const REPOSITORIES_PER_PAGE = 100;
+
 /**
- * Retrieves the repositories of the authenticated user.
+ * Retrieves all repositories of the authenticated user, following every page.
  * @throws {Error} If the access token is missing or invalid.
  * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
  */
@@ -26,11 +30,25 @@ export const getAuthenticatedUserRepositories = async () => {
     throw new InvalidRequestException('Github', 'access token');
   }
 
-  const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?type=owner`;
   const headers = createGithubAuthHeader(githubAccessToken);
 
-  const response = await request(url, 'GET', headers, undefined);
-  return response;
+  return fetchAllPages(async (page = 1) => {
+    const params = new URLSearchParams({
+      type: 'owner',
+      per_page: REPOSITORIES_PER_PAGE,
+      page,
+    });
+    const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?${params}`;
+
+    const repositories = await request(url, 'GET', headers, undefined);
+
+    // A full page means there can be more repositories on the next page.
+    return {
+      items: repositories,
+      nextCursor:
+        repositories.length === REPOSITORIES_PER_PAGE ? page + 1 : null,
+    };
+  });
 };
 
 /**
