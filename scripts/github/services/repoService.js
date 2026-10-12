@@ -12,6 +12,8 @@ import {
   encodeBase64Unicode,
 } from '../../common/utils/index.js';
 
+import { createUploadPath, encodeGithubContentPath } from '../utils/path.js';
+
 /**
  * Retrieves the repositories of the authenticated user.
  * @throws {Error} If the access token is missing or invalid.
@@ -29,20 +31,6 @@ export const getAuthenticatedUserRepositories = async () => {
   const response = await request(url, 'GET', headers, undefined);
   return response;
 };
-
-const sanitizePathSegment = (value, fallback) => {
-  const sanitized = String(value || '')
-    // eslint-disable-next-line no-control-regex -- strip control characters from file names
-    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '_')
-    .replace(/\s+/g, ' ')
-    .replace(/^\.+|\.+$/g, '')
-    .trim();
-
-  return sanitized || fallback;
-};
-
-const encodeGithubContentPath = (path) =>
-  path.split('/').map(encodeURIComponent).join('/');
 
 /**
  * Commits the provided source code to the specified GitHub repository.
@@ -65,8 +53,7 @@ export const commit = async (payload) => {
 
   const { extension, problemId, sourceCode, type, title } = payload;
   const encodeNewSourceCode = encodeBase64Unicode(sourceCode);
-  const fileName = sanitizePathSegment(title, problemId);
-  const path = `${type}/${fileName}.${extension}`;
+  const path = createUploadPath({ type, title, problemId, extension });
   const encodedPath = encodeGithubContentPath(path);
   const url =
     `${GITHUB_CONFIG.API_BASE_URL}/repos/` +

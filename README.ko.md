@@ -93,6 +93,7 @@ npm run lint            # 린트 (airbnb-base + prettier)
 npm run lint:fix        # 자동 수정 가능한 린트 오류 고치기
 npm run format:check    # 포맷 검사 (prettier)
 npm run format          # prettier로 포맷 적용
+npm test                # 단위 테스트 (node:test)
 ```
 
 파일을 고친 뒤에는 `chrome://extensions/`의 확장 프로그램 카드에서 **새로고침**을 눌러요.

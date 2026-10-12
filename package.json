@@ -4,22 +4,20 @@
   "private": true,
   "description": "A Chrome extension that uploads accepted solutions from algorithm judge sites to GitHub and Notion.",
   "scripts": {
-    "lint": "eslint scripts popup",
-    "lint:fix": "eslint scripts popup --fix",
-    "format": "prettier --write scripts popup",
-    "format:check": "prettier --check scripts popup"
+    "lint": "eslint scripts popup tests",
+    "lint:fix": "eslint scripts popup tests --fix",
+    "format": "prettier --write scripts popup tests",
+    "format:check": "prettier --check scripts popup tests",
+    "test": "node --test"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
     "babel-loader": "^10.0.0",
     "eslint": "^8.57.1",
-    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.30.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "eslint-plugin-react": "^7.36.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
     "prettier": "^3.3.3",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
@@ -27,5 +25,6 @@
   },
   "dependencies": {
     "jquery": "^3.7.1"
-  }
+  },
+  "type": "module"
 }

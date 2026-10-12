@@ -93,6 +93,7 @@ npm run lint            # eslint (airbnb-base + prettier)
 npm run lint:fix        # fix auto-fixable lint errors
 npm run format:check    # prettier check
 npm run format          # format with prettier
+npm test                # unit tests (node:test)
 ```
 
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
