@@ -8,6 +8,23 @@ import {
 } from '../../scripts/common/utils/index.js';
 import { showToast } from './toast.js';
 
+/**
+ * Saves the settings selected in the popup, and shows an error if saving fails.
+ * @param {Object} values - The values to save, keyed by the storage key.
+ */
+const saveSettings = async (values) => {
+  try {
+    await Promise.all(
+      Object.entries(values).map(([key, value]) =>
+        setChromeStorage(key, value),
+      ),
+    );
+  } catch (e) {
+    logger.error('Failed to save the settings.', e);
+    showToast('Failed to save the setting. Try again.', 'error');
+  }
+};
+
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
   handleAutoUploadBtn();
@@ -38,7 +55,7 @@ const handleAutoUploadBtn = () => {
     const platform = $(e.currentTarget).closest('li').attr('platform');
 
     const isChecked = $(`#${platform}-auto-upload`).prop('checked');
-    setChromeStorage(`${platform}AutoUpload`, isChecked);
+    saveSettings({ [`${platform}AutoUpload`]: isChecked });
   });
 };
 
@@ -115,8 +132,10 @@ const handleUploadedDatabaseSelection = () => {
 
       $('#uploaded-database').text(uploadedDatabase);
 
-      setChromeStorage('notionUploadedDatabase', uploadedDatabase);
-      setChromeStorage('notionUploadedDatabaseId', uploadedDatabaseId);
+      saveSettings({
+        notionUploadedDatabase: uploadedDatabase,
+        notionUploadedDatabaseId: uploadedDatabaseId,
+      });
     },
   );
 };
@@ -131,7 +150,7 @@ const handleUploadedRepositorySelection = () => {
 
     $('#uploaded-repository').text(uploadedRepository);
 
-    setChromeStorage('githubUploadedRepository', uploadedRepository);
+    saveSettings({ githubUploadedRepository: uploadedRepository });
   });
 };
 

@@ -41,9 +41,11 @@ export const getUserInfo = async (accessToken) => {
   return githubID;
 };
 
-export const saveInfo = (accessToken, githubID) => {
-  setChromeStorage('githubAccessToken', accessToken);
-  setChromeStorage('githubID', githubID);
+export const saveInfo = async (accessToken, githubID) => {
+  await Promise.all([
+    setChromeStorage('githubAccessToken', accessToken),
+    setChromeStorage('githubID', githubID),
+  ]);
 };
 
 /**

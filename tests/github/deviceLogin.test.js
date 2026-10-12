@@ -116,6 +116,18 @@ describe('GitHub device login', () => {
     });
   });
 
+  it('does not report the login as done when it cannot be saved', async () => {
+    mockGithub([{ access_token: 'github-token', token_type: 'bearer' }]);
+    await dispatch('startDeviceLogin');
+    globalThis.chrome.storage.local.set = async () => {
+      throw new Error('QUOTA_BYTES quota exceeded');
+    };
+
+    await assert.rejects(dispatch('pollDeviceLogin'), {
+      message: 'QUOTA_BYTES quota exceeded',
+    });
+  });
+
   it('saves the login when the code is entered', async () => {
     mockGithub([{ access_token: 'github-token', token_type: 'bearer' }]);
     await dispatch('startDeviceLogin');

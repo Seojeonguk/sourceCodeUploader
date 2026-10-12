@@ -29,10 +29,11 @@ export const removeChromeStorage = (keys) => {
  * Sets a value in Chrome local storage.
  * @param {string} key - The key used to set the value in storage.
  * @param {any} value - The value to be stored in local storage.
+ * @returns {Promise<void>} A promise that resolves when the value is saved.
  */
 export const setChromeStorage = (key, value) => {
   logger.debug(
     `[Storage] Saving key '${key}' with value '${maskSensitiveValue(key, value)}'`,
   );
-  chrome.storage.local.set({ [key]: value });
+  return chrome.storage.local.set({ [key]: value });
 };
