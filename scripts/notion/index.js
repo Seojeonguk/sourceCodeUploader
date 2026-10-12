@@ -20,9 +20,7 @@ export async function dispatch(action, payload) {
       setChromeStorage('notionAccessToken', accessToken);
       return 'success';
     },
-    [ACTIONS.GET_DATABASES]: async () => {
-      return await getDatabases();
-    },
+    [ACTIONS.GET_DATABASES]: async () => await getDatabases(),
     [ACTIONS.UPLOAD]: async () => {
       const problemInfo = await solvedAC(
         NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,

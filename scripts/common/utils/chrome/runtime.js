@@ -5,21 +5,18 @@
  * @param {any} payload - The payload data to be sent along with the message.
  * @returns {Promise<any>} A promise that resolves with the response from the background script.
  */
-export const sendMessage = (platform, action, payload) => {
-  return new Promise((resolve) => {
+export const sendMessage = (platform, action, payload) =>
+  new Promise((resolve) => {
     chrome.runtime.sendMessage(
       {
-        platform: platform,
-        action: action,
-        payload: payload,
+        platform,
+        action,
+        payload,
       },
       (response) => {
         resolve(response);
       },
     );
   });
-};
 
-export const getResourceURL = (path) => {
-  return chrome.runtime.getURL(path);
-};
+export const getResourceURL = (path) => chrome.runtime.getURL(path);

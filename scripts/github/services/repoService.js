@@ -40,9 +40,8 @@ const sanitizePathSegment = (value, fallback) => {
   return sanitized || fallback;
 };
 
-const encodeGithubContentPath = (path) => {
-  return path.split('/').map(encodeURIComponent).join('/');
-};
+const encodeGithubContentPath = (path) =>
+  path.split('/').map(encodeURIComponent).join('/');
 
 /**
  * Commits the provided source code to the specified GitHub repository.

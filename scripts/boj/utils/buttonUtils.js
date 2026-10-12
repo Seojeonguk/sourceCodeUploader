@@ -1,6 +1,6 @@
 import { getResourceURL, sendMessage } from '../../common/utils/index.js';
 import { PLATFORMS } from '../constants/index.js';
-import { createElement } from '../utils/index.js';
+import { createElement } from './index.js';
 
 import {
   ParseException,
@@ -11,9 +11,8 @@ import {
  * Creates a wrapper div element to contain action buttons.
  * @returns {HTMLElement} The div element containing the buttons.
  */
-export const createActionButtonContainer = () => {
-  return createElement('div', { className: 'btnWrapper' });
-};
+export const createActionButtonContainer = () =>
+  createElement('div', { className: 'btnWrapper' });
 
 /**
  * Creates a button with an image and attaches a click event handler.

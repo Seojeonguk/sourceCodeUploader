@@ -30,7 +30,7 @@ export const getDatabases = async () => {
 
   const response = await request(url, 'POST', headers, body);
 
-  const results = response.results;
+  const { results } = response;
 
   return results;
 };
@@ -75,8 +75,8 @@ export const upload = async (
 
   const data = {
     parent: { database_id: databaseId },
-    properties: properties,
-    children: children,
+    properties,
+    children,
   };
 
   const result = await createPage(data);

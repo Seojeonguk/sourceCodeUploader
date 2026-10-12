@@ -11,9 +11,9 @@ export const request = async (
 
   try {
     const response = await fetch(url, {
-      method: method,
-      headers: headers,
-      body: body,
+      method,
+      headers,
+      body,
       signal: controller.signal,
     });
 
@@ -51,9 +51,7 @@ export const request = async (
   }
 };
 
-export const createGithubAuthHeader = (token) => {
-  return {
-    Accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${token}`,
-  };
-};
+export const createGithubAuthHeader = (token) => ({
+  Accept: 'application/vnd.github+json',
+  Authorization: `Bearer ${token}`,
+});
