@@ -25,9 +25,10 @@ const handleMessage = (request, sender, sendResponse) => {
       .catch((err) => sendResponse({ ok: false, message: err.message }));
   } catch (e) {
     sendResponse({ ok: false, message: e.message });
-  } finally {
-    return true;
   }
+
+  // Keep the message channel open for the asynchronous sendResponse.
+  return true;
 };
 
 chrome.runtime.onMessage.addListener(handleMessage);
