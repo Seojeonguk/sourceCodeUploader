@@ -32,6 +32,7 @@ export const getAuthenticatedUserRepositories = async () => {
 
 const sanitizePathSegment = (value, fallback) => {
   const sanitized = String(value || '')
+    // eslint-disable-next-line no-control-regex -- strip control characters from file names
     .replace(/[<>:"/\\|?*\x00-\x1f]/g, '_')
     .replace(/\s+/g, ' ')
     .replace(/^\.+|\.+$/g, '')

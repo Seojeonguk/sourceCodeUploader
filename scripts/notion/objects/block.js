@@ -1,4 +1,4 @@
-import { BLOCK_TYPE, COLORS, LANGUAGES } from './constants/blockConstants.js';
+import { BLOCK_TYPE, LANGUAGES } from './constants/blockConstants.js';
 
 /**
  * Create a block based on the specified type and payload.
@@ -60,12 +60,14 @@ export const createHeading = ({
   type = BLOCK_TYPE.HEADING_LARGE,
   text,
   color,
+  // eslint-disable-next-line camelcase -- Notion API field name
   is_toggleable = false,
 }) => ({
   type,
   [type]: {
     rich_text: createRichTextArray(text),
     color,
+    // eslint-disable-next-line camelcase -- Notion API field name
     is_toggleable,
   },
 });
