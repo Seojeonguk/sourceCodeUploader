@@ -1,4 +1,4 @@
-import { ParseException } from "../../common/exception/index.js";
+import { ParseException } from '../../common/exception/index.js';
 
 /**
  * Safely selects a DOM element using a CSS selector.

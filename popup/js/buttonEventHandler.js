@@ -1,4 +1,4 @@
-import { ACTIONS } from "../../scripts/github/constants/actions.js";
+import { ACTIONS } from '../../scripts/github/constants/actions.js';
 
 import {
   removeChromeStorage,

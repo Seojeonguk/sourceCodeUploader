@@ -1,7 +1,7 @@
-import { getResourceURL, sendMessage } from "./chrome/runtime.js";
-import { closeLatestTab } from "./chrome/tabs.js";
-import { encodeBase64Unicode } from "./encoding.js";
-import { createGithubAuthHeader, request } from "./fetch.js";
+import { getResourceURL, sendMessage } from './chrome/runtime.js';
+import { closeLatestTab } from './chrome/tabs.js';
+import { encodeBase64Unicode } from './encoding.js';
+import { createGithubAuthHeader, request } from './fetch.js';
 
 import {
   setChromeStorage,

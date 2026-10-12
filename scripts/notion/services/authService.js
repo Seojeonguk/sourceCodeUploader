@@ -1,5 +1,5 @@
-import { closeLatestTab, request } from "../../common/utils/index.js";
-import { NOTION_CONFIG } from "../config/config.js";
+import { closeLatestTab, request } from '../../common/utils/index.js';
+import { NOTION_CONFIG } from '../config/config.js';
 
 import {
   InvalidRequestException,

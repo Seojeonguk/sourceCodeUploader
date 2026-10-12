@@ -1,11 +1,11 @@
-import { InvalidRequestException } from "../../common/exception/index.js";
-import { getChromeStorage, request } from "../../common/utils/index.js";
-import { NOTION_CONFIG } from "../config/config.js";
-import { createPage } from "../endpoints/pages.js";
-import { createBlock } from "../objects/block.js";
-import { BLOCK_TYPE } from "../objects/constants/blockConstants.js";
-import { PROPERTY_TYPE } from "../objects/constants/pageConstants.js";
-import { createPageProperty } from "../objects/page.js";
+import { InvalidRequestException } from '../../common/exception/index.js';
+import { getChromeStorage, request } from '../../common/utils/index.js';
+import { NOTION_CONFIG } from '../config/config.js';
+import { createPage } from '../endpoints/pages.js';
+import { createBlock } from '../objects/block.js';
+import { BLOCK_TYPE } from '../objects/constants/blockConstants.js';
+import { PROPERTY_TYPE } from '../objects/constants/pageConstants.js';
+import { createPageProperty } from '../objects/page.js';
 
 export const getDatabases = async () => {
   const accessToken = await getChromeStorage('notionAccessToken');
