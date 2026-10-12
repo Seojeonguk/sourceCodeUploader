@@ -78,15 +78,13 @@ describe('createProblemPageData', () => {
     assert.deepEqual(names(properties.info), ['Programmers', '1845']);
   });
 
-  it('defaults to the BOJ problem URL', () => {
+  it('leaves the URL empty when the problem has none', () => {
     const { properties } = createProblemPageData({
       ...programmersProblem,
-      type: 'BOJ',
-      problemId: '1000',
       url: undefined,
     });
 
-    assert.equal(properties.URL.url, 'acmicpc.net/problem/1000');
+    assert.equal(properties.URL.url, null);
   });
 });
 

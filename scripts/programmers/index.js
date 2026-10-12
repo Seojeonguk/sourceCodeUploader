@@ -247,7 +247,7 @@
       sourceCode,
       title,
       type: PROGRAMMERS_TYPE,
-      // Used by the Notion upload instead of looking the problem up on solved.ac.
+      // Used by the Notion upload.
       problemInfo: {
         title,
         level: getProblemLevel(),

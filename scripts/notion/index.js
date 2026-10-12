@@ -1,6 +1,4 @@
 import { SetupRequiredException } from '../common/exception/index.js';
-import { ACTIONS as NOTION_ACTIONS } from '../solvedAC/constants/actions.js';
-import { dispatch as solvedAC } from '../solvedAC/index.js';
 import { ACTIONS } from './constants/actions.js';
 import {
   clearExpiredLogin,
@@ -21,16 +19,8 @@ export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => openOauthPage(),
     [ACTIONS.GET_DATABASES]: async () => getDatabases(),
-    [ACTIONS.UPLOAD]: async () => {
-      // Programmers sends the problem info from the page. BOJ problems are looked up on solved.ac.
-      const problemInfo =
-        payload.problemInfo ??
-        (await solvedAC(
-          NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
-          payload,
-        ));
-      return upload(payload, problemInfo);
-    },
+    // The content script sends the problem info read from the page.
+    [ACTIONS.UPLOAD]: async () => upload(payload, payload.problemInfo),
     [ACTIONS.LOGOUT]: async () => logout(),
   };
 
