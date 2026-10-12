@@ -4,6 +4,7 @@ import {
   removeChromeStorage,
   setChromeStorage,
   sendMessage,
+  logger,
 } from '../../scripts/common/utils/index.js';
 
 export function initializeButtonEvents() {
@@ -119,7 +120,7 @@ const showDatabases = () => {
     const response = await sendMessage('notion', 'getDatabases');
 
     if (!Array.isArray(response?.message)) {
-      console.debug(response);
+      logger.debug(response);
       alert(response.message);
       return;
     }

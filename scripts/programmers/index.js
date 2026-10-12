@@ -237,6 +237,7 @@
       const response = await sendGithubCommitMessage(payload);
       alert(response?.message);
     } catch (error) {
+      // eslint-disable-next-line no-console -- a classic content script cannot import the logger
       console.error('[SCU]', error);
       alert(error.message);
     } finally {

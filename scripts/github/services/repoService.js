@@ -10,6 +10,7 @@ import {
   request,
   getChromeStorage,
   encodeBase64Unicode,
+  logger,
 } from '../../common/utils/index.js';
 
 import { createUploadPath, encodeGithubContentPath } from '../utils/path.js';
@@ -65,7 +66,7 @@ export const commit = async (payload) => {
     existingFile = await request(url, 'GET', headers, undefined);
   } catch (e) {
     if (e instanceof Error && e.message.includes('404')) {
-      console.warn('File not found. Creating a new file.');
+      logger.warn('File not found. Creating a new file.');
     } else {
       throw e;
     }
