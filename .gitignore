@@ -7,3 +7,6 @@ node_modules
 
 # build output (webpack)
 dist
+
+# The private key of the extension (kept outside the repository)
+*.pem

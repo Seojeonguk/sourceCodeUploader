@@ -44,11 +44,30 @@ const handleAutoUploadBtn = () => {
 
 /**
  * Logs out of the platform in the background and reloads the popup.
+ * GitHub cannot revoke the token without the client secret, so its authorized apps page
+ * is opened for the user to revoke the access there.
  * @param {'github'|'notion'} platform
  */
 const logout = async (platform) => {
-  await sendMessage(platform, 'logout');
+  const response = await sendMessage(platform, 'logout');
+
+  const authorizedAppsUrl = response?.message?.authorizedAppsUrl;
+  if (authorizedAppsUrl) {
+    chrome.tabs.create({ url: authorizedAppsUrl });
+  }
+
   window.location.reload();
+};
+
+/**
+ * Opens the login page of the platform, and shows why if it cannot be opened.
+ * @param {'github'|'notion'} platform
+ */
+const openLoginPage = async (platform) => {
+  const response = await sendMessage(platform, 'openOauthPage');
+  if (!response?.ok) {
+    showToast(response?.message, 'error');
+  }
 };
 
 /**
@@ -58,7 +77,7 @@ const logout = async (platform) => {
 const handleGithubAuthenticationBtn = () => {
   $('#github-authentication').on('click', (e) => {
     if (!$(e.currentTarget).hasClass('delete')) {
-      sendMessage('github', 'openOauthPage');
+      openLoginPage('github');
       return;
     }
 
@@ -73,7 +92,7 @@ const handleGithubAuthenticationBtn = () => {
 const handleNotionAuthenticationBtn = () => {
   $('#notion-authentication').on('click', (e) => {
     if (!$(e.currentTarget).hasClass('delete')) {
-      sendMessage('notion', 'openOauthPage');
+      openLoginPage('notion');
       return;
     }
 

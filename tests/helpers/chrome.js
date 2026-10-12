@@ -35,6 +35,9 @@ export const mockChromeSessionAndTabs = () => {
   globalThis.chrome.storage.session = {
     get: async (key) => ({ [key]: structuredClone(session[key]) }),
     set: async (values) => Object.assign(session, structuredClone(values)),
+    remove: async (keys) => {
+      [keys].flat().forEach((key) => delete session[key]);
+    },
   };
   globalThis.chrome.tabs = {
     create: async ({ url }) => {

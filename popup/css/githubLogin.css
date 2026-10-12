@@ -1,0 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --text-color: #1f2328;
+  --muted-color: #59636e;
+  --bg-color: #ffffff;
+  --surface-color: #f6f8fa;
+  --border-color: #d1d9e0;
+  --accent-color: #1f883d;
+  --error-color: #d1242f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: #f0f6fc;
+    --muted-color: #9198a1;
+    --bg-color: #0d1117;
+    --surface-color: #151b23;
+    --border-color: #3d444d;
+    --accent-color: #3fb950;
+    --error-color: #f85149;
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.device-login {
+  max-width: 420px;
+  margin: 64px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+.code-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.code-section[hidden] {
+  display: none;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-code {
+  flex: 1;
+  padding: 12px 16px;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 28px;
+  letter-spacing: 4px;
+  text-align: center;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+button,
+.verification-link {
+  padding: 10px 16px;
+  font-size: 15px;
+  color: #ffffff;
+  text-align: center;
+  text-decoration: none;
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.status {
+  color: var(--muted-color);
+}
+
+.status-success {
+  color: var(--accent-color);
+}
+
+.status-error {
+  color: var(--error-color);
+}

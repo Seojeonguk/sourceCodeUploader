@@ -4,10 +4,10 @@
   "private": true,
   "description": "A Chrome extension that uploads accepted solutions from algorithm judge sites to GitHub and Notion.",
   "scripts": {
-    "lint": "eslint scripts popup tests --max-warnings 0",
-    "lint:fix": "eslint scripts popup tests --fix",
-    "format": "prettier --write scripts popup tests",
-    "format:check": "prettier --check scripts popup tests",
+    "lint": "eslint scripts popup tests proxy --max-warnings 0",
+    "lint:fix": "eslint scripts popup tests proxy --fix",
+    "format": "prettier --write scripts popup tests proxy",
+    "format:check": "prettier --check scripts popup tests proxy",
     "test": "node --test"
   },
   "devDependencies": {

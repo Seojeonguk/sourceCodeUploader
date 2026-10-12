@@ -15,7 +15,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 - **GitHub** — Commits the source to `{platform}/{problem}.{ext}` in the repository you choose. Skips the commit if the file content is unchanged.
 - **Notion** — Creates a page in the database you choose, with the problem title, level and tags as properties and the source as a code block.
 - **Problem info** — Fetches title, level and tags from [solved.ac](https://solved.ac).
-- **OAuth login** — Sign in with GitHub and Notion from the popup; pick a repository or database from a list.
+- **Login** — Sign in with GitHub (device code) and Notion (OAuth) from the popup; pick a repository or database from a list. No client secret is shipped in the extension.
 - **Dark mode** — Upload icons follow the site theme.
 
 ## Supported Platforms
@@ -37,7 +37,7 @@ The extension is not on the Chrome Web Store yet. Load it manually:
 ## Usage
 
 1. Click the extension icon to open the popup.
-2. **GitHub** — Click `Authorize`, approve access, then select the repository to upload to. ([guide](scripts/github/README.md))
+2. **GitHub** — Click `Authorize`. A login page shows a code: enter it on GitHub and approve access, then select the repository to upload to. ([guide](scripts/github/README.md))
 3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. ([guide](scripts/notion/README.md))
 4. (Optional) Turn on **Auto upload** for each platform.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
@@ -53,11 +53,14 @@ flowchart LR
     BG -->|host_permissions| SA["solved.ac API"]
     BG -->|host_permissions| GH["GitHub API"]
     BG -->|host_permissions| NO["Notion API"]
+    BG -->|token exchange · revoke| PX["Notion OAuth proxy<br/>(Cloudflare Worker)"]
+    PX --> NO
 ```
 
 - **Content scripts** parse the judge page (problem, language, submission) and render the upload buttons.
 - **The background service worker** does every network call. Thanks to `host_permissions`, it can call the GitHub, Notion and solved.ac APIs without CORS issues — which is why no server is needed.
 - **Programmers** keeps the code inside the page's editor object, which the isolated content script cannot read. `scripts/programmers/sourceExtractor.js` is injected into the page context and returns the code via `window.postMessage`.
+- **Secrets** — GitHub logs in with the device flow, which needs only the client ID. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The OAuth redirect is accepted only with the `state` sent from the tab opened for it.
 - **BOJ source download** uses `declarativeNetRequest` (`rules.json`) to set the request headers the site expects.
 
 ### Permissions
@@ -74,13 +77,15 @@ flowchart LR
 ```text
 ├─ manifest.json
 ├─ rules.json               # declarativeNetRequest rules
-├─ popup/                   # popup UI (html · css · js)
+├─ popup/                   # popup UI and the GitHub login page (html · css · js)
+├─ proxy/notion-oauth/      # Cloudflare Worker that keeps the Notion client secret
 └─ scripts/
    ├─ background.js         # service worker, message routing
    ├─ boj/                  # BOJ content scripts (parsing, buttons, auto upload)
    ├─ programmers/          # Programmers content script + page-context extractor
-   ├─ github/               # OAuth, repository list, commit
-   ├─ notion/               # OAuth, database list, page / block builders
+   ├─ github/               # device flow login, repository list, commit
+   ├─ notion/               # OAuth (through the proxy), database list, page / block builders
+   ├─ oauth/                # OAuth state check for the Notion redirect
    ├─ solvedAC/             # problem info
    └─ common/               # exceptions, chrome / fetch / encoding utils
 ```
@@ -97,6 +102,8 @@ npm test                # unit tests (node:test)
 ```
 
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
+
+The `key` in `manifest.json` fixes the extension ID to `mfhbpmbchemfhijjamldbkidlegfmaff` wherever the folder is loaded from, so the deployed [Notion OAuth proxy](proxy/notion-oauth/README.md) accepts everyone's login. Users do not deploy anything; the maintainer deploys the proxy once and keeps its URL in `TOKEN_PROXY_URL` of `scripts/notion/config/config.js`.
 
 Conventions: branch from `master` and open a PR; commit messages start with an English verb and end with the PR number, e.g. `Refactor notion (#177)`, signed off with `-s`.
 
