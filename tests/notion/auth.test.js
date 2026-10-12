@@ -92,6 +92,20 @@ describe('Notion login', () => {
     assert.equal(storage.notionAccessToken, 'notion-token');
   });
 
+  it('fails the login when the token cannot be saved', async () => {
+    mockChromeStorage();
+    globalThis.chrome.storage.local.set = async () => {
+      throw new Error('QUOTA_BYTES quota exceeded');
+    };
+    globalThis.fetch = mock.fn(async () =>
+      jsonResponse({ access_token: 'notion-token' }),
+    );
+
+    await assert.rejects(login('code', PROXY_URL), {
+      message: 'QUOTA_BYTES quota exceeded',
+    });
+  });
+
   it('asks to set the proxy before opening the Notion page', async () => {
     mockChromeStorage();
     globalThis.chrome.tabs = { create: mock.fn() };

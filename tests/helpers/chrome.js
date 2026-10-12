@@ -10,7 +10,9 @@ export const mockChromeStorage = (initial = {}) => {
     storage: {
       local: {
         get: ([key], callback) => callback({ [key]: storage[key] }),
-        set: (values) => Object.assign(storage, values),
+        set: async (values) => {
+          Object.assign(storage, values);
+        },
         remove: async (keys) => {
           [keys].flat().forEach((key) => delete storage[key]);
         },

@@ -103,7 +103,7 @@ export const getAccessToken = async (
  */
 export const login = async (code, proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL) => {
   const accessToken = await getAccessToken({ code }, proxyUrl);
-  setChromeStorage('notionAccessToken', accessToken);
+  await setChromeStorage('notionAccessToken', accessToken);
 };
 
 /**

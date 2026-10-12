@@ -91,7 +91,7 @@ export const pollDeviceLogin = async () => {
 
   if (response?.access_token) {
     const githubID = await getUserInfo(response.access_token);
-    saveInfo(response.access_token, githubID);
+    await saveInfo(response.access_token, githubID);
     await removeDeviceLogin();
     return { status: DEVICE_LOGIN_STATUS.DONE };
   }
