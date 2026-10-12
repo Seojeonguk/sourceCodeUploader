@@ -42,7 +42,7 @@ export const getCodeLanguage = (extension) =>
  * @param {string} param.title - The problem title.
  * @param {?string} [param.level] - The problem level.
  * @param {string[]} [param.tags=[]] - The problem tags.
- * @param {?string} [param.url] - The problem URL. Defaults to the BOJ problem URL.
+ * @param {?string} [param.url] - The problem URL.
  * @param {string} param.extension - The file extension of the source code.
  * @param {string} param.sourceCode - The source code.
  * @param {Date} [param.createdAt=new Date()] - The date of the upload.
@@ -74,7 +74,7 @@ export const createProblemPageData = ({
       selections: tags.map((tag) => ({ name: tag })),
     }),
     URL: createPageProperty(PROPERTY_TYPE.URL, {
-      url: url ?? `acmicpc.net/problem/${problemId}`,
+      url,
     }),
     Date: createPageProperty(PROPERTY_TYPE.DATE, {
       start: createdAt,

@@ -6,7 +6,7 @@
 
 <!-- TODO: 데모 GIF (프로그래머스 문제 페이지 → 업로드 버튼 → GitHub 커밋 / Notion 페이지) -->
 
-> **참고** — 백준 온라인 저지가 서비스를 종료했어요. 아래 백준 기능은 종료 전까지 만들어 쓰던 기능이고, 지금은 동작을 확인할 수 없어요. 현재는 프로그래머스를 지원해요.
+> **참고** — 백준 온라인 저지가 서비스를 종료해서 백준 지원을 제거했어요. 백준 지원이 있던 마지막 버전은 [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) 태그에 남겨 두었어요.
 
 ## 기능
 
@@ -14,16 +14,13 @@
 - **자동 업로드** — 켜 두면 제출 결과가 *맞았습니다*로 바뀌는 순간 자동으로 올려요.
 - **GitHub** — 선택한 저장소의 `{플랫폼}/{문제}.{확장자}`에 커밋해요. 내용이 같으면 커밋하지 않아요.
 - **Notion** — 선택한 데이터베이스에 문제 제목 · 난이도 · 태그를 속성으로, 소스 코드를 코드 블록으로 담은 페이지를 만들어요.
-- **문제 정보** — [solved.ac](https://solved.ac)에서 제목 · 난이도 · 태그를 가져와요.
 - **로그인** — 팝업에서 GitHub(기기 코드) · Notion(OAuth)에 로그인하고, 목록에서 저장소 · 데이터베이스를 골라요. 확장 프로그램에는 client secret이 들어 있지 않아요.
-- **다크 모드** — 업로드 아이콘이 사이트 테마를 따라가요.
 
 ## 지원 플랫폼
 
 | 사이트 | 페이지 | GitHub | Notion | 자동 업로드 | 상태 |
 |---|---|:-:|:-:|:-:|---|
 | [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지 | ✅ | ✅ | ✅ (채점 결과 창) | 지원 중 |
-| 백준 온라인 저지 | 채점 현황(`/status`), 소스 코드(`/source/{id}`) | ✅ | ✅ | ✅ (채점 현황) | 사이트 종료 — 확인 불가 |
 
 ## 설치
 
@@ -41,16 +38,14 @@
 3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. ([가이드](scripts/notion/README.md))
 4. (선택) 플랫폼별 **자동 업로드**를 켜요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
-   (백준에서는 채점 현황의 맞은 제출에 업로드 버튼이 생기고, 자동 업로드도 할 수 있었어요.)
 
 ## 동작 방식
 
 ```mermaid
 flowchart LR
-    CS["Content script<br/>(백준 · 프로그래머스)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
+    CS["Content script<br/>(프로그래머스)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
     POP["Popup"] -->|OAuth · 설정| BG
     BG --> ST[("chrome.storage<br/>access token · 설정")]
-    BG -->|host_permissions| SA["solved.ac API"]
     BG -->|host_permissions| GH["GitHub API"]
     BG -->|host_permissions| NO["Notion API"]
     BG -->|토큰 교환 · 취소| PX["Notion OAuth 프록시<br/>(Cloudflare Worker)"]
@@ -58,10 +53,9 @@ flowchart LR
 ```
 
 - **Content script**가 문제 페이지에서 문제 · 언어 · 제출 정보를 파싱하고 업로드 버튼을 그려요.
-- **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion · solved.ac API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
+- **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
 - **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 로그인해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. OAuth 리다이렉트는 로그인용으로 연 탭에서 보낸 `state`가 맞을 때만 받아요.
-- **백준 소스 코드 다운로드**는 `declarativeNetRequest`(`rules.json`)로 사이트가 요구하는 요청 헤더를 맞춰요.
 
 ### 권한
 
@@ -69,24 +63,20 @@ flowchart LR
 |---|---|
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
 | `activeTab`, `scripting` | 현재 보고 있는 문제 페이지에서 동작 |
-| `declarativeNetRequest` | 백준 소스 코드를 가져올 때 요청 헤더 조정 |
-| 호스트: `api.notion.com`, `github.com`, `solved.ac`, `acmicpc.net`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
+| 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
 ## 프로젝트 구조
 
 ```text
 ├─ manifest.json
-├─ rules.json               # declarativeNetRequest 규칙
 ├─ popup/                   # 팝업 UI와 GitHub 로그인 페이지 (html · css · js)
 ├─ proxy/notion-oauth/      # Notion client secret을 보관하는 Cloudflare Worker
 └─ scripts/
    ├─ background.js         # service worker, 메시지 라우팅
-   ├─ boj/                  # 백준 content script (파싱 · 버튼 · 자동 업로드)
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
    ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋
    ├─ notion/               # OAuth (프록시 경유), 데이터베이스 목록, 페이지 · 블록 생성
    ├─ oauth/                # Notion 리다이렉트의 OAuth state 확인
-   ├─ solvedAC/             # 문제 정보
    └─ common/               # 예외, chrome · fetch · 인코딩 유틸
 ```
 
@@ -116,6 +106,7 @@ npm test                # 단위 테스트 (node:test)
 | v3 | 2024.02 – | OAuth를 쓰는 서버 없는 Extension ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
 | v3.x | 2024.07 – 2026.04 | 채점 현황 업로드, Notion 길이 제한, UTF-8 인코딩, 리팩토링, 프로그래머스, 자동 업로드 |
 | v3.x | 2026.10 | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI |
+| v3.x | 2026.10 | 사이트 종료로 백준 지원 제거 — 스냅샷: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) |
 
 ## 문의
 
