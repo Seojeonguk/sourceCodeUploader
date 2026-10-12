@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Source Code Uploader",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A extension enabling seamless uploading of source code to platforms.",
   "icons": {
     "16": "icon/icon16.png",
@@ -12,9 +12,6 @@
   "action": {
     "default_title": "Source Code Uploader",
     "default_popup": "popup/html/index.html"
-  },
-  "author": {
-    "email": "junguk7880@naver.com"
   },
   "background": {
     "service_worker": "scripts/background.js",
