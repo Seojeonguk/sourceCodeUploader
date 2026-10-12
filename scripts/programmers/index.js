@@ -4,8 +4,42 @@
   const REQUEST_EVENT = 'SCU_PROGRAMMERS_SOURCE_REQUEST';
   const TOAST_DURATION = 5000;
 
-  const { getExtensionFromLanguage, normalizeText } =
-    globalThis.SCU_PROGRAMMERS;
+  const PLATFORMS = Object.freeze([
+    {
+      id: 'github',
+      name: 'GitHub',
+      action: 'commit',
+      icon: 'icon/githubIcon.png',
+    },
+    {
+      id: 'notion',
+      name: 'Notion',
+      action: 'upload',
+      icon: 'icon/notionIcon.png',
+    },
+  ]);
+
+  const SELECTORS = Object.freeze({
+    LESSON: '.lesson-content[data-lesson-id], [data-lesson-id]',
+    TITLE: [
+      '.algorithm-title .challenge-title',
+      '.challenge-title',
+      '.lesson-title',
+      '.algorithm-title',
+      'h1',
+      'h2',
+    ],
+    BREADCRUMB_ITEMS: 'ol.breadcrumb > li',
+    FILE_LABEL: 'div.editor > ul > li.nav-item > a',
+  });
+
+  const {
+    formatLevel,
+    getCategoryTags,
+    getExtensionFromFileLabel,
+    getExtensionFromLanguage,
+    normalizeText,
+  } = globalThis.SCU_PROGRAMMERS;
 
   let sourceExtractorReady;
 
@@ -34,35 +68,31 @@
     return sourceExtractorReady;
   };
 
-  const sendGithubCommitMessage = (payload) =>
+  const sendUploadMessage = ({ id, action }, payload) =>
     new Promise((resolve) => {
       chrome.runtime.sendMessage(
         {
-          platform: 'github',
-          action: 'commit',
+          platform: id,
+          action,
           payload,
         },
         (response) => resolve(response),
       );
     });
 
-  const createUploadButton = () => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'scu-programmers-wrapper';
-
+  const createUploadButton = ({ id, name, icon }) => {
     const button = document.createElement('button');
     button.className = 'scu-programmers-upload';
     button.type = 'button';
-    button.title = 'Upload to GitHub';
+    button.title = `Upload to ${name}`;
+    button.dataset.platform = id;
 
     const image = document.createElement('img');
-    image.src = chrome.runtime.getURL('icon/githubIcon.png');
-    image.alt = 'GitHub';
+    image.src = chrome.runtime.getURL(icon);
+    image.alt = name;
 
     button.appendChild(image);
-    wrapper.appendChild(button);
-
-    return { button, wrapper };
+    return button;
   };
 
   const findEditorContainer = () => {
@@ -87,25 +117,36 @@
     }
   };
 
+  const getLesson = () => document.querySelector(SELECTORS.LESSON);
+
   const getProblemId = () => {
+    const lessonId = getLesson()?.dataset.lessonId;
+    if (lessonId) {
+      return lessonId;
+    }
+
     const match = window.location.pathname.match(/lessons\/([^/?#]+)/);
     return match?.[1] ?? 'unknown';
   };
 
-  const getProblemTitle = () => {
-    const candidates = [
-      '.challenge-title',
-      '.lesson-title',
-      '.algorithm-title',
-      'h1',
-      'h2',
-    ];
+  const getProblemLevel = () =>
+    formatLevel(getLesson()?.dataset.challengeLevel);
 
-    const title = candidates
-      .map((selector) =>
-        normalizeText(document.querySelector(selector)?.textContent),
-      )
-      .find(Boolean);
+  const getProblemUrl = () =>
+    `${window.location.origin}${window.location.pathname}`;
+
+  const getProblemTags = (title) =>
+    getCategoryTags(
+      [...document.querySelectorAll(SELECTORS.BREADCRUMB_ITEMS)].map(
+        (item) => item.textContent,
+      ),
+      title,
+    );
+
+  const getProblemTitle = () => {
+    const title = SELECTORS.TITLE.map((selector) =>
+      normalizeText(document.querySelector(selector)?.textContent),
+    ).find(Boolean);
 
     if (title) {
       return title;
@@ -139,7 +180,11 @@
   };
 
   const getFileExtension = () =>
-    getExtensionFromLanguage(getLanguage()) ?? 'txt';
+    getExtensionFromFileLabel(
+      document.querySelector(SELECTORS.FILE_LABEL)?.textContent,
+    ) ??
+    getExtensionFromLanguage(getLanguage()) ??
+    'txt';
 
   const getTextareaSourceCode = () => {
     const textareas = [...document.querySelectorAll('textarea')];
@@ -187,15 +232,22 @@
       throw new Error('Source code not found.');
     }
 
-    const title = getProblemTitle();
     const problemId = getProblemId();
+    const title = getProblemTitle() || problemId;
 
     return {
       extension: getFileExtension(),
       problemId,
       sourceCode,
-      title: title || problemId,
+      title,
       type: PROGRAMMERS_TYPE,
+      // Used by the Notion upload instead of looking the problem up on solved.ac.
+      problemInfo: {
+        title,
+        level: getProblemLevel(),
+        tags: getProblemTags(title),
+        url: getProblemUrl(),
+      },
     };
   };
 
@@ -239,13 +291,13 @@
     showToast(`Uploaded to ${platformName}.`, { type: 'success', link });
   };
 
-  const handleUploadClick = async (button) => {
+  const handleUploadClick = async (button, platform) => {
     button.disabled = true;
 
     try {
       const payload = await buildPayload();
-      const response = await sendGithubCommitMessage(payload);
-      showUploadResult('GitHub', response);
+      const response = await sendUploadMessage(platform, payload);
+      showUploadResult(platform.name, response);
     } catch (error) {
       // eslint-disable-next-line no-console -- a classic content script cannot import the logger
       console.error('[SCU]', error);
@@ -267,8 +319,17 @@
 
     ensureContainerPositioning(container);
 
-    const { button, wrapper } = createUploadButton();
-    button.addEventListener('click', () => handleUploadClick(button));
+    const wrapper = document.createElement('div');
+    wrapper.className = 'scu-programmers-wrapper';
+
+    PLATFORMS.forEach((platform) => {
+      const button = createUploadButton(platform);
+      button.addEventListener('click', () =>
+        handleUploadClick(button, platform),
+      );
+      wrapper.appendChild(button);
+    });
+
     container.appendChild(wrapper);
 
     return true;
