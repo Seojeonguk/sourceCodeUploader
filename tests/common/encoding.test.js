@@ -31,4 +31,23 @@ describe('encodeBase64Unicode', () => {
   it('encodes an empty string', () => {
     assert.equal(encodeBase64Unicode(''), '');
   });
+
+  it('encodes a large source without exceeding the call stack', () => {
+    // About 1.5 MB in UTF-8: spreading this many bytes into
+    // String.fromCharCode() throws "Maximum call stack size exceeded".
+    const source = '// 한글 주석\nprint("a")\n'.repeat(60000);
+
+    assert.equal(decodeBase64Unicode(encodeBase64Unicode(source)), source);
+  });
+
+  it('encodes multi-byte characters split across chunks', () => {
+    // Shift the 3-byte characters so that some of them cross a chunk boundary.
+    const source = `a${'가'.repeat(50000)}`;
+
+    assert.equal(decodeBase64Unicode(encodeBase64Unicode(source)), source);
+    assert.equal(
+      encodeBase64Unicode(source),
+      Buffer.from(source).toString('base64'),
+    );
+  });
 });
