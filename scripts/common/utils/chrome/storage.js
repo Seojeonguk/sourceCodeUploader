@@ -16,12 +16,13 @@ export const getChromeStorage = async (key) =>
   });
 
 /**
- * Removes a value from Chrome local storage.
- * @param {string} key - The key used to remove the value from storage.
+ * Removes values from Chrome local storage.
+ * @param {string|string[]} keys - The keys used to remove the values from storage.
+ * @returns {Promise<void>} A promise that resolves when the values are removed.
  */
-export const removeChromeStorage = (key) => {
-  logger.debug(`[Storage] Removing key '${key}'`);
-  chrome.storage.local.remove([key]);
+export const removeChromeStorage = (keys) => {
+  logger.debug(`[Storage] Removing keys '${keys}'`);
+  return chrome.storage.local.remove(keys);
 };
 
 /**

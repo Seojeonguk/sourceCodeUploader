@@ -1,4 +1,5 @@
 import { DuplicateResourceException } from './DuplicateResourceException.js';
+import { HttpException } from './HttpException.js';
 import { InvalidRequestException } from './InvalidRequestException.js';
 import { NotFoundException } from './NotFoundException.js';
 import { ParseException } from './ParseException.js';
@@ -8,6 +9,7 @@ import { UndefinedException } from './UndefinedException.js';
 
 export {
   DuplicateResourceException,
+  HttpException,
   InvalidRequestException,
   NotFoundException,
   ParseException,

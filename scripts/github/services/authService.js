@@ -8,9 +8,17 @@ import {
 import {
   createGithubAuthHeader,
   request,
+  getChromeStorage,
   setChromeStorage,
+  removeChromeStorage,
   closeLatestTab,
+  logger,
 } from '../../common/utils/index.js';
+
+// Saved when the user logs in.
+const LOGIN_KEYS = Object.freeze(['githubAccessToken', 'githubID']);
+// Selected by the user in the popup.
+const SETTING_KEYS = Object.freeze(['githubUploadedRepository']);
 
 /**
  * Opens the OAuth authorization page for the user to grant access.
@@ -78,3 +86,46 @@ export const saveInfo = (accessToken, githubID) => {
   setChromeStorage('githubAccessToken', accessToken);
   setChromeStorage('githubID', githubID);
 };
+
+/**
+ * Revokes the access token on GitHub.
+ * @param {string} accessToken - The access token to revoke.
+ */
+export const revokeAccessToken = async (accessToken) => {
+  const url = `${GITHUB_CONFIG.API_BASE_URL}/applications/${GITHUB_CONFIG.CLIENT_ID}/token`;
+  const headers = {
+    Accept: 'application/vnd.github+json',
+    Authorization: `Basic ${btoa(`${GITHUB_CONFIG.CLIENT_ID}:${GITHUB_CONFIG.CLIENT_SECRET}`)}`,
+    'Content-Type': 'application/json',
+  };
+
+  await request(
+    url,
+    'DELETE',
+    headers,
+    JSON.stringify({ access_token: accessToken }),
+  );
+};
+
+/**
+ * Logs out: revokes the access token and removes the login and the selected repository.
+ * The saved values are removed even if revoking fails, such as when the token has already expired.
+ */
+export const logout = async () => {
+  const accessToken = await getChromeStorage('githubAccessToken');
+  if (accessToken) {
+    try {
+      await revokeAccessToken(accessToken);
+    } catch (e) {
+      logger.warn('Failed to revoke the GitHub access token.', e.message);
+    }
+  }
+
+  await removeChromeStorage([...LOGIN_KEYS, ...SETTING_KEYS]);
+};
+
+/**
+ * Removes the login after GitHub rejected the access token.
+ * The selected repository is kept for the next login.
+ */
+export const clearExpiredLogin = () => removeChromeStorage([...LOGIN_KEYS]);

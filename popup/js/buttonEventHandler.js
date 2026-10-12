@@ -1,7 +1,6 @@
 import { ACTIONS } from '../../scripts/github/constants/actions.js';
 
 import {
-  removeChromeStorage,
   setChromeStorage,
   sendMessage,
   logger,
@@ -43,6 +42,15 @@ const handleAutoUploadBtn = () => {
 };
 
 /**
+ * Logs out of the platform in the background and reloads the popup.
+ * @param {'github'|'notion'} platform
+ */
+const logout = async (platform) => {
+  await sendMessage(platform, 'logout');
+  window.location.reload();
+};
+
+/**
  * If the delete class does not exist on github authentication button, open the github oauth page.
  * Otherwise, clear the information related to github.
  */
@@ -53,9 +61,7 @@ const handleGithubAuthenticationBtn = () => {
       return;
     }
 
-    removeChromeStorage('githubAccessToken');
-    removeChromeStorage('githubUploadedRepository');
-    window.location.reload(true);
+    logout('github');
   });
 };
 
@@ -70,11 +76,7 @@ const handleNotionAuthenticationBtn = () => {
       return;
     }
 
-    removeChromeStorage(`notionAccessToken`);
-    removeChromeStorage(`notionUploadedDatabase`);
-    removeChromeStorage(`notionUploadedDatabases`);
-    removeChromeStorage(`notionUploadedDatabaseId`);
-    window.location.reload(true);
+    logout('notion');
   });
 };
 
