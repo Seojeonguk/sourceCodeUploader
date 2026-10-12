@@ -33,7 +33,6 @@
 2. `chrome://extensions/`(**Chrome › 설정 › 확장 프로그램**)를 열어요.
 3. 오른쪽 위 **개발자 모드**를 켜요.
 4. **압축해제된 확장 프로그램을 로드합니다**를 누르고 저장소 폴더(`manifest.json`이 있는 폴더)를 선택해요.
-5. (Notion을 쓸 때만) Notion client secret을 보관하는 [Notion OAuth 프록시](proxy/notion-oauth/README.md)를 배포하고, 그 URL을 `scripts/notion/config/config.js`의 `TOKEN_PROXY_URL`에 넣어요.
 
 ## 사용 방법
 
@@ -103,6 +102,8 @@ npm test                # 단위 테스트 (node:test)
 ```
 
 파일을 고친 뒤에는 `chrome://extensions/`의 확장 프로그램 카드에서 **새로고침**을 눌러요.
+
+`manifest.json`의 `key` 덕분에 어느 폴더에서 불러오든 확장 프로그램 ID가 `mfhbpmbchemfhijjamldbkidlegfmaff`로 같아서, 배포된 [Notion OAuth 프록시](proxy/notion-oauth/README.md)가 모든 사용자의 로그인을 받아요. 사용자는 아무것도 배포하지 않아도 돼요. 관리자가 프록시를 한 번 배포하고 그 URL을 `scripts/notion/config/config.js`의 `TOKEN_PROXY_URL`에 넣어 두면 돼요.
 
 컨벤션: `master`에서 브랜치를 따서 PR을 열어요. 커밋 메시지는 영어 동사로 시작하고 PR 번호로 끝내요(예: `Refactor notion (#177)`). `-s`로 서명을 남겨요.
 

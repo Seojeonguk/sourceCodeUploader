@@ -10,7 +10,7 @@
  * Environment variables:
  * - NOTION_CLIENT_ID, NOTION_CLIENT_SECRET (secrets)
  * - NOTION_REDIRECT_URI: the redirect URI registered in the Notion integration
- * - ALLOWED_EXTENSION_ID: the ID of the extension allowed to call this worker
+ * - ALLOWED_EXTENSION_IDS: the comma-separated IDs of the extensions allowed to call this worker
  */
 
 const NOTION_API_BASE_URL = 'https://api.notion.com';
@@ -40,6 +40,20 @@ const readJson = async (request) => {
 const isNonEmptyString = (value) => typeof value === 'string' && value !== '';
 
 /**
+ * Returns the origin of the request if it is one of the allowed extensions.
+ * @returns {?string} The allowed origin, or null.
+ */
+const findAllowedOrigin = (request, env) => {
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = (env.ALLOWED_EXTENSION_IDS ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter((id) => id !== '')
+    .map((id) => `chrome-extension://${id}`);
+  return allowedOrigins.includes(origin) ? origin : null;
+};
+
+/**
  * Creates the request to Notion for the path. The redirect URI comes from the worker
  * settings, not from the request, so the worker only completes this extension's logins.
  * @returns {?{path: string, body: Object}} The Notion request, or null if the input is invalid.
@@ -67,8 +81,8 @@ export default {
   async fetch(request, env) {
     // Only the extension can call the worker from a browser. Other clients can send any
     // Origin header, but an authorization code is useless without the user's consent.
-    const allowedOrigin = `chrome-extension://${env.ALLOWED_EXTENSION_ID}`;
-    if (request.headers.get('Origin') !== allowedOrigin) {
+    const allowedOrigin = findAllowedOrigin(request, env);
+    if (!allowedOrigin) {
       return jsonResponse({ error: 'forbidden_origin' }, 403);
     }
 

@@ -4,10 +4,11 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import worker from '../../proxy/notion-oauth/src/index.js';
 
 const EXTENSION_ID = 'abcdefghijklmnopabcdefghijklmnop';
+const OTHER_EXTENSION_ID = 'ponmlkjihgfedcbaponmlkjihgfedcba';
 const ORIGIN = `chrome-extension://${EXTENSION_ID}`;
 
 const env = {
-  ALLOWED_EXTENSION_ID: EXTENSION_ID,
+  ALLOWED_EXTENSION_IDS: `${EXTENSION_ID}, ${OTHER_EXTENSION_ID}`,
   NOTION_CLIENT_ID: 'client-id',
   NOTION_CLIENT_SECRET: 'client-secret',
   NOTION_REDIRECT_URI: 'https://github.com',
@@ -90,6 +91,28 @@ describe('Notion OAuth proxy', () => {
 
     assert.equal(response.status, 403);
     assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
+    assert.equal(globalThis.fetch.mock.callCount(), 0);
+  });
+
+  it('accepts every allowed extension', async () => {
+    const origin = `chrome-extension://${OTHER_EXTENSION_ID}`;
+    const response = await call('/token', { origin, body: { code: 'code' } });
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), origin);
+  });
+
+  it('rejects every origin when no extension is allowed', async () => {
+    const response = await worker.fetch(
+      new Request('https://proxy.example.workers.dev/token', {
+        method: 'POST',
+        headers: { Origin: 'chrome-extension://' },
+        body: JSON.stringify({ code: 'code' }),
+      }),
+      { ...env, ALLOWED_EXTENSION_IDS: '' },
+    );
+
+    assert.equal(response.status, 403);
     assert.equal(globalThis.fetch.mock.callCount(), 0);
   });
 

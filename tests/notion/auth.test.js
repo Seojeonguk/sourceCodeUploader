@@ -60,7 +60,7 @@ describe('Notion logout', () => {
     const storage = mockChromeStorage(settings);
     globalThis.fetch = mock.fn();
 
-    await dispatch('logout');
+    await logout('');
 
     assert.deepEqual(storage, {});
     assert.equal(globalThis.fetch.mock.callCount(), 0);

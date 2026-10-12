@@ -6,5 +6,5 @@ export const NOTION_CONFIG = Object.freeze({
   REDIRECT_URL: 'https://github.com',
   // The URL of the deployed proxy/notion-oauth worker, which keeps the client secret,
   // such as `https://scu-notion-oauth.<your-subdomain>.workers.dev`.
-  TOKEN_PROXY_URL: '',
+  TOKEN_PROXY_URL: 'https://scu-notion-oauth.scu-notion-oauth.workers.dev',
 });

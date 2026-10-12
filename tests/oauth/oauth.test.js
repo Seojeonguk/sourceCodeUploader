@@ -21,10 +21,11 @@ const openNotionPage = () =>
     (state) => `https://api.notion.com/v1/oauth/authorize?state=${state}`,
   );
 
-// The token proxy URL is not set in the tests, so a redirect that passes the state check
-// fails at the token exchange with SetupRequiredException. The Notion login itself is
-// tested in tests/notion/auth.test.js.
-const PASSED_STATE_CHECK = { name: 'SetupRequiredException' };
+// The token exchange fails in the tests (with SetupRequiredException if the token proxy URL
+// is not set, or with the mocked fetch if it is), so a redirect that passes the state check
+// rejects with anything but the state error. The Notion login itself is tested in
+// tests/notion/auth.test.js.
+const PASSED_STATE_CHECK = (error) => error.name !== 'InvalidRequestException';
 const REJECTED_STATE = { name: 'InvalidRequestException' };
 
 describe('OAuth redirect', () => {

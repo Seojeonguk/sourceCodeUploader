@@ -33,7 +33,6 @@ The extension is not on the Chrome Web Store yet. Load it manually:
 2. Open `chrome://extensions/` (**Chrome › Settings › Extensions**).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and select the repository folder (the one containing `manifest.json`).
-5. (Notion only) Deploy the [Notion OAuth proxy](proxy/notion-oauth/README.md), which keeps the Notion client secret, and set its URL as `TOKEN_PROXY_URL` in `scripts/notion/config/config.js`.
 
 ## Usage
 
@@ -103,6 +102,8 @@ npm test                # unit tests (node:test)
 ```
 
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
+
+The `key` in `manifest.json` fixes the extension ID to `mfhbpmbchemfhijjamldbkidlegfmaff` wherever the folder is loaded from, so the deployed [Notion OAuth proxy](proxy/notion-oauth/README.md) accepts everyone's login. Users do not deploy anything; the maintainer deploys the proxy once and keeps its URL in `TOKEN_PROXY_URL` of `scripts/notion/config/config.js`.
 
 Conventions: branch from `master` and open a PR; commit messages start with an English verb and end with the PR number, e.g. `Refactor notion (#177)`, signed off with `-s`.
 
