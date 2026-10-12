@@ -94,10 +94,6 @@
       ]
     },
     {
-      "resources": ["scripts/common/*"],
-      "matches": ["<all_urls>"]
-    },
-    {
       "resources": ["scripts/programmers/sourceExtractor.js"],
       "matches": [
         "https://school.programmers.co.kr/*",
