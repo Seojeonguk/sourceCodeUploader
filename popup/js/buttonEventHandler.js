@@ -22,7 +22,7 @@ export function initializeButtonEvents() {
  * Closes the select list when clicking outside of it.
  */
 const closeSelectListOnOutsideClick = () => {
-  $(document).on('click', function () {
+  $(document).on('click', () => {
     $('.select-list ul').removeClass('is-active');
     $('.content-wrapper').removeClass('overlay');
   });
@@ -98,7 +98,7 @@ const handleUploadedDatabaseSelection = () => {
  * Upon selection, updates the uploaded repository display and stores the selected repository in Chrome storage.
  */
 const handleUploadedRepositorySelection = () => {
-  $(document).on('click', '#repository-list li p', function (e) {
+  $(document).on('click', '#repository-list li p', (e) => {
     const uploadedRepository = e.target.innerHTML;
 
     $('#uploaded-repository').text(uploadedRepository);
@@ -162,7 +162,7 @@ const showRepositories = () => {
  * Stops event propagation to prevent further event handling.
  */
 const toggleDarkMode = () => {
-  $('.dark-light').on('click', function (e) {
+  $('.dark-light').on('click', (e) => {
     $('body').toggleClass('light-mode');
     e.stopPropagation();
   });

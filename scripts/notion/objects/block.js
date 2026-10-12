@@ -37,16 +37,14 @@ export const createBlock = (type, payload) => {
  * @param {string} [code.language=plain_text] - The programming language of the code block.
  * @returns {Object} - The created code block.
  */
-export const createCode = ({ caption, text, language = LANGUAGES.Text }) => {
-  return {
-    type: BLOCK_TYPE.CODE,
-    [BLOCK_TYPE.CODE]: {
-      caption: caption && createRichTextArray(caption),
-      rich_text: createRichTextArrayByLength(text),
-      language,
-    },
-  };
-};
+export const createCode = ({ caption, text, language = LANGUAGES.Text }) => ({
+  type: BLOCK_TYPE.CODE,
+  [BLOCK_TYPE.CODE]: {
+    caption: caption && createRichTextArray(caption),
+    rich_text: createRichTextArrayByLength(text),
+    language,
+  },
+});
 
 /**
  * Create a heading block.
@@ -63,16 +61,14 @@ export const createHeading = ({
   text,
   color,
   is_toggleable = false,
-}) => {
-  return {
-    type,
-    [type]: {
-      rich_text: createRichTextArray(text),
-      color,
-      is_toggleable,
-    },
-  };
-};
+}) => ({
+  type,
+  [type]: {
+    rich_text: createRichTextArray(text),
+    color,
+    is_toggleable,
+  },
+});
 
 /**
  * Creates a paragraph block.
@@ -82,15 +78,13 @@ export const createHeading = ({
  * @param {string} [paragraph.color] - The color of the text in the paragraph.
  * @returns {Object} The created paragraph block.
  */
-export const createParagraph = ({ text, color }) => {
-  return {
-    type: BLOCK_TYPE.PARAGRAPH,
-    [BLOCK_TYPE.PARAGRAPH]: {
-      rich_text: createRichTextArray(text),
-      color,
-    },
-  };
-};
+export const createParagraph = ({ text, color }) => ({
+  type: BLOCK_TYPE.PARAGRAPH,
+  [BLOCK_TYPE.PARAGRAPH]: {
+    rich_text: createRichTextArray(text),
+    color,
+  },
+});
 
 /**
  * Creates a rich text block.
@@ -120,25 +114,23 @@ export const createRichText = ({
     color,
   } = {},
   href = null,
-}) => {
-  return {
-    type: BLOCK_TYPE.TEXT,
-    [BLOCK_TYPE.TEXT]: {
-      content: text,
-      link,
-    },
-    annotations: {
-      bold,
-      italic,
-      strikethrough,
-      underline,
-      code,
-      color,
-    },
-    plain_text: text,
-    href,
-  };
-};
+}) => ({
+  type: BLOCK_TYPE.TEXT,
+  [BLOCK_TYPE.TEXT]: {
+    content: text,
+    link,
+  },
+  annotations: {
+    bold,
+    italic,
+    strikethrough,
+    underline,
+    code,
+    color,
+  },
+  plain_text: text,
+  href,
+});
 
 /**
  * Splits the given text by newline characters ('\n') and creates an array of rich text objects,
@@ -147,13 +139,12 @@ export const createRichText = ({
  * @param {string} text The text to be transformed
  * @returns {Object[]} An array of rich text objects
  */
-export const createRichTextArray = (text) => {
-  return text.split('\n').map((value, index, array) => {
-    return createRichText({
-      text: array.length - 1 === index ? value : value + '\n',
-    });
-  });
-};
+export const createRichTextArray = (text) =>
+  text.split('\n').map((value, index, array) =>
+    createRichText({
+      text: array.length - 1 === index ? value : `${value}\n`,
+    }),
+  );
 
 /**
  * Splits the given text into chunks of 2000 characters each and creates an array of rich text objects,
