@@ -80,8 +80,7 @@
     "activeTab",
     "declarativeNetRequest",
     "scripting",
-    "storage",
-    "nativeMessaging"
+    "storage"
   ],
   "short_name": "SCU",
   "web_accessible_resources": [
