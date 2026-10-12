@@ -3,7 +3,11 @@ import { describe, it } from 'node:test';
 
 import {
   createProblemPageData,
+  createSourceCodeBlock,
+  findSourceCodeBlock,
   getCodeLanguage,
+  getPlainText,
+  isSameSourceCode,
 } from '../../scripts/notion/objects/problemPage.js';
 
 const names = (property) => property.multi_select.map(({ name }) => name);
@@ -83,5 +87,65 @@ describe('createProblemPageData', () => {
     });
 
     assert.equal(properties.URL.url, 'acmicpc.net/problem/1000');
+  });
+});
+
+describe('findSourceCodeBlock', () => {
+  const heading = (text) => ({
+    id: text,
+    type: 'heading_1',
+    heading_1: { rich_text: [{ plain_text: text }] },
+  });
+  const code = (id, text) => ({
+    id,
+    type: 'code',
+    code: { rich_text: [{ plain_text: text }] },
+  });
+
+  it('finds the code block below the Source Code heading', () => {
+    const blocks = [
+      heading('How to resolve?'),
+      code('note', 'a code block in the notes'),
+      heading('Source Code'),
+      code('source', 'print(1)'),
+    ];
+
+    assert.equal(findSourceCodeBlock(blocks).id, 'source');
+  });
+
+  it('falls back to the first code block if the heading was removed', () => {
+    assert.equal(findSourceCodeBlock([code('only', 'print(1)')]).id, 'only');
+  });
+
+  it('returns null if the page has no code block', () => {
+    assert.equal(findSourceCodeBlock([heading('Source Code')]), null);
+  });
+});
+
+describe('getPlainText', () => {
+  it('joins the text split by the 2000 character limit (#145)', () => {
+    const source = 'a'.repeat(4500);
+    const { code } = createSourceCodeBlock({
+      sourceCode: source,
+      extension: 'py',
+    });
+
+    assert.equal(code.rich_text.length, 3);
+    assert.equal(getPlainText(code.rich_text), source);
+  });
+
+  it('returns an empty string for an empty array', () => {
+    assert.equal(getPlainText([]), '');
+    assert.equal(getPlainText(undefined), '');
+  });
+});
+
+describe('isSameSourceCode', () => {
+  it('ignores the line endings', () => {
+    assert.equal(isSameSourceCode('a\r\nb', 'a\nb'), true);
+  });
+
+  it('detects changed code', () => {
+    assert.equal(isSameSourceCode('print(1)', 'print(2)'), false);
   });
 });

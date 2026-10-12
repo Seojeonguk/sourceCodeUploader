@@ -3,6 +3,8 @@ import { BLOCK_TYPE, CODE_LANGUAGES } from './constants/blockConstants.js';
 import { PROPERTY_TYPE } from './constants/pageConstants.js';
 import { createPageProperty } from './page.js';
 
+const SOURCE_CODE_HEADING = 'Source Code';
+
 const EXTENSION_CODE_LANGUAGES = Object.freeze({
   c: CODE_LANGUAGES.C,
   cc: CODE_LANGUAGES.CPP,
@@ -84,10 +86,69 @@ export const createProblemPageData = ({
   children: [
     createBlock(BLOCK_TYPE.HEADING_LARGE, { text: 'How to resolve?' }),
     createBlock(BLOCK_TYPE.PARAGRAPH, { text: '' }),
-    createBlock(BLOCK_TYPE.HEADING_LARGE, { text: 'Source Code' }),
-    createBlock(BLOCK_TYPE.CODE, {
-      text: sourceCode,
-      language: getCodeLanguage(extension),
-    }),
+    ...createSourceCodeBlocks({ sourceCode, extension }),
   ],
 });
+
+/**
+ * Creates the code block of the source code.
+ * @param {Object} param
+ * @param {string} param.sourceCode - The source code.
+ * @param {string} param.extension - The file extension of the source code.
+ * @returns {Object} The code block.
+ */
+export const createSourceCodeBlock = ({ sourceCode, extension }) =>
+  createBlock(BLOCK_TYPE.CODE, {
+    text: sourceCode,
+    language: getCodeLanguage(extension),
+  });
+
+/**
+ * Creates the `Source Code` heading and the code block below it.
+ * @param {Object} param
+ * @param {string} param.sourceCode - The source code.
+ * @param {string} param.extension - The file extension of the source code.
+ * @returns {Object[]} The heading and the code block.
+ */
+export const createSourceCodeBlocks = ({ sourceCode, extension }) => [
+  createBlock(BLOCK_TYPE.HEADING_LARGE, { text: SOURCE_CODE_HEADING }),
+  createSourceCodeBlock({ sourceCode, extension }),
+];
+
+/**
+ * Joins the text of a rich text array, such as the text of a code block.
+ * @param {Object[]} [richTexts=[]] - The rich text array from the Notion API.
+ * @returns {string} The plain text.
+ */
+export const getPlainText = (richTexts = []) =>
+  richTexts.map((text) => text.plain_text ?? text.text?.content ?? '').join('');
+
+/**
+ * Finds the code block of the source code in the blocks of a problem page:
+ * the first code block below the `Source Code` heading, or the first code block
+ * if the heading was removed.
+ * @param {Object[]} blocks - The child blocks of the page.
+ * @returns {?Object} The code block, or null if the page has none.
+ */
+export const findSourceCodeBlock = (blocks) => {
+  const headingIndex = blocks.findIndex(
+    (block) =>
+      block.type === BLOCK_TYPE.HEADING_LARGE &&
+      getPlainText(block[block.type].rich_text) === SOURCE_CODE_HEADING,
+  );
+
+  return (
+    blocks
+      .slice(headingIndex + 1)
+      .find((block) => block.type === BLOCK_TYPE.CODE) ?? null
+  );
+};
+
+/**
+ * Checks whether two source codes are the same, ignoring the line endings.
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+export const isSameSourceCode = (a, b) =>
+  String(a).replace(/\r\n/g, '\n') === String(b).replace(/\r\n/g, '\n');

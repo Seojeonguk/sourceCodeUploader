@@ -1,17 +1,18 @@
-import { getChromeStorage, request } from '../../common/utils/index.js';
-import { NOTION_CONFIG } from '../config/config.js';
+import { notionRequest } from './request.js';
 
-export const createPage = async (data) => {
-  const accessToken = await getChromeStorage('notionAccessToken');
+/**
+ * Creates a page.
+ * @param {Object} data - The request body of the page.
+ * @returns {Promise<Object>} The created page.
+ */
+export const createPage = async (data) =>
+  notionRequest('/v1/pages', 'POST', data);
 
-  const url = `${NOTION_CONFIG.API_BASE_URL}/v1/pages`;
-
-  const headers = {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json',
-    'Notion-Version': '2022-06-28',
-  };
-
-  const response = await request(url, 'POST', headers, JSON.stringify(data));
-  return response;
-};
+/**
+ * Updates the properties of a page.
+ * @param {string} pageId - The page to update.
+ * @param {Object} properties - The properties to update. Other properties are kept.
+ * @returns {Promise<Object>} The updated page.
+ */
+export const updatePageProperties = async (pageId, properties) =>
+  notionRequest(`/v1/pages/${pageId}`, 'PATCH', { properties });
