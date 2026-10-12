@@ -6,6 +6,7 @@ import {
   sendMessage,
   logger,
 } from '../../scripts/common/utils/index.js';
+import { showToast } from './toast.js';
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
@@ -121,7 +122,7 @@ const showDatabases = () => {
 
     if (!Array.isArray(response?.message)) {
       logger.debug(response);
-      alert(response.message);
+      showToast(response?.message, 'error');
       return;
     }
 
@@ -146,7 +147,7 @@ const showRepositories = () => {
     const response = await sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
     if (!response.ok || !Array.isArray(response.message)) {
-      alert(response.message);
+      showToast(response?.message, 'error');
       return;
     }
 

@@ -2,6 +2,7 @@
   const PROGRAMMERS_TYPE = 'Programmers';
   const RESPONSE_EVENT = 'SCU_PROGRAMMERS_SOURCE_RESPONSE';
   const REQUEST_EVENT = 'SCU_PROGRAMMERS_SOURCE_REQUEST';
+  const TOAST_DURATION = 5000;
 
   const { getExtensionFromLanguage, normalizeText } =
     globalThis.SCU_PROGRAMMERS;
@@ -198,17 +199,57 @@
     };
   };
 
+  /**
+   * Shows a message on the page instead of alert().
+   * @param {string} message - The message to show.
+   * @param {Object} [options]
+   * @param {'info'|'success'|'error'} [options.type='info'] - The type of the message.
+   * @param {?string} [options.link] - A URL to open from the message.
+   */
+  const showToast = (message, { type = 'info', link = null } = {}) => {
+    document.querySelector('.scu-programmers-toast')?.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `scu-programmers-toast scu-programmers-toast-${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.textContent = message || 'Something went wrong.';
+
+    if (link) {
+      const anchor = document.createElement('a');
+      anchor.href = link;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.textContent = 'Open';
+      toast.append(' ', anchor);
+    }
+
+    document.body.appendChild(toast);
+    window.setTimeout(() => toast.remove(), TOAST_DURATION);
+  };
+
+  const showUploadResult = (platformName, response) => {
+    if (!response?.ok) {
+      showToast(response?.message, { type: 'error' });
+      return;
+    }
+
+    const link = /^https?:\/\//.test(response.message)
+      ? response.message
+      : null;
+    showToast(`Uploaded to ${platformName}.`, { type: 'success', link });
+  };
+
   const handleUploadClick = async (button) => {
     button.disabled = true;
 
     try {
       const payload = await buildPayload();
       const response = await sendGithubCommitMessage(payload);
-      alert(response?.message);
+      showUploadResult('GitHub', response);
     } catch (error) {
       // eslint-disable-next-line no-console -- a classic content script cannot import the logger
       console.error('[SCU]', error);
-      alert(error.message);
+      showToast(error.message, { type: 'error' });
     } finally {
       button.disabled = false;
     }
