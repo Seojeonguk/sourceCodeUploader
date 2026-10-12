@@ -31,6 +31,8 @@
     ],
     BREADCRUMB_ITEMS: 'ol.breadcrumb > li',
     FILE_LABEL: 'div.editor > ul > li.nav-item > a',
+    // The language dropdown button, such as `Python3`.
+    LANGUAGE: ['div#tour7 > button', 'select[name*="language"] option:checked'],
     // The title of the result modal shown after "제출 후 채점하기".
     RESULT_TITLE: [
       'div.modal-header > h4',
@@ -39,7 +41,8 @@
     ],
   });
 
-  const RESULT_CHECK_INTERVAL = 1000;
+  // The delay before checking the result modal after the page changes.
+  const RESULT_CHECK_DELAY = 300;
 
   const {
     formatLevel,
@@ -174,18 +177,12 @@
       return queryLanguage.toLowerCase();
     }
 
-    const selectedLanguage = [
-      '[class*="language"] .active',
-      '[class*="Language"] .active',
-      '[aria-selected="true"]',
-      'select[name*="language"] option:checked',
-    ]
-      .map((selector) =>
-        normalizeText(document.querySelector(selector)?.textContent),
-      )
-      .find(Boolean);
+    const selectedLanguage = SELECTORS.LANGUAGE.map((selector) =>
+      normalizeText(document.querySelector(selector)?.textContent),
+    ).find(Boolean);
 
-    return selectedLanguage?.toLowerCase() ?? 'javascript';
+    // Unknown languages are not guessed, so the file extension falls back to `txt`.
+    return selectedLanguage?.toLowerCase() ?? null;
   };
 
   const getFileExtension = () =>
@@ -370,13 +367,10 @@
    */
   const watchAcceptedResult = () => {
     let handled = false;
+    let checkScheduled = false;
 
-    const timer = window.setInterval(() => {
-      // The extension was reloaded or removed, so this script can no longer use chrome APIs.
-      if (!chrome.runtime?.id) {
-        window.clearInterval(timer);
-        return;
-      }
+    const checkResult = () => {
+      checkScheduled = false;
 
       const resultTitle = getResultTitle();
       if (!isRendered(resultTitle)) {
@@ -390,7 +384,31 @@
 
       handled = true;
       uploadAutomatically();
-    }, RESULT_CHECK_INTERVAL);
+    };
+
+    // Check only when the page changes, instead of polling all the time.
+    const observer = new MutationObserver(() => {
+      // The extension was reloaded or removed, so this script can no longer use chrome APIs.
+      if (!chrome.runtime?.id) {
+        observer.disconnect();
+        return;
+      }
+
+      // The editor changes the DOM on every key stroke, so check at most once per delay.
+      // A timer (not requestAnimationFrame) also runs while the tab is in the background.
+      if (!checkScheduled) {
+        checkScheduled = true;
+        window.setTimeout(checkResult, RESULT_CHECK_DELAY);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    });
   };
 
   const initialize = () => {
