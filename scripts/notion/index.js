@@ -22,10 +22,13 @@ export async function dispatch(action, payload) {
     },
     [ACTIONS.GET_DATABASES]: async () => getDatabases(),
     [ACTIONS.UPLOAD]: async () => {
-      const problemInfo = await solvedAC(
-        NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
-        payload,
-      );
+      // Programmers sends the problem info from the page. BOJ problems are looked up on solved.ac.
+      const problemInfo =
+        payload.problemInfo ??
+        (await solvedAC(
+          NOTION_ACTIONS.GET_PROBLEM_INFO_BY_PROBLEM_ID,
+          payload,
+        ));
       return upload(payload, problemInfo);
     },
   };

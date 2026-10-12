@@ -35,3 +35,39 @@
   width: 24px;
   height: 24px;
 }
+
+.scu-programmers-toasts {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.scu-programmers-toast {
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #ffffff;
+  background: #333333;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-all;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.scu-programmers-toast-success {
+  background: #1e7e34;
+}
+
+.scu-programmers-toast-error {
+  background: #d93025;
+}
+
+.scu-programmers-toast a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+}

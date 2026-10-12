@@ -264,3 +264,23 @@ label {
 [type='checkbox']:enabled:hover {
   box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
 }
+
+.scu-toast {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  z-index: 1000;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: white;
+  background-color: #333333;
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-all;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.scu-toast-error {
+  background-color: #d93025;
+}

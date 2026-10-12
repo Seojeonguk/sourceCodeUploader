@@ -4,7 +4,7 @@
 
 알고리즘 문제 사이트에서 통과한 소스 코드를 **버튼 한 번으로 GitHub · Notion에 업로드**하는 Chrome 확장 프로그램이에요. 별도 서버도, 토큰 직접 설정도 필요 없어요.
 
-<!-- TODO: 데모 GIF (프로그래머스 문제 페이지 → 업로드 버튼 → GitHub 커밋) -->
+<!-- TODO: 데모 GIF (프로그래머스 문제 페이지 → 업로드 버튼 → GitHub 커밋 / Notion 페이지) -->
 
 > **참고** — 백준 온라인 저지가 서비스를 종료했어요. 아래 백준 기능은 종료 전까지 만들어 쓰던 기능이고, 지금은 동작을 확인할 수 없어요. 현재는 프로그래머스를 지원해요.
 
@@ -22,7 +22,7 @@
 
 | 사이트 | 페이지 | GitHub | Notion | 자동 업로드 | 상태 |
 |---|---|:-:|:-:|:-:|---|
-| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지 | ✅ | — | — | 지원 중 |
+| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지 | ✅ | ✅ | ✅ (채점 결과 창) | 지원 중 |
 | 백준 온라인 저지 | 채점 현황(`/status`), 소스 코드(`/source/{id}`) | ✅ | ✅ | ✅ (채점 현황) | 사이트 종료 — 확인 불가 |
 
 ## 설치
@@ -40,7 +40,7 @@
 2. **GitHub** — `Authorize`를 누르고 접근을 허용한 뒤, 업로드할 저장소를 골라요. ([가이드](scripts/github/README.md))
 3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. ([가이드](scripts/notion/README.md))
 4. (선택) 플랫폼별 **자동 업로드**를 켜요.
-5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 업로드 버튼을 누르면 돼요.
+5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
    (백준에서는 채점 현황의 맞은 제출에 업로드 버튼이 생기고, 자동 업로드도 할 수 있었어요.)
 
 ## 동작 방식
@@ -108,6 +108,7 @@ npm test                # 단위 테스트 (node:test)
 | v2 | 2022.12 – 2023.01 | Extension + Django REST 서버(Docker · Nginx · Jenkins) — 스냅샷: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server) |
 | v3 | 2024.02 – | OAuth를 쓰는 서버 없는 Extension ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
 | v3.x | 2024.07 – 2026.04 | 채점 현황 업로드, Notion 길이 제한, UTF-8 인코딩, 리팩토링, 프로그래머스, 자동 업로드 |
+| v3.x | 2026.10 | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI |
 
 ## 문의
 

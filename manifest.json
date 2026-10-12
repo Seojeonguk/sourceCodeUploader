@@ -47,7 +47,10 @@
         "https://programmers.co.kr/learn/courses/*/lessons/*"
       ],
       "css": ["scripts/programmers/programmers.css"],
-      "js": ["scripts/programmers/index.js"],
+      "js": [
+        "scripts/programmers/helpers.js",
+        "scripts/programmers/index.js"
+      ],
       "run_at": "document_idle"
     },
     {

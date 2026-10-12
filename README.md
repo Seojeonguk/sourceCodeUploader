@@ -4,7 +4,7 @@
 
 A Chrome extension that uploads your accepted solutions from algorithm judge sites to **GitHub** and **Notion** with a single click — no server, no manual token setup.
 
-<!-- TODO: demo GIF (Programmers problem page → upload button → GitHub commit) -->
+<!-- TODO: demo GIF (Programmers problem page → upload button → GitHub commit / Notion page) -->
 
 > **Note** — Baekjoon Online Judge has been shut down. The BOJ features below were built and used until then, but can no longer be tested. Programmers is currently supported.
 
@@ -22,7 +22,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 
 | Source | Pages | GitHub | Notion | Auto upload | Status |
 |---|---|:-:|:-:|:-:|---|
-| [Programmers](https://school.programmers.co.kr/) | Lesson page | ✅ | — | — | Supported |
+| [Programmers](https://school.programmers.co.kr/) | Lesson page | ✅ | ✅ | ✅ (result modal) | Supported |
 | Baekjoon Online Judge | Status (`/status`), Source (`/source/{id}`) | ✅ | ✅ | ✅ (status page) | Site shut down — untested |
 
 ## Installation
@@ -40,7 +40,7 @@ The extension is not on the Chrome Web Store yet. Load it manually:
 2. **GitHub** — Click `Authorize`, approve access, then select the repository to upload to. ([guide](scripts/github/README.md))
 3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. ([guide](scripts/notion/README.md))
 4. (Optional) Turn on **Auto upload** for each platform.
-5. Solve a problem. On a Programmers lesson page, click the GitHub upload button.
+5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
    (On BOJ, accepted submissions on the status page got upload buttons and could be uploaded automatically.)
 
 ## How It Works
@@ -108,6 +108,7 @@ Conventions: branch from `master` and open a PR; commit messages start with an E
 | v2 | 2022.12 – 2023.01 | Extension + Django REST server (Docker · Nginx · Jenkins) — snapshot: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server) |
 | v3 | 2024.02 – | Serverless extension with OAuth ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
 | v3.x | 2024.07 – 2026.04 | Status-page upload, Notion length limits, UTF-8 encoding, refactoring, Programmers, auto upload |
+| v3.x | 2026.10 | Programmers Notion upload and auto upload, in-page messages, lint · test CI |
 
 ## Support
 
