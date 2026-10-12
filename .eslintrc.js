@@ -16,6 +16,8 @@ module.exports = {
     'no-use-before-define': 'off',
     // Native ES modules in the extension need explicit `.js` extensions.
     'import/extensions': ['error', 'always', { ignorePackages: true }],
+    // Modules use named exports consistently.
+    'import/prefer-default-export': 'off',
     // 추가 규칙 설정 (필요시)
   },
 };
