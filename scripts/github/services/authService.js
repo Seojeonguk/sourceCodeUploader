@@ -1,3 +1,4 @@
+import { openOAuthPage } from '../../oauth/state.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 
 import {
@@ -11,7 +12,6 @@ import {
   getChromeStorage,
   setChromeStorage,
   removeChromeStorage,
-  closeLatestTab,
   logger,
 } from '../../common/utils/index.js';
 
@@ -23,17 +23,17 @@ const SETTING_KEYS = Object.freeze(['githubUploadedRepository']);
 /**
  * Opens the OAuth authorization page for the user to grant access.
  */
-export const openOauthPage = () => {
-  const params = new URLSearchParams({
-    client_id: GITHUB_CONFIG.CLIENT_ID,
-    redirect_uri: GITHUB_CONFIG.REDIRECT_URL,
-    scope: GITHUB_CONFIG.SCOPES[0],
-  });
+export const openOauthPage = () =>
+  openOAuthPage('github', (state) => {
+    const params = new URLSearchParams({
+      client_id: GITHUB_CONFIG.CLIENT_ID,
+      redirect_uri: GITHUB_CONFIG.REDIRECT_URL,
+      scope: GITHUB_CONFIG.SCOPES[0],
+      state,
+    });
 
-  chrome.tabs.create({
-    url: `${GITHUB_CONFIG.BASE_URL}/login/oauth/authorize?${params}`,
+    return `${GITHUB_CONFIG.BASE_URL}/login/oauth/authorize?${params}`;
   });
-};
 
 /**
  * Retrieves the access token using the provided authorization code.
@@ -59,8 +59,6 @@ export const getAccessToken = async (payload) => {
     throw new NotFoundException('Github', 'access token');
   }
 
-  closeLatestTab();
-
   return accessToken;
 };
 
@@ -85,6 +83,16 @@ export const getUserInfo = async (accessToken) => {
 export const saveInfo = (accessToken, githubID) => {
   setChromeStorage('githubAccessToken', accessToken);
   setChromeStorage('githubID', githubID);
+};
+
+/**
+ * Logs in with the authorization code from the OAuth redirect.
+ * @param {string} code - The authorization code.
+ */
+export const login = async (code) => {
+  const accessToken = await getAccessToken({ code });
+  const githubID = await getUserInfo(accessToken);
+  saveInfo(accessToken, githubID);
 };
 
 /**
