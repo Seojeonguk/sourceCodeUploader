@@ -1,9 +1,21 @@
 import { InvalidRequestException } from '../../common/exception/index.js';
-import { getChromeStorage, request } from '../../common/utils/index.js';
+import {
+  fetchAllPages,
+  getChromeStorage,
+  request,
+} from '../../common/utils/index.js';
 import { NOTION_CONFIG } from '../config/config.js';
 import { createPage } from '../endpoints/pages.js';
 import { createProblemPageData } from '../objects/problemPage.js';
 
+// The maximum page size of the Notion API.
+const DATABASES_PER_PAGE = 100;
+
+/**
+ * Retrieves all databases shared with the integration, following every page.
+ * @throws {Error} If the access token is missing or invalid.
+ * @returns {Promise<Object[]>} A list of databases.
+ */
 export const getDatabases = async () => {
   const accessToken = await getChromeStorage('notionAccessToken');
   if (!accessToken) {
@@ -18,18 +30,23 @@ export const getDatabases = async () => {
     'Notion-Version': '2022-06-28',
   };
 
-  const body = JSON.stringify({
-    filter: {
-      value: 'database',
-      property: 'object',
-    },
+  return fetchAllPages(async (startCursor) => {
+    const body = JSON.stringify({
+      filter: {
+        value: 'database',
+        property: 'object',
+      },
+      page_size: DATABASES_PER_PAGE,
+      start_cursor: startCursor,
+    });
+
+    const response = await request(url, 'POST', headers, body);
+
+    return {
+      items: response.results,
+      nextCursor: response.has_more ? response.next_cursor : null,
+    };
   });
-
-  const response = await request(url, 'POST', headers, body);
-
-  const { results } = response;
-
-  return results;
 };
 
 /**

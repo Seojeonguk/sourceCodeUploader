@@ -3,6 +3,7 @@ import { closeLatestTab } from './chrome/tabs.js';
 import { encodeBase64Unicode } from './encoding.js';
 import { createGithubAuthHeader, request } from './fetch.js';
 import { logger } from './logger.js';
+import { fetchAllPages } from './pagination.js';
 
 import {
   setChromeStorage,
@@ -26,5 +27,6 @@ export {
   getResourceURL,
   sendMessage,
   encodeBase64Unicode,
+  fetchAllPages,
   logger,
 };
