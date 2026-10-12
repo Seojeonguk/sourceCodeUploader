@@ -1,3 +1,4 @@
+import { HttpException } from '../exception/HttpException.js';
 import { logger, maskSensitiveFields } from './logger.js';
 
 export const request = async (
@@ -29,7 +30,7 @@ export const request = async (
         method,
         headers: maskSensitiveFields(headers),
       });
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new HttpException(response.status);
     }
 
     const contentType = response.headers.get('Content-Type');

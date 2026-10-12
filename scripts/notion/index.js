@@ -1,8 +1,14 @@
+import { SetupRequiredException } from '../common/exception/index.js';
 import { setChromeStorage } from '../common/utils/index.js';
 import { ACTIONS as NOTION_ACTIONS } from '../solvedAC/constants/actions.js';
 import { dispatch as solvedAC } from '../solvedAC/index.js';
 import { ACTIONS } from './constants/actions.js';
-import { getAccessToken, openOauthPage } from './services/authService.js';
+import {
+  clearExpiredLogin,
+  getAccessToken,
+  logout,
+  openOauthPage,
+} from './services/authService.js';
 import { getDatabases, upload } from './services/databaseService.js';
 
 /**
@@ -10,6 +16,7 @@ import { getDatabases, upload } from './services/databaseService.js';
  * @param {string} action - The action to be executed.
  * @param {Object} payload - The payload associated with the action.
  * @throws {Error} If the action is not supported.
+ * @throws {SetupRequiredException} If Notion rejected the access token. The login is removed.
  * @returns {Promise<*>} The result of the action handler.
  */
 export async function dispatch(action, payload) {
@@ -31,6 +38,7 @@ export async function dispatch(action, payload) {
         ));
       return upload(payload, problemInfo);
     },
+    [ACTIONS.LOGOUT]: async () => logout(),
   };
 
   const handler = actions[action];
@@ -38,5 +46,14 @@ export async function dispatch(action, payload) {
     throw new Error(`Unsupported action : ${action}`);
   }
 
-  return handler();
+  try {
+    return await handler();
+  } catch (e) {
+    // 401: the access token has expired or the user removed the integration on Notion.
+    if (e.status === 401) {
+      await clearExpiredLogin();
+      throw new SetupRequiredException('Notion', 'login-expired');
+    }
+    throw e;
+  }
 }

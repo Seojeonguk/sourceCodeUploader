@@ -91,7 +91,7 @@ export const commit = async (payload) => {
   try {
     existingFile = await request(url, 'GET', headers, undefined);
   } catch (e) {
-    if (e instanceof Error && e.message.includes('404')) {
+    if (e.status === 404) {
       logger.warn('File not found. Creating a new file.');
     } else {
       throw e;

@@ -3,4 +3,5 @@ export const ACTIONS = Object.freeze({
   REQUEST_AND_SAVE_ACCESS_TOKEN: 'requestAndSaveAccessToken',
   GET_REPOSITORIES: 'getRepositories',
   COMMIT: 'commit',
+  LOGOUT: 'logout',
 });
