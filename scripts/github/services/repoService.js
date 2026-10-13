@@ -3,6 +3,7 @@ import { GITHUB_CONFIG } from '../config/config.js';
 import {
   DuplicateResourceException,
   SetupRequiredException,
+  TimeoutException,
 } from '../../common/exception/index.js';
 
 import {
@@ -18,6 +19,27 @@ import { createUploadPath, encodeGithubContentPath } from '../utils/path.js';
 
 // The maximum page size of the GitHub REST API. The default is 30.
 const REPOSITORIES_PER_PAGE = 100;
+
+/**
+ * Reads a file of the repository.
+ * @param {string} url - The contents API URL of the file.
+ * @param {Object} headers - The GitHub auth headers.
+ * @returns {Promise<?Object>} The file with its `sha`, base64 `content` and `html_url`, or null if there is none.
+ */
+const getFile = async (url, headers) => {
+  try {
+    return await request(url, 'GET', headers, undefined);
+  } catch (e) {
+    if (e.status === 404) {
+      return null;
+    }
+    throw e;
+  }
+};
+
+// The contents API returns the content in base64 with a line break every 60 characters.
+const isSameContent = (file, encodedContent) =>
+  file?.content?.replaceAll(/\n/g, '') === encodedContent;
 
 /**
  * Retrieves all repositories of the authenticated user, following every page.
@@ -87,31 +109,34 @@ export const commit = async (payload) => {
     `${githubID}/${githubUploadedRepository}/contents/${encodedPath}`;
   const headers = createGithubAuthHeader(githubAccessToken);
 
-  let existingFile = { sha: null, content: null };
-  try {
-    existingFile = await request(url, 'GET', headers, undefined);
-  } catch (e) {
-    if (e.status === 404) {
-      logger.warn('File not found. Creating a new file.');
-    } else {
-      throw e;
-    }
+  const existingFile = await getFile(url, headers);
+  if (!existingFile) {
+    logger.warn('File not found. Creating a new file.');
   }
-  const { sha, content } = existingFile;
-  const sanitizedContent = content?.replaceAll(/\n/g, '');
 
-  if (sanitizedContent === encodeNewSourceCode) {
+  if (isSameContent(existingFile, encodeNewSourceCode)) {
     throw new DuplicateResourceException('Github', 'content');
   }
 
   const body = JSON.stringify({
     content: encodeNewSourceCode,
     message: title,
-    sha,
+    sha: existingFile?.sha ?? null,
   });
 
-  const response = await request(url, 'PUT', headers, body);
-  const message = response?.commit?.html_url ?? response.message;
+  try {
+    const response = await request(url, 'PUT', headers, body);
+    return response?.commit?.html_url ?? response.message;
+  } catch (e) {
+    if (!(e instanceof TimeoutException && e.mayBeApplied)) {
+      throw e;
+    }
 
-  return message;
+    // GitHub may have committed the file before the timeout, so check the file before reporting a failure.
+    const uploadedFile = await getFile(url, headers);
+    if (isSameContent(uploadedFile, encodeNewSourceCode)) {
+      return uploadedFile.html_url;
+    }
+    throw e;
+  }
 };

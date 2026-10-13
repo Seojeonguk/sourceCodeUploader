@@ -178,4 +178,56 @@ describe('upload', () => {
       ['heading_1', 'code'],
     );
   });
+
+  describe('when creating the page times out', () => {
+    /**
+     * Mocks Notion: the problem is not found, creating the page times out,
+     * and the database is queried again after the timeout.
+     * @param {?Object} pageAfterTimeout - The page found by the second query.
+     * @param {Object[]} [blocks=[]] - The child blocks of that page.
+     */
+    const mockTimedOutCreate = (pageAfterTimeout, blocks = []) => {
+      let queries = 0;
+      globalThis.fetch = mock.fn(async (url, { method }) => {
+        const { pathname } = new URL(url);
+
+        if (method === 'POST' && pathname === '/v1/pages') {
+          throw new DOMException('The operation was aborted.', 'AbortError');
+        }
+        if (pathname.endsWith('/query')) {
+          queries += 1;
+          const page = queries === 1 ? null : pageAfterTimeout;
+          return jsonResponse({ results: page ? [page] : [] });
+        }
+        return jsonResponse({ results: blocks, has_more: false });
+      });
+    };
+
+    it('reports the page if Notion created it before the timeout', async () => {
+      mockTimedOutCreate({ id: 'page-id', url: PAGE_URL }, [
+        codeBlock('print(2)'),
+      ]);
+
+      assert.equal(await upload(payload, problemInfo), PAGE_URL);
+    });
+
+    it('reports the timeout if the page was not created', async () => {
+      mockTimedOutCreate(null);
+
+      await assert.rejects(upload(payload, problemInfo), {
+        name: 'TimeoutException',
+        mayBeApplied: true,
+      });
+    });
+
+    it('reports the timeout if the page has other source code', async () => {
+      mockTimedOutCreate({ id: 'page-id', url: PAGE_URL }, [
+        codeBlock('print(1)'),
+      ]);
+
+      await assert.rejects(upload(payload, problemInfo), {
+        name: 'TimeoutException',
+      });
+    });
+  });
 });

@@ -1,6 +1,7 @@
 import {
   DuplicateResourceException,
   SetupRequiredException,
+  TimeoutException,
 } from '../../common/exception/index.js';
 import { fetchAllPages, getChromeStorage } from '../../common/utils/index.js';
 import {
@@ -58,6 +59,29 @@ const findProblemPage = async (databaseId, url) => {
   });
 
   return response.results[0] ?? null;
+};
+
+/**
+ * Checks whether the problem page already has the source code.
+ * @param {string} databaseId - The database to search.
+ * @param {string} url - The problem URL.
+ * @param {string} sourceCode - The source code that was uploaded.
+ * @returns {Promise<?string>} The URL of the page, or null if the page does not have the source code.
+ */
+const findUploadedPageUrl = async (databaseId, url, sourceCode) => {
+  const page = await findProblemPage(databaseId, url);
+  if (!page) {
+    return null;
+  }
+
+  const codeBlock = findSourceCodeBlock(await getBlockChildren(page.id));
+  if (
+    codeBlock &&
+    isSameSourceCode(getPlainText(codeBlock.code.rich_text), sourceCode)
+  ) {
+    return page.url;
+  }
+  return null;
 };
 
 /**
@@ -119,15 +143,31 @@ export const upload = async (payload, problemInfo) => {
     ...problemInfo,
   });
 
-  const existingPage = await findProblemPage(
-    databaseId,
-    pageData.properties.URL.url,
-  );
-  if (existingPage) {
-    await replaceSourceCode(existingPage, payload, pageData.properties);
-    return existingPage.url;
-  }
+  const problemUrl = pageData.properties.URL.url;
 
-  const result = await createPage(pageData);
-  return result.url ?? result.public_url;
+  try {
+    const existingPage = await findProblemPage(databaseId, problemUrl);
+    if (existingPage) {
+      await replaceSourceCode(existingPage, payload, pageData.properties);
+      return existingPage.url;
+    }
+
+    const result = await createPage(pageData);
+    return result.url ?? result.public_url;
+  } catch (e) {
+    if (!(e instanceof TimeoutException && e.mayBeApplied)) {
+      throw e;
+    }
+
+    // Notion may have saved the page before the timeout, so check the page before reporting a failure.
+    const uploadedPageUrl = await findUploadedPageUrl(
+      databaseId,
+      problemUrl,
+      payload.sourceCode,
+    );
+    if (uploadedPageUrl) {
+      return uploadedPageUrl;
+    }
+    throw e;
+  }
 };
