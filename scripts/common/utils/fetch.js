@@ -7,6 +7,13 @@ import { logger, maskSensitiveFields } from './logger.js';
 // so sending them again can create a duplicate Notion page, for example.
 const RETRYABLE_METHODS = Object.freeze(['GET', 'HEAD']);
 
+// Server errors that may pass if the same request is sent again. Only reads are sent again for them.
+const RETRYABLE_STATUSES = Object.freeze([500, 502, 503, 504]);
+
+// The longest wait asked by `Retry-After` that is waited for.
+// The service worker can be stopped while it waits, so a longer wait is reported to the user instead.
+const MAX_RETRY_AFTER = 10000;
+
 // A read is sent again after a timeout, so it gives up early.
 const READ_TIMEOUT = 5000;
 // A write is sent only once, and creating a Notion page with long code or committing a file can be slow.
@@ -17,6 +24,35 @@ const wait = (ms) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+
+/**
+ * Reads the `Retry-After` header, which is a number of seconds or an HTTP date.
+ * @param {?string} value - The header value.
+ * @returns {?number} The time to wait in milliseconds, or null if there is no valid value.
+ */
+export const parseRetryAfter = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) {
+    return Math.max(seconds, 0) * 1000;
+  }
+
+  const date = Date.parse(value);
+  return Number.isNaN(date) ? null : Math.max(date - Date.now(), 0);
+};
+
+/**
+ * Checks whether the API refused the request because too many requests were sent.
+ * Notion answers 429, and GitHub answers 403 or 429 with `Retry-After` for its secondary rate limit.
+ * The request was not applied, so it can be sent again whatever the method is.
+ * @param {HttpException} error
+ * @returns {boolean}
+ */
+const isRateLimited = (error) =>
+  error.status === 429 || (error.status === 403 && error.retryAfter !== null);
 
 /**
  * Reads the response body: JSON if the response says so, otherwise text.
@@ -66,7 +102,11 @@ const send = async (url, method, headers, body, timeout) => {
         method,
         headers: maskSensitiveFields(headers),
       });
-      throw new HttpException(response.status, responseBody);
+      throw new HttpException(
+        response.status,
+        responseBody,
+        parseRetryAfter(response.headers.get('Retry-After')),
+      );
     }
 
     return responseBody;
@@ -81,17 +121,41 @@ const send = async (url, method, headers, body, timeout) => {
 };
 
 /**
- * Sends a request. GET requests are sent again after a network error or a timeout.
+ * Finds how long to wait before sending the request again.
+ * @param {Error} error - The error of the last attempt.
+ * @param {boolean} isRead - Whether the request is a GET or a HEAD.
+ * @param {number} retryDelay - The delay of the exponential backoff.
+ * @returns {?number} The delay in milliseconds, or null if the request must not be sent again.
+ */
+const getRetryDelay = (error, isRead, retryDelay) => {
+  if (!(error instanceof HttpException)) {
+    // A network error or a timeout: a write may have been applied.
+    return isRead ? retryDelay : null;
+  }
+  if (isRateLimited(error)) {
+    const delay = error.retryAfter ?? retryDelay;
+    return delay <= MAX_RETRY_AFTER ? delay : null;
+  }
+  if (isRead && RETRYABLE_STATUSES.includes(error.status)) {
+    return retryDelay;
+  }
+  return null;
+};
+
+/**
+ * Sends a request, and sends it again when that is safe:
+ * - GET / HEAD after a network error, a timeout or a server error (500, 502, 503, 504),
+ * - any method after a rate limit (429), waiting as long as `Retry-After` asks, up to 10 seconds.
  * @param {string} url
  * @param {string} method - The HTTP method.
  * @param {Object} [headers]
  * @param {*} [body]
  * @param {Object} [options]
- * @param {number} [options.retries=3] - How many times to send a GET request again.
+ * @param {number} [options.retries=3] - How many times to send the request again.
  * @param {number} [options.timeout] - The timeout of each attempt in milliseconds.
  *   5 seconds for GET / HEAD, and 30 seconds for the other methods.
  * @param {number} [options.retryDelay=500] - The delay before the first retry, doubled each time.
- * @throws {HttpException} If the response has an error status. It is not retried.
+ * @throws {HttpException} If the response has an error status, after the retries.
  * @returns {Promise<*>} The response body: JSON, text, or an empty string.
  */
 export const request = async (
@@ -101,18 +165,19 @@ export const request = async (
   body,
   { retries = 3, timeout = undefined, retryDelay = 500 } = {},
 ) => {
-  const canRetry = RETRYABLE_METHODS.includes(method.toUpperCase());
-  const attemptTimeout = timeout ?? (canRetry ? READ_TIMEOUT : WRITE_TIMEOUT);
+  const isRead = RETRYABLE_METHODS.includes(method.toUpperCase());
+  const attemptTimeout = timeout ?? (isRead ? READ_TIMEOUT : WRITE_TIMEOUT);
 
   try {
     return await send(url, method, headers, body, attemptTimeout);
   } catch (error) {
-    if (!canRetry || retries <= 0 || error instanceof HttpException) {
+    const delay = getRetryDelay(error, isRead, retryDelay);
+    if (retries <= 0 || delay === null) {
       throw error;
     }
 
     logger.warn(`Request failed, retrying... (${retries} retries left)`);
-    await wait(retryDelay);
+    await wait(delay);
 
     return request(url, method, headers, body, {
       retries: retries - 1,

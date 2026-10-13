@@ -66,10 +66,10 @@ describe('GitHub expired login', () => {
   it('keeps the login on other errors', async () => {
     const storage = mockChromeStorage(settings);
     globalThis.fetch = mock.fn(async () =>
-      jsonResponse({ message: 'Server Error' }, 500),
+      jsonResponse({ message: 'Resource not accessible by integration' }, 403),
     );
 
-    await assert.rejects(dispatch('getRepositories'), { status: 500 });
+    await assert.rejects(dispatch('getRepositories'), { status: 403 });
     assert.deepEqual(storage, settings);
   });
 });
