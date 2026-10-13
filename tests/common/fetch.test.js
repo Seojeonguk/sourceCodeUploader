@@ -163,7 +163,11 @@ describe('request', () => {
           retries: 1,
           timeout: 10,
         }),
-        { message: 'Request timed out' },
+        {
+          name: 'TimeoutException',
+          message: 'The request timed out. Try again later.',
+          mayBeApplied: false,
+        },
       );
       assert.equal(globalThis.fetch.mock.callCount(), 2);
     });
@@ -173,9 +177,61 @@ describe('request', () => {
 
       await assert.rejects(
         request(URL, 'POST', undefined, '{}', { ...options, timeout: 10 }),
-        { message: 'Request timed out' },
+        {
+          name: 'TimeoutException',
+          message:
+            'The request timed out, but it may have been applied. Check the result before trying again.',
+          mayBeApplied: true,
+        },
       );
       assert.equal(globalThis.fetch.mock.callCount(), 1);
+    });
+
+    describe('default', () => {
+      // Settles the pending promises after the fake timers fire.
+      const flush = () => new Promise(setImmediate);
+
+      beforeEach(() => {
+        mock.timers.enable({ apis: ['setTimeout'] });
+        globalThis.fetch = mock.fn(hangingFetch);
+      });
+
+      afterEach(() => {
+        mock.timers.reset();
+      });
+
+      it('gives up a GET after 5 seconds', async () => {
+        const result = request(URL, 'GET', undefined, undefined, {
+          ...options,
+          retries: 0,
+        }).catch((error) => error);
+
+        mock.timers.tick(4999);
+        await flush();
+        assert.equal(
+          globalThis.fetch.mock.calls[0].arguments[1].signal.aborted,
+          false,
+        );
+
+        mock.timers.tick(1);
+        assert.equal((await result).name, 'TimeoutException');
+      });
+
+      it('waits 30 seconds for a write', async () => {
+        const result = request(URL, 'POST', undefined, '{}', options).catch(
+          (error) => error,
+        );
+
+        mock.timers.tick(29999);
+        await flush();
+        assert.equal(
+          globalThis.fetch.mock.calls[0].arguments[1].signal.aborted,
+          false,
+        );
+
+        mock.timers.tick(1);
+        assert.equal((await result).name, 'TimeoutException');
+      });
     });
   });
 });

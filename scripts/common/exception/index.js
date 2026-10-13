@@ -5,6 +5,7 @@ import { NotFoundException } from './NotFoundException.js';
 import { ParseException } from './ParseException.js';
 import { PlatformDispatcherNotFoundException } from './PlatformDispatcherNotFoundException.js';
 import { SetupRequiredException } from './SetupRequiredException.js';
+import { TimeoutException } from './TimeoutException.js';
 import { UndefinedException } from './UndefinedException.js';
 
 export {
@@ -15,5 +16,6 @@ export {
   ParseException,
   PlatformDispatcherNotFoundException,
   SetupRequiredException,
+  TimeoutException,
   UndefinedException,
 };
