@@ -6,6 +6,7 @@
 2. [Select Repository for Upload](#select-repository-for-upload)
 3. [Remove Authorize](#remove-authorize)
 4. [Commit](#commit)
+5. [Auto upload](#auto-upload)
 
 ## Authorize
 
@@ -41,26 +42,14 @@ The extension logs in with the GitHub [device flow](https://docs.github.com/en/a
 
 ## Commit
 
-- Click on the programming language for the source code you want to upload on the submission status page.
+- Open a problem on [Programmers](https://school.programmers.co.kr/) and write your solution.
+- Click the GitHub icon button at the top right of the code editor.
+- The source code is committed to `Programmers/{problem title}.{extension}` in the selected repository.
+- If the commit is successful, a message with an `Open` link to the uploaded file is shown at the bottom right of the page.
+- If the same source code has already been uploaded, it is not committed again and a message says so. (The source code must match exactly.)
+- If an error occurs, the cause of the error is shown in the message.
 
-![Move source code page](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/33146007-7eac-41d7-bfb2-97b51b60a9e4)
+## Auto upload
 
-- Click on the platform icon button to upload the source code
-
-![Click github icon button](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/978f6361-f351-4b15-8901-b804b449574f)
-
-- If the commit is successful, the commit address will be displayed.
-
-![Show successful result](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/bd2901dc-1679-4527-a515-70ff8328839c)
-
-- If the same source code has already been uploaded, it will not be uploaded again. (The source code must match exactly.)
-
-![Show same code result](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/ca4487a7-254a-4e4d-a6f6-b7695dee9fcb)
-
-- If an error occurs, the cause of the error will be displayed.
-
-![Show error](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/63ceb88e-b5cc-406c-b856-55eb196df622)
-
-- Navigate to the upload address or go to the repository to verify the commit.
-
-![Check github commit](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/f4c75ebf-1a16-4889-84cd-a300d77d1afa)
+- Turn on the auto upload switch of GitHub on the popup page.
+- When the result of `제출 후 채점하기` is `정답`, the source code is committed without clicking the button.

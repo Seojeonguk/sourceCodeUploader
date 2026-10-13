@@ -66,22 +66,14 @@ Create a Notion database with the properties below before you authorize. The nam
 
 ## Uploading
 
-- Click on the programming language for the source code you want to upload on the submission status page.
+- Open a problem on [Programmers](https://school.programmers.co.kr/) and write your solution.
+- Click the Notion icon button at the top right of the code editor.
+- A page with the problem title, level and tags as properties and the source code as a code block is created in the selected database.
+- If the problem has already been uploaded, the source code of that page is replaced instead of creating a new page. If the source code is the same, nothing is changed and a message says so.
+- If the upload is successful, a message with an `Open` link to the Notion page is shown at the bottom right of the page.
+- If an error occurs, the cause of the error is shown in the message.
 
-  ![Move source code page](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/33146007-7eac-41d7-bfb2-97b51b60a9e4)
+## Auto upload
 
-- Click on the notion icon button to upload the source code.
-
-  ![Click notion icon button](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/10582032-ce0b-47ba-a14e-c572203da943)
-
-- If the commit is successful, the commit address will be displayed.
-
-  ![Show successful result](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/8b424dc2-7e12-4443-b4d0-446ab5a31178)
-
-- If an error occurs, the cause of the error will be displayed.
-
-  ![Show error](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/18cdfeda-f63f-45f5-9bdf-31a28c0d7cd4)
-
-- Navigate to the upload address or go to the database to verify the uploading.
-
-  ![Check notion uploading](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/f1570c09-cb85-4a29-8ac4-ef8a42f00cae)
+- Turn on the auto upload switch of Notion on the popup page.
+- When the result of `제출 후 채점하기` is `정답`, the source code is uploaded without clicking the button.

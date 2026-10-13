@@ -62,7 +62,6 @@ flowchart LR
 | 권한 | 이유 |
 |---|---|
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
-| `activeTab`, `scripting` | 현재 보고 있는 문제 페이지에서 동작 |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
 ## 프로젝트 구조

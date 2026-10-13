@@ -62,7 +62,6 @@ flowchart LR
 | Permission | Why |
 |---|---|
 | `storage` | Keep access tokens, the selected repository / database and options |
-| `activeTab`, `scripting` | Work with the judge page you are on |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
 
 ## Project Structure

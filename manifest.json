@@ -43,11 +43,7 @@
     "https://school.programmers.co.kr/*",
     "https://programmers.co.kr/*"
   ],
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "storage"
-  ],
+  "permissions": ["storage"],
   "short_name": "SCU",
   "web_accessible_resources": [
     {
