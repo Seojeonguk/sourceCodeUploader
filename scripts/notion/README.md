@@ -2,10 +2,28 @@
 
 ## Table of Contents
 
-1. [Authorize](#authorize)
-2. [Select Database for Upload](#select-database-for-upload)
-3. [Remove Authorize](#remove-authorize)
-4. [Uploading](#uploading)
+1. [Prepare the database](#prepare-the-database)
+2. [Authorize](#authorize)
+3. [Select Database for Upload](#select-database-for-upload)
+4. [Remove Authorize](#remove-authorize)
+5. [Uploading](#uploading)
+
+## Prepare the database
+
+Create a Notion database with the properties below before you authorize. The names are case-sensitive and must match exactly; otherwise Notion rejects the upload.
+
+| Property | Type         | Value                                                                       |
+| -------- | ------------ | --------------------------------------------------------------------------- |
+| (title)  | Title        | The problem title. The title property can have any name.                    |
+| `info`   | Multi-select | The platform, level and problem ID, such as `Programmers`, `Lv. 2`, `42586` |
+| `tags`   | Multi-select | The categories of the problem from the breadcrumb                           |
+| `URL`    | URL          | The problem URL. Used to find a problem that was already uploaded.          |
+| `Date`   | Date         | The date of the last upload                                                 |
+| `mime`   | Select       | The file extension of the source code, such as `py`                         |
+
+- Select and multi-select options are added by Notion automatically, so you do not need to create them.
+- Other properties are left as they are, so you can add your own, such as a status or notes.
+- The page body has a `How to resolve?` heading for your notes and a `Source Code` heading with the code block. When the same problem is uploaded again, only the code block below `Source Code` and the `Date` and `mime` properties are changed.
 
 ## Authorize
 

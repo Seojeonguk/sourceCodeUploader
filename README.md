@@ -35,7 +35,7 @@ The extension is not on the Chrome Web Store yet. Load it manually:
 
 1. Click the extension icon to open the popup.
 2. **GitHub** — Click `Authorize`. A login page shows a code: enter it on GitHub and approve access, then select the repository to upload to. ([guide](scripts/github/README.md))
-3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. ([guide](scripts/notion/README.md))
+3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. The database needs the properties listed in the [guide](scripts/notion/README.md#prepare-the-database).
 4. (Optional) Turn on **Auto upload** for each platform.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
 
