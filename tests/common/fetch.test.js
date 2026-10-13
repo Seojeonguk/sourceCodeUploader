@@ -67,7 +67,7 @@ describe('request', () => {
       await assert.rejects(request(URL, 'GET'), {
         name: 'HttpException',
         status: 401,
-        message: 'HTTP error! Status: 401',
+        message: 'Bad credentials (HTTP 401)',
         body: { message: 'Bad credentials' },
       });
     });
@@ -84,6 +84,8 @@ describe('request', () => {
       await assert.rejects(request(URL, 'GET'), {
         name: 'HttpException',
         status: 502,
+        message:
+          'The server could not handle the request. Try again later. (HTTP 502)',
         body: '<html>Bad Gateway</html>',
       });
     });
