@@ -35,7 +35,7 @@
 
 1. 확장 프로그램 아이콘을 눌러 팝업을 열어요.
 2. **GitHub** — `Authorize`를 누르면 로그인 페이지에 코드가 나와요. GitHub에서 코드를 입력하고 접근을 허용한 뒤, 업로드할 저장소를 골라요. ([가이드](scripts/github/README.md))
-3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. ([가이드](scripts/notion/README.md))
+3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. 데이터베이스에는 [가이드](scripts/notion/README.md#prepare-the-database)에 적힌 속성이 있어야 해요.
 4. (선택) 플랫폼별 **자동 업로드**를 켜요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
 
