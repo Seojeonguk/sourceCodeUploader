@@ -53,6 +53,38 @@ const findAllowedOrigin = (request, env) => {
   return allowedOrigins.includes(origin) ? origin : null;
 };
 
+const EXTENSION_ORIGIN_PREFIX = 'chrome-extension://';
+
+/**
+ * Answers an origin that is not allowed.
+ * An extension that is not in ALLOWED_EXTENSION_IDS, such as one loaded from a folder without
+ * the fixed `key`, gets the CORS headers, so it can read why it was refused instead of a
+ * network error. Other origins get no CORS headers. Nothing is sent to Notion in either case.
+ */
+const forbidOrigin = (request) => {
+  const origin = request.headers.get('Origin') ?? '';
+  const extensionId = origin.startsWith(EXTENSION_ORIGIN_PREFIX)
+    ? origin.slice(EXTENSION_ORIGIN_PREFIX.length)
+    : '';
+  if (!extensionId) {
+    return jsonResponse({ error: 'forbidden_origin' }, 403);
+  }
+
+  const corsHeaders = createCorsHeaders(origin);
+  // The preflight has to pass for the extension to read the 403 of the request itself.
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+  return jsonResponse(
+    {
+      error: 'forbidden_origin',
+      error_description: `The Notion token proxy does not allow this extension (ID: ${extensionId}). Add the ID to ALLOWED_EXTENSION_IDS of the worker and deploy it again.`,
+    },
+    403,
+    corsHeaders,
+  );
+};
+
 /**
  * Creates the request to Notion for the path. The redirect URI comes from the worker
  * settings, not from the request, so the worker only completes this extension's logins.
@@ -83,7 +115,7 @@ export default {
     // Origin header, but an authorization code is useless without the user's consent.
     const allowedOrigin = findAllowedOrigin(request, env);
     if (!allowedOrigin) {
-      return jsonResponse({ error: 'forbidden_origin' }, 403);
+      return forbidOrigin(request);
     }
 
     const corsHeaders = createCorsHeaders(allowedOrigin);

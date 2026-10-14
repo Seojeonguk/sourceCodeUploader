@@ -7,7 +7,7 @@ Notion needs the client secret to exchange an authorization code for an access t
 | `POST /token` `{ "code": "..." }`   | `POST /v1/oauth/token` with the redirect URI from the worker settings |
 | `POST /revoke` `{ "token": "..." }` | `POST /v1/oauth/revoke`                                               |
 
-It accepts requests only from `chrome-extension://<id>` for the IDs in `ALLOWED_EXTENSION_IDS`, and stores nothing.
+It accepts requests only from `chrome-extension://<id>` for the IDs in `ALLOWED_EXTENSION_IDS`, and stores nothing. Another extension gets a `403` that it can read, naming its ID, so a missing ID shows up as that message in the extension instead of a CORS error. Other origins get a `403` without CORS headers.
 
 The maintainer deploys it once, and every user logs in through it: the `key` in `manifest.json` gives every unpacked copy the same extension ID, `mfhbpmbchemfhijjamldbkidlegfmaff`.
 

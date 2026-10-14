@@ -94,6 +94,51 @@ describe('Notion OAuth proxy', () => {
     assert.equal(globalThis.fetch.mock.callCount(), 0);
   });
 
+  describe('an extension that is not allowed', () => {
+    const NOT_ALLOWED_ID = 'zyxwvutsrqponmlkzyxwvutsrqponmlk';
+    const origin = `chrome-extension://${NOT_ALLOWED_ID}`;
+
+    it('tells why it was refused, with the CORS headers', async () => {
+      const response = await call('/token', { origin, body: { code: 'code' } });
+
+      assert.equal(response.status, 403);
+      assert.equal(response.headers.get('Access-Control-Allow-Origin'), origin);
+      const body = await response.json();
+      assert.equal(body.error, 'forbidden_origin');
+      assert.match(body.error_description, new RegExp(NOT_ALLOWED_ID));
+      assert.match(body.error_description, /ALLOWED_EXTENSION_IDS/);
+      assert.equal(globalThis.fetch.mock.callCount(), 0);
+    });
+
+    it('passes the preflight, so the 403 can be read', async () => {
+      const response = await call('/token', { method: 'OPTIONS', origin });
+
+      assert.equal(response.status, 204);
+      assert.equal(response.headers.get('Access-Control-Allow-Origin'), origin);
+      assert.equal(globalThis.fetch.mock.callCount(), 0);
+    });
+
+    it('does not reflect an extension origin without an ID', async () => {
+      const response = await call('/token', {
+        origin: 'chrome-extension://',
+        body: { code: 'code' },
+      });
+
+      assert.equal(response.status, 403);
+      assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
+    });
+  });
+
+  it('rejects the preflight of other origins', async () => {
+    const response = await call('/token', {
+      method: 'OPTIONS',
+      origin: 'https://attacker.example',
+    });
+
+    assert.equal(response.status, 403);
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
+  });
+
   it('accepts every allowed extension', async () => {
     const origin = `chrome-extension://${OTHER_EXTENSION_ID}`;
     const response = await call('/token', { origin, body: { code: 'code' } });
