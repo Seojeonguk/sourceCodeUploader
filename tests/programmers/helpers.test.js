@@ -22,6 +22,7 @@ const {
   getExtensionFromLanguage,
   isAcceptedResult,
   normalizeText,
+  toProblemUrl,
 } = loadHelpers();
 
 describe('normalizeText', () => {
@@ -108,5 +109,17 @@ describe('isAcceptedResult', () => {
     assert.equal(isAcceptedResult('틀렸습니다.'), false);
     assert.equal(isAcceptedResult('실행한 결괏값이 기댓값과 다릅니다.'), false);
     assert.equal(isAcceptedResult(''), false);
+  });
+});
+
+describe('toProblemUrl', () => {
+  it('uses school.programmers.co.kr whichever host the page is on', () => {
+    const pathname = '/learn/courses/30/lessons/1845';
+
+    // Both hosts give the same path, so the Notion upload finds the same page.
+    assert.equal(
+      toProblemUrl(pathname),
+      'https://school.programmers.co.kr/learn/courses/30/lessons/1845',
+    );
   });
 });
