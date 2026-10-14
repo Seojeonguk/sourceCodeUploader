@@ -3,13 +3,15 @@ export class HttpException extends Error {
    * Thrown when an API responds with an error status.
    * @param {number} status - The HTTP status code.
    * @param {*} [body] - The response body, such as the error from the API.
+   * @param {?number} [retryAfter] - How long the API asks to wait before trying again, in milliseconds.
    */
-  constructor(status, body = undefined) {
+  constructor(status, body = undefined, retryAfter = null) {
     super(HttpException.createMessage(status, body));
     this.name = 'HttpException';
     this.status = status;
     this.body = body;
     this.statusCode = status;
+    this.retryAfter = retryAfter;
 
     // Error 스택 트레이스를 올바르게 캡처하기 위함
     Error.captureStackTrace(this, this.constructor);
