@@ -6,6 +6,7 @@ import { dispatch as notionDispatch } from '../../scripts/notion/index.js';
 import { dispatch as oauthDispatch } from '../../scripts/oauth/index.js';
 import { openOAuthPage } from '../../scripts/oauth/state.js';
 import {
+  jsonResponse,
   mockChromeSessionAndTabs,
   mockChromeStorage,
 } from '../helpers/chrome.js';
@@ -21,18 +22,22 @@ const openNotionPage = () =>
     (state) => `https://api.notion.com/v1/oauth/authorize?state=${state}`,
   );
 
-// The token exchange fails in the tests (with SetupRequiredException if the token proxy URL
-// is not set, or with the mocked fetch if it is), so a redirect that passes the state check
-// rejects with anything but the state error. The Notion login itself is tested in
-// tests/notion/auth.test.js.
-const PASSED_STATE_CHECK = (error) => error.name !== 'InvalidRequestException';
-const REJECTED_STATE = { name: 'InvalidRequestException' };
+// The token exchange fails in the tests unless a test mocks the token proxy, so a redirect
+// that passes the state check rejects with anything but the state error. The Notion login
+// itself is tested in tests/notion/auth.test.js.
+const PASSED_STATE_CHECK = (error) => error.reason !== 'state';
+const REJECTED_STATE = {
+  name: 'OAuthException',
+  reason: 'state',
+  message: 'This login has expired or was already used.',
+};
 
 describe('OAuth redirect', () => {
   let tabs;
+  let storage;
 
   beforeEach(() => {
-    mockChromeStorage();
+    storage = mockChromeStorage();
     tabs = mockChromeSessionAndTabs();
     globalThis.fetch = mock.fn();
     mock.method(console, 'debug', () => {});
@@ -52,15 +57,71 @@ describe('OAuth redirect', () => {
     assert.notEqual(getState(first), getState(second));
   });
 
-  it('accepts the state from the tab opened for it, and closes that tab', async () => {
+  it('logs in with the state from the tab opened for it, and closes that tab', async () => {
+    globalThis.fetch = mock.fn(async () =>
+      jsonResponse({ access_token: 'notion-token' }),
+    );
+    await openNotionPage();
+    const [tab] = tabs.createdTabs;
+
+    await complete({ code: 'code', state: getState(tab) }, tab.id);
+
+    assert.equal(storage.notionAccessToken, 'notion-token');
+    assert.deepEqual(tabs.removedTabIds, [tab.id]);
+  });
+
+  it('keeps the tab open and reports the error if the token exchange fails', async () => {
+    globalThis.fetch = mock.fn(async () =>
+      jsonResponse(
+        {
+          error: 'invalid_grant',
+          error_description: 'The authorization code has expired.',
+        },
+        400,
+      ),
+    );
     await openNotionPage();
     const [tab] = tabs.createdTabs;
 
     await assert.rejects(
       complete({ code: 'code', state: getState(tab) }, tab.id),
-      PASSED_STATE_CHECK,
+      { message: 'The authorization code has expired. (HTTP 400)' },
     );
-    assert.deepEqual(tabs.removedTabIds, [tab.id]);
+    assert.equal(storage.notionAccessToken, undefined);
+    assert.deepEqual(tabs.removedTabIds, []);
+  });
+
+  it('reports a canceled login without exchanging a code', async () => {
+    await openNotionPage();
+    const [tab] = tabs.createdTabs;
+
+    await assert.rejects(
+      complete({ error: 'access_denied', state: getState(tab) }, tab.id),
+      {
+        name: 'OAuthException',
+        reason: 'access_denied',
+        message: 'Access to Notion was not allowed.',
+      },
+    );
+    assert.equal(globalThis.fetch.mock.callCount(), 0);
+    assert.deepEqual(tabs.removedTabIds, []);
+  });
+
+  it('reports another error from the platform', async () => {
+    await openNotionPage();
+    const [tab] = tabs.createdTabs;
+
+    await assert.rejects(
+      complete({ error: 'server_error', state: getState(tab) }, tab.id),
+      { message: 'Notion could not complete the login (server_error).' },
+    );
+  });
+
+  it('checks the state before the error from the platform', async () => {
+    await assert.rejects(
+      complete({ error: 'access_denied', state: 'unknown' }, 1),
+      REJECTED_STATE,
+    );
   });
 
   it('rejects an unknown state without closing the tab', async () => {

@@ -2,6 +2,7 @@ import { DuplicateResourceException } from './DuplicateResourceException.js';
 import { HttpException } from './HttpException.js';
 import { InvalidRequestException } from './InvalidRequestException.js';
 import { NotFoundException } from './NotFoundException.js';
+import { OAuthException } from './OAuthException.js';
 import { ParseException } from './ParseException.js';
 import { PlatformDispatcherNotFoundException } from './PlatformDispatcherNotFoundException.js';
 import { SetupRequiredException } from './SetupRequiredException.js';
@@ -13,6 +14,7 @@ export {
   HttpException,
   InvalidRequestException,
   NotFoundException,
+  OAuthException,
   ParseException,
   PlatformDispatcherNotFoundException,
   SetupRequiredException,
