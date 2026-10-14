@@ -148,20 +148,31 @@ export const createRichTextArray = (text) =>
     }),
   );
 
+// Notion allows up to 2000 characters in the content of one rich text object.
+const MAX_TEXT_LENGTH = 2000;
+
+// The first half of a character that takes two UTF-16 code units, such as an emoji.
+const isHighSurrogate = (code) => code >= 0xd800 && code <= 0xdbff;
+
 /**
- * Splits the given text into chunks of 2000 characters each and creates an array of rich text objects,
+ * Splits the given text into chunks of up to 2000 characters each and creates an array of rich text objects,
  * where each chunk is transformed into a rich text object using the createRichText function.
+ * A character made of two UTF-16 code units is kept in one chunk, so it is not broken in Notion.
  * @param {string} text The text to be transformed
  * @returns {Object[]} An array of rich text objects
  */
 export const createRichTextArrayByLength = (text) => {
   const array = [];
-  for (let i = 0; i < text.length; i += 2000) {
-    array.push(
-      createRichText({
-        text: text.slice(i, i + 2000),
-      }),
-    );
+  let start = 0;
+
+  while (start < text.length) {
+    let end = Math.min(start + MAX_TEXT_LENGTH, text.length);
+    if (end < text.length && isHighSurrogate(text.charCodeAt(end - 1))) {
+      end -= 1;
+    }
+
+    array.push(createRichText({ text: text.slice(start, end) }));
+    start = end;
   }
 
   return array;

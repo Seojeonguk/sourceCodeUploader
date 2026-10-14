@@ -51,6 +51,7 @@
     getExtensionFromLanguage,
     isAcceptedResult,
     normalizeText,
+    toProblemUrl,
   } = globalThis.SCU_PROGRAMMERS;
 
   let sourceExtractorReady;
@@ -157,8 +158,7 @@
   const getProblemLevel = () =>
     formatLevel(getLesson()?.dataset.challengeLevel);
 
-  const getProblemUrl = () =>
-    `${window.location.origin}${window.location.pathname}`;
+  const getProblemUrl = () => toProblemUrl(window.location.pathname);
 
   const getProblemTags = (title) =>
     getCategoryTags(

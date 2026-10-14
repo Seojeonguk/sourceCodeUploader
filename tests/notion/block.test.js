@@ -27,6 +27,41 @@ describe('createRichTextArrayByLength', () => {
     assert.equal(contents.join(''), text);
   });
 
+  it('does not cut an emoji in half at the end of a chunk', () => {
+    // The emoji takes two UTF-16 code units, at positions 1999 and 2000.
+    const text = `${'a'.repeat(1999)}😀${'b'.repeat(10)}`;
+    const contents = contentsOf(createRichTextArrayByLength(text));
+
+    assert.deepEqual(
+      contents.map((content) => content.length),
+      [1999, 12],
+    );
+    assert.ok(contents[1].startsWith('😀'));
+    assert.equal(contents.join(''), text);
+  });
+
+  it('keeps every chunk at 2000 characters or less with many emoji', () => {
+    // The leading `a` puts every 2000th code unit in the middle of an emoji.
+    const text = `a${'😀'.repeat(3000)}`;
+    const contents = contentsOf(createRichTextArrayByLength(text));
+
+    assert.ok(contents.every((content) => content.length <= 2000));
+    // No chunk starts or ends in the middle of an emoji.
+    assert.ok(contents.every((content) => /^a?(?:😀)+$/u.test(content)));
+    assert.equal(contents.join(''), text);
+  });
+
+  it('keeps a Korean or other single-unit character at the boundary', () => {
+    const text = '가'.repeat(2001);
+
+    assert.deepEqual(
+      contentsOf(createRichTextArrayByLength(text)).map(
+        (content) => content.length,
+      ),
+      [2000, 1],
+    );
+  });
+
   it('returns an empty array for empty text', () => {
     assert.deepEqual(createRichTextArrayByLength(''), []);
   });

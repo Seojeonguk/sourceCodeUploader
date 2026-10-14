@@ -105,6 +105,17 @@
     ];
   };
 
+  // A lesson opens on both hosts. The Notion upload finds the page of a problem by its URL,
+  // so the URL always uses this host, and the same problem gets one page.
+  const PROBLEM_ORIGIN = 'https://school.programmers.co.kr';
+
+  /**
+   * Returns the URL of the problem, on the same host whichever host the page is on.
+   * @param {string} pathname - The path of the page, such as `/learn/courses/30/lessons/1845`.
+   * @returns {string}
+   */
+  const toProblemUrl = (pathname) => `${PROBLEM_ORIGIN}${pathname}`;
+
   /**
    * Checks whether the result title means the submission is accepted.
    * @param {?string} resultText - The title of the result modal, such as `정답입니다.`
@@ -121,5 +132,6 @@
     formatLevel,
     getCategoryTags,
     isAcceptedResult,
+    toProblemUrl,
   });
 })();
