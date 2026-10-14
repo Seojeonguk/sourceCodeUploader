@@ -4,8 +4,6 @@ module.exports = {
     es2021: true,
     // `chrome.*` extension APIs
     webextensions: true,
-    // `$` from library/jquery
-    jquery: true,
   },
   extends: ['airbnb-base', 'prettier'],
   parserOptions: {

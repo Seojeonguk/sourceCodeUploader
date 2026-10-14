@@ -35,13 +35,15 @@ const checkPlatformInfos = () => {
   platforms.forEach(async (platform) => {
     const accessToken = await getChromeStorage(`${platform}AccessToken`);
     if (accessToken) {
-      $(`.${platform} .status`).addClass('green');
-      $(`.${platform} .authentication-btn`).text('Remove');
-      $(`.${platform} .authentication-btn`).addClass('delete');
+      document.querySelector(`.${platform} .status`).classList.add('green');
+      const button = document.querySelector(`.${platform} .authentication-btn`);
+      button.textContent = 'Remove';
+      button.classList.add('delete');
     }
 
     const autoUpload = await getChromeStorage(`${platform}AutoUpload`);
-    $(`#${platform}-auto-upload`).prop('checked', autoUpload);
+    document.querySelector(`#${platform}-auto-upload`).checked =
+      Boolean(autoUpload);
   });
 };
 
@@ -52,7 +54,7 @@ const loadCachedDatabaseList = async () => {
   const uploadedDatabase = await getChromeStorage('notionUploadedDatabase');
 
   if (uploadedDatabase) {
-    $('#uploaded-database').text(uploadedDatabase);
+    document.querySelector('#uploaded-database').textContent = uploadedDatabase;
   }
 };
 
@@ -64,6 +66,7 @@ const loadCachedRepositoryList = async () => {
   const uploadedRepository = await getChromeStorage('githubUploadedRepository');
 
   if (uploadedRepository) {
-    $('#uploaded-repository').text(uploadedRepository);
+    document.querySelector('#uploaded-repository').textContent =
+      uploadedRepository;
   }
 };

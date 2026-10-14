@@ -6,14 +6,13 @@ const TOAST_DURATION = 4000;
  * @param {'info'|'error'} [type='info'] - The type of the message.
  */
 export const showToast = (message, type = 'info') => {
-  $('.scu-toast').remove();
+  document.querySelectorAll('.scu-toast').forEach((toast) => toast.remove());
 
-  const toast = $('<div>', {
-    class: `scu-toast scu-toast-${type}`,
-    role: type === 'error' ? 'alert' : 'status',
-    text: message || 'Something went wrong.',
-  });
+  const toast = document.createElement('div');
+  toast.className = `scu-toast scu-toast-${type}`;
+  toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  toast.textContent = message || 'Something went wrong.';
 
-  $('body').append(toast);
+  document.body.append(toast);
   setTimeout(() => toast.remove(), TOAST_DURATION);
 };
