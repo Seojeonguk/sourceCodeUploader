@@ -3,8 +3,9 @@ main = "src/index.js"
 compatibility_date = "2026-10-01"
 
 [vars]
-# The redirect URI registered in the Notion integration.
-NOTION_REDIRECT_URI = "https://github.com"
+# The redirect URI registered in the Notion integration: chrome.identity.getRedirectURL()
+# of the extension, https://<extension-id>.chromiumapp.org/ with the trailing slash.
+NOTION_REDIRECT_URI = "https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/"
 # The comma-separated IDs of the extensions allowed to call the worker.
 # The `key` in manifest.json fixes the ID of the unpacked extension, so everyone has the same one.
 ALLOWED_EXTENSION_IDS = "mfhbpmbchemfhijjamldbkidlegfmaff"

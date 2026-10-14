@@ -78,12 +78,18 @@ const logout = async (platform) => {
 
 /**
  * Opens the login page of the platform, and shows why if it cannot be opened.
+ * The Notion login window usually closes the popup first. Then the background keeps the error,
+ * and the popup shows it the next time it opens.
  * @param {'github'|'notion'} platform
  */
 const openLoginPage = async (platform) => {
   const response = await sendMessage(platform, 'openOauthPage');
   if (!response?.ok) {
     showToast(response?.message, 'error');
+    if (platform === 'notion') {
+      // Shown already, so do not show it again next time.
+      sendMessage('notion', 'takeLoginError');
+    }
   }
 };
 

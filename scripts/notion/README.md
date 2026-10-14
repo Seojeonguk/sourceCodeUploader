@@ -39,8 +39,8 @@ Create a Notion database with the properties below before you authorize. The nam
 
   ![Access notion authorize](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/7071faa9-e001-4c9d-acc8-a629a26fe347)
 
-- Once authorized, the window will redirect github and close automatically.
-- If the login fails, such as when you cancel the access or the login has expired, the window stays open and shows the reason at the top. Close it and click `Authorize` again.
+- Once authorized, the login window closes automatically.
+- The popup closes while the login window is open. If the login fails, such as when you cancel the access or close the window, the popup shows the reason the next time you open it. Click `Authorize` again.
 - Check if the status color has turned green and if the authorize button has changed to a remove button.
 
   ![Check authorize result](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/032f341f-7f93-40d2-8bf0-578cccd87972)

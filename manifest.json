@@ -31,11 +31,6 @@
         "scripts/programmers/index.js"
       ],
       "run_at": "document_idle"
-    },
-    {
-      "matches": ["https://github.com/*"],
-      "js": ["scripts/github/handlers/oauthHandler.js"],
-      "run_at": "document_idle"
     }
   ],
   "host_permissions": [
@@ -44,7 +39,7 @@
     "https://school.programmers.co.kr/*",
     "https://programmers.co.kr/*"
   ],
-  "permissions": ["storage"],
+  "permissions": ["identity", "storage"],
   "short_name": "SCU",
   "web_accessible_resources": [
     {

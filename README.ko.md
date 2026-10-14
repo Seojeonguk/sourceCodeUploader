@@ -55,12 +55,13 @@ flowchart LR
 - **Content script**가 문제 페이지에서 문제 · 언어 · 제출 정보를 파싱하고 업로드 버튼을 그려요.
 - **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
-- **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 로그인해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. OAuth 리다이렉트는 로그인용으로 연 탭에서 보낸 `state`가 맞을 때만 받아요.
+- **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 로그인해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. Notion 로그인은 `chrome.identity.launchWebAuthFlow`로 연 창에서 진행해요. Chrome이 `https://<확장 ID>.chromiumapp.org/`로의 리다이렉트를 가로채서 code가 다른 사이트로 가지 않고, 그 로그인에서 보낸 `state`가 맞을 때만 받아요.
 
 ### 권한
 
 | 권한 | 이유 |
 |---|---|
+| `identity` | Notion 로그인 창을 열고 리다이렉트 받기 |
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
@@ -75,7 +76,6 @@ flowchart LR
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
    ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋
    ├─ notion/               # OAuth (프록시 경유), 데이터베이스 목록, 페이지 · 블록 생성
-   ├─ oauth/                # Notion 리다이렉트의 OAuth state 확인
    └─ common/               # 예외, chrome · fetch · 인코딩 유틸
 ```
 
