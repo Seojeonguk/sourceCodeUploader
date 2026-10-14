@@ -82,6 +82,8 @@ flowchart LR
 
 ## Development
 
+Requires Node.js 22.22.2+ or 24.15.0+ (`engines` in `package.json`; CI uses Node 22).
+
 ```bash
 npm install
 npm run lint            # eslint (airbnb-base + prettier)
