@@ -350,11 +350,18 @@
           element.getClientRects().length),
     );
 
+  // The storage is hidden from content scripts, so the background reads the options.
   const getAutoUploadPlatforms = async () => {
-    const keys = PLATFORMS.map(({ id }) => `${id}AutoUpload`);
-    const options = await chrome.storage.local.get(keys);
+    const responses = await Promise.all(
+      PLATFORMS.map((platform) =>
+        sendUploadMessage({ ...platform, action: 'getAutoUpload' }),
+      ),
+    );
 
-    return PLATFORMS.filter(({ id }) => options[`${id}AutoUpload`]);
+    return PLATFORMS.filter((platform, index) => {
+      const response = responses[index];
+      return response.ok && response.message === true;
+    });
   };
 
   const uploadAutomatically = async () => {

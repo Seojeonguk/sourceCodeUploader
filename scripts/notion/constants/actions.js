@@ -3,5 +3,6 @@ export const ACTIONS = Object.freeze({
   GET_DATABASES: 'getDatabases',
   UPLOAD: 'upload',
   LOGOUT: 'logout',
+  GET_AUTO_UPLOAD: 'getAutoUpload',
   TAKE_LOGIN_ERROR: 'takeLoginError',
 });

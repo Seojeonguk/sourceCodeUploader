@@ -1,4 +1,5 @@
 import { SetupRequiredException } from '../common/exception/index.js';
+import { getChromeStorage } from '../common/utils/index.js';
 import { ACTIONS } from './constants/actions.js';
 
 import {
@@ -27,6 +28,9 @@ export async function dispatch(action, payload) {
     [ACTIONS.GET_REPOSITORIES]: async () => getAuthenticatedUserRepositories(),
     [ACTIONS.COMMIT]: async () => commit(payload),
     [ACTIONS.LOGOUT]: async () => logout(),
+    // The content scripts cannot read the storage, so they ask here.
+    [ACTIONS.GET_AUTO_UPLOAD]: async () =>
+      Boolean(await getChromeStorage('githubAutoUpload')),
   };
 
   const handler = actions[action];
