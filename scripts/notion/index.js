@@ -1,4 +1,5 @@
 import { SetupRequiredException } from '../common/exception/index.js';
+import { getChromeStorage } from '../common/utils/index.js';
 import { ACTIONS } from './constants/actions.js';
 import {
   authorize,
@@ -34,6 +35,9 @@ export async function dispatch(action, payload) {
   const actions = {
     [ACTIONS.OPEN_OAUTH_PAGE]: () => loginAndKeepError(),
     [ACTIONS.TAKE_LOGIN_ERROR]: () => takeLoginError(),
+    // The content scripts cannot read the storage, so they ask here.
+    [ACTIONS.GET_AUTO_UPLOAD]: async () =>
+      Boolean(await getChromeStorage('notionAutoUpload')),
     [ACTIONS.GET_DATABASES]: async () => getDatabases(),
     // The content script sends the problem info read from the page.
     [ACTIONS.UPLOAD]: async () => upload(payload, payload.problemInfo),

@@ -5,4 +5,5 @@ export const ACTIONS = Object.freeze({
   GET_REPOSITORIES: 'getRepositories',
   COMMIT: 'commit',
   LOGOUT: 'logout',
+  GET_AUTO_UPLOAD: 'getAutoUpload',
 });

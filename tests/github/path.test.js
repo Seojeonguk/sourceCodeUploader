@@ -72,4 +72,81 @@ describe('createUploadPath', () => {
       'Programmers/12345.java',
     );
   });
+
+  it('keeps an extension with + or #', () => {
+    assert.equal(
+      createUploadPath({
+        type: 'Programmers',
+        title: 'a',
+        problemId: '1',
+        extension: 'c++',
+      }),
+      'Programmers/a.c++',
+    );
+  });
+
+  [
+    '.github/workflows',
+    '../Programmers',
+    'Programmers/..',
+    '',
+    undefined,
+  ].forEach((type) => {
+    it(`refuses the type ${JSON.stringify(type)}`, () => {
+      assert.throws(
+        () =>
+          createUploadPath({
+            type,
+            title: 'a',
+            problemId: '1',
+            extension: 'py',
+          }),
+        {
+          name: 'InvalidRequestException',
+          message: 'Invalid type for GitHub.',
+        },
+      );
+    });
+  });
+
+  ['py/../../x', 'yml/', '', '.py', undefined].forEach((extension) => {
+    it(`refuses the extension ${JSON.stringify(extension)}`, () => {
+      assert.throws(
+        () =>
+          createUploadPath({
+            type: 'Programmers',
+            title: 'a',
+            problemId: '1',
+            extension,
+          }),
+        { name: 'InvalidRequestException' },
+      );
+    });
+  });
+});
+
+describe('createUploadPath with an unsafe problem ID', () => {
+  it('sanitizes the problem ID used as the file name', () => {
+    assert.equal(
+      createUploadPath({
+        type: 'Programmers',
+        title: '',
+        problemId: '../.github/workflows/x',
+        extension: 'py',
+      }),
+      'Programmers/_.github_workflows_x.py',
+    );
+  });
+
+  it('falls back to solution without a title or a problem ID', () => {
+    assert.equal(
+      createUploadPath({
+        type: 'Programmers',
+        title: '',
+        problemId: '',
+        extension: 'py',
+      }),
+      'Programmers/solution.py',
+    );
+  });
 });

@@ -56,6 +56,7 @@ flowchart LR
 - **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
 - **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 로그인해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. Notion 로그인은 `chrome.identity.launchWebAuthFlow`로 연 창에서 진행해요. Chrome이 `https://<확장 ID>.chromiumapp.org/`로의 리다이렉트를 가로채서 code가 다른 사이트로 가지 않고, 그 로그인에서 보낸 `state`가 맞을 때만 받아요.
+- **메시지와 저장소** — background는 문제 페이지에서 오는 메시지 중 업로드 관련 메시지(`commit`, `upload`, 자동 업로드 옵션 읽기)만 받고, 나머지는 확장 프로그램 자체 페이지에서 온 것만 받아요(`scripts/senders.js`). access token을 보관하는 `chrome.storage.local`은 content script에서 읽을 수 없게 했고, 업로드 경로에는 정해진 플랫폼 폴더와 파일 확장자만 쓸 수 있어요.
 
 ### 권한
 
