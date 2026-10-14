@@ -7,17 +7,18 @@
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "lint": "eslint scripts popup tests proxy --max-warnings 0",
-    "lint:fix": "eslint scripts popup tests proxy --fix",
-    "format": "prettier --write scripts popup tests proxy",
-    "format:check": "prettier --check scripts popup tests proxy",
+    "lint": "eslint scripts popup tests proxy eslint.config.js eslint.airbnb-rules.js --max-warnings 0",
+    "lint:fix": "eslint scripts popup tests proxy eslint.config.js eslint.airbnb-rules.js --fix",
+    "format": "prettier --write scripts popup tests proxy eslint.config.js eslint.airbnb-rules.js",
+    "format:check": "prettier --check scripts popup tests proxy eslint.config.js eslint.airbnb-rules.js",
     "test": "node --test"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.30.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.17.1",
+    "globals": "^17.13.0",
     "jsdom": "^30.1.2",
     "prettier": "^3.3.3"
   },

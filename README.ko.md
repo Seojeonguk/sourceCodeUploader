@@ -86,7 +86,7 @@ Node.js 22.22.2 이상 또는 24.15.0 이상이 필요해요 (`package.json`의 
 
 ```bash
 npm install
-npm run lint            # 린트 (airbnb-base + prettier)
+npm run lint            # 린트 (ESLint 10 recommended + airbnb-base 규칙 + prettier)
 npm run lint:fix        # 자동 수정 가능한 린트 오류 고치기
 npm run format:check    # 포맷 검사 (prettier)
 npm run format          # prettier로 포맷 적용

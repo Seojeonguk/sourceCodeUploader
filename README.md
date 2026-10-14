@@ -86,7 +86,7 @@ Requires Node.js 22.22.2+ or 24.15.0+ (`engines` in `package.json`; CI uses Node
 
 ```bash
 npm install
-npm run lint            # eslint (airbnb-base + prettier)
+npm run lint            # eslint 10 (recommended + airbnb-base rules + prettier)
 npm run lint:fix        # fix auto-fixable lint errors
 npm run format:check    # prettier check
 npm run format          # format with prettier
