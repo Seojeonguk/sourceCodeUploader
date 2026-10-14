@@ -1,9 +1,25 @@
-import { getChromeStorage } from '../../scripts/common/utils/index.js';
+import {
+  getChromeStorage,
+  sendMessage,
+} from '../../scripts/common/utils/index.js';
+import { showToast } from './toast.js';
+
+/**
+ * Shows why the last Notion login failed. The login window closes the popup,
+ * so the popup could not show it when it happened.
+ */
+const showLastLoginError = async () => {
+  const response = await sendMessage('notion', 'takeLoginError');
+  if (response?.ok && response.message) {
+    showToast(response.message, 'error');
+  }
+};
 
 export const initializeOnLoad = () => {
   checkPlatformInfos();
   loadCachedDatabaseList();
   loadCachedRepositoryList();
+  showLastLoginError();
 };
 
 /**

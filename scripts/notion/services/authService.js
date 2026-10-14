@@ -5,12 +5,12 @@ import {
   request,
   setChromeStorage,
 } from '../../common/utils/index.js';
-import { openOAuthPage } from '../../oauth/state.js';
 import { NOTION_CONFIG } from '../config/config.js';
 
 import {
   InvalidRequestException,
   NotFoundException,
+  OAuthException,
   SetupRequiredException,
 } from '../../common/exception/index.js';
 
@@ -44,29 +44,90 @@ const requestTokenProxy = (path, body, proxyUrl) => {
   );
 };
 
+// Kept until the popup shows it: the popup closes when the login window opens,
+// so it cannot receive the result of the login.
+const LOGIN_ERROR_KEY = 'notionLoginError';
+
 /**
- * Opens the Notion OAuth authorization page.
+ * Opens the Notion authorization page in a window of the browser, and returns the URL that
+ * Notion redirects to. Chrome catches the redirect to `https://<extension-id>.chromiumapp.org/`,
+ * so the authorization code never reaches another site.
+ * @param {string} state - The random state sent with the request.
+ * @throws {OAuthException} If the window was closed before the login finished.
+ * @returns {Promise<URL>} The redirect URL.
+ */
+const launchAuthorizationPage = async (state) => {
+  const params = new URLSearchParams({
+    owner: 'user',
+    client_id: NOTION_CONFIG.CLIENT_ID,
+    response_type: 'code',
+    // The token proxy sends the same URI, so the extension ID must be the one it is set for.
+    redirect_uri: chrome.identity.getRedirectURL(),
+    state,
+  });
+
+  try {
+    const redirectUrl = await chrome.identity.launchWebAuthFlow({
+      url: `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${params}`,
+      interactive: true,
+    });
+    return new URL(redirectUrl);
+  } catch (e) {
+    // Such as `The user did not approve access.` when the window is closed.
+    logger.warn('The Notion login window did not finish.', e.message);
+    throw new OAuthException('Notion', 'window_closed');
+  }
+};
+
+/**
+ * Logs in to Notion: opens the authorization page, checks the redirect and exchanges the code.
  * @param {string} [proxyUrl] - The URL of the token proxy, checked before opening the page.
  * @throws {SetupRequiredException} If the proxy URL is not set.
+ * @throws {OAuthException} If the window was closed, the state does not match,
+ *   or Notion sent an error such as `access_denied`.
  */
-export const openOauthPage = async (
-  proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL,
-) => {
+export const authorize = async (proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL) => {
   if (!proxyUrl) {
     throw new SetupRequiredException('Notion', 'proxy');
   }
 
-  return openOAuthPage('notion', (state) => {
-    const params = new URLSearchParams({
-      owner: 'user',
-      client_id: NOTION_CONFIG.CLIENT_ID,
-      response_type: 'code',
-      redirect_uri: NOTION_CONFIG.REDIRECT_URL,
-      state,
-    });
+  const state = crypto.randomUUID();
+  const { searchParams } = await launchAuthorizationPage(state);
 
-    return `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${params}`;
-  });
+  if (searchParams.get('state') !== state) {
+    throw new OAuthException('Notion', 'state');
+  }
+
+  const error = searchParams.get('error');
+  const code = searchParams.get('code');
+  if (error || !code) {
+    throw new OAuthException('Notion', error || 'no_code');
+  }
+
+  await login(code, proxyUrl);
+};
+
+/**
+ * Saves why the last login failed, for the popup to show the next time it opens.
+ * @param {?string} message - The error message, or null to clear it.
+ */
+export const saveLoginError = (message) =>
+  message
+    ? chrome.storage.session.set({ [LOGIN_ERROR_KEY]: message })
+    : chrome.storage.session.remove(LOGIN_ERROR_KEY);
+
+/**
+ * Reads and clears why the last login failed.
+ * @returns {Promise<?string>} The error message, or null if the last login did not fail.
+ */
+export const takeLoginError = async () => {
+  const message = (await chrome.storage.session.get(LOGIN_ERROR_KEY))[
+    LOGIN_ERROR_KEY
+  ];
+  if (message) {
+    await chrome.storage.session.remove(LOGIN_ERROR_KEY);
+  }
+  return message ?? null;
 };
 
 /**
@@ -99,6 +160,7 @@ export const getAccessToken = async (
 
 /**
  * Logs in with the authorization code from the OAuth redirect.
+ * @param {string} [proxyUrl] - The URL of the token proxy.
  * @param {string} code - The authorization code.
  */
 export const login = async (code, proxyUrl = NOTION_CONFIG.TOKEN_PROXY_URL) => {

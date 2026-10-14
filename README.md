@@ -55,12 +55,13 @@ flowchart LR
 - **Content scripts** parse the judge page (problem, language, submission) and render the upload buttons.
 - **The background service worker** does every network call. Thanks to `host_permissions`, it can call the GitHub and Notion APIs without CORS issues — which is why no server is needed.
 - **Programmers** keeps the code inside the page's editor object, which the isolated content script cannot read. `scripts/programmers/sourceExtractor.js` is injected into the page context and returns the code via `window.postMessage`.
-- **Secrets** — GitHub logs in with the device flow, which needs only the client ID. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The OAuth redirect is accepted only with the `state` sent from the tab opened for it.
+- **Secrets** — GitHub logs in with the device flow, which needs only the client ID. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The Notion login opens in a window from `chrome.identity.launchWebAuthFlow`, which catches the redirect to `https://<extension-id>.chromiumapp.org/`, so the code never reaches another site, and the redirect is accepted only with the `state` sent for that login.
 
 ### Permissions
 
 | Permission | Why |
 |---|---|
+| `identity` | Open the Notion login window and receive its redirect |
 | `storage` | Keep access tokens, the selected repository / database and options |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
 
@@ -75,7 +76,6 @@ flowchart LR
    ├─ programmers/          # Programmers content script + page-context extractor
    ├─ github/               # device flow login, repository list, commit
    ├─ notion/               # OAuth (through the proxy), database list, page / block builders
-   ├─ oauth/                # OAuth state check for the Notion redirect
    └─ common/               # exceptions, chrome / fetch / encoding utils
 ```
 

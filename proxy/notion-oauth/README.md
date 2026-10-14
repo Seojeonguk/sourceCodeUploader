@@ -16,7 +16,7 @@ GitHub does not need a proxy: the extension logs in with the [device flow](https
 ## Deploy
 
 1. Check `ALLOWED_EXTENSION_IDS` in `wrangler.toml`. It already has the ID fixed by `manifest.json`; add others separated by commas, such as the Chrome Web Store ID.
-2. `NOTION_REDIRECT_URI` must match the redirect URI of the Notion integration (`https://github.com`).
+2. `NOTION_REDIRECT_URI` must match the redirect URI of the Notion integration, which is `https://<extension-id>.chromiumapp.org/` (`chrome.identity.getRedirectURL()`), including the trailing slash. For the fixed ID it is `https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/`. The extension sends the same URI when it opens the login page, so a different extension ID cannot complete a login through this worker.
 3. Log in to Cloudflare and set the Notion credentials as secrets (from <https://www.notion.so/my-integrations> → the integration → **Secrets**):
 
    ```bash

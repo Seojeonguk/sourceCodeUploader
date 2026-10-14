@@ -11,7 +11,8 @@ const env = {
   ALLOWED_EXTENSION_IDS: `${EXTENSION_ID}, ${OTHER_EXTENSION_ID}`,
   NOTION_CLIENT_ID: 'client-id',
   NOTION_CLIENT_SECRET: 'client-secret',
-  NOTION_REDIRECT_URI: 'https://github.com',
+  NOTION_REDIRECT_URI:
+    'https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/',
 };
 
 const call = (path, { method = 'POST', origin = ORIGIN, body } = {}) =>
@@ -57,7 +58,7 @@ describe('Notion OAuth proxy', () => {
     assert.deepEqual(JSON.parse(body), {
       grant_type: 'authorization_code',
       code: 'code',
-      redirect_uri: 'https://github.com',
+      redirect_uri: 'https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/',
     });
   });
 
