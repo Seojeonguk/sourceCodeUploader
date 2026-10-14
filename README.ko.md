@@ -82,6 +82,8 @@ flowchart LR
 
 ## 개발
 
+Node.js 22.22.2 이상 또는 24.15.0 이상이 필요해요 (`package.json`의 `engines`, CI는 Node 22).
+
 ```bash
 npm install
 npm run lint            # 린트 (airbnb-base + prettier)
