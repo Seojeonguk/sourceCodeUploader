@@ -199,7 +199,7 @@ const showRepositories = () => {
   $('#uploaded-repository').on('click', async () => {
     const response = await sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
-    if (!response.ok || !Array.isArray(response.message)) {
+    if (!response?.ok || !Array.isArray(response?.message)) {
       showToast(response?.message, 'error');
       return;
     }

@@ -80,6 +80,7 @@
     return sourceExtractorReady;
   };
 
+  // Like sendMessage in scripts/common/utils/chrome/runtime.js, which a content script cannot import.
   const sendUploadMessage = ({ id, action }, payload) =>
     new Promise((resolve) => {
       chrome.runtime.sendMessage(
@@ -88,7 +89,19 @@
           action,
           payload,
         },
-        (response) => resolve(response),
+        (response) => {
+          // Reading lastError also keeps Chrome from logging it as unchecked.
+          const error = chrome.runtime.lastError;
+          if (error || response === undefined) {
+            resolve({
+              ok: false,
+              message:
+                error?.message ?? 'The extension did not respond. Try again.',
+            });
+            return;
+          }
+          resolve(response);
+        },
       );
     });
 
