@@ -316,14 +316,14 @@ describe('popup', () => {
   });
 
   describe('database list', () => {
-    it('lists the databases, and saves the name and the ID of the selected one', async () => {
+    it('lists the data sources as databases, and saves the name and the data source ID of the selected one', async () => {
       const { storage } = mockChrome({
         responses: {
           'notion/getDatabases': {
             ok: true,
             message: [
-              { id: 'db-1', title: [{ plain_text: 'Problems' }] },
-              { id: 'db-2', title: [] },
+              { id: 'ds-1', title: [{ plain_text: 'Problems' }] },
+              { id: 'ds-2', title: [] },
             ],
           },
         },
@@ -339,11 +339,11 @@ describe('popup', () => {
       assert.deepEqual(
         items.map((item) => [
           item.textContent,
-          item.getAttribute('database-id'),
+          item.getAttribute('data-source-id'),
         ]),
         [
-          ['Problems', 'db-1'],
-          ['Untitled', 'db-2'],
+          ['Problems', 'ds-1'],
+          ['Untitled', 'ds-2'],
         ],
       );
       assert.ok($$('#notion-database-list').classList.contains('is-active'));
@@ -353,7 +353,7 @@ describe('popup', () => {
 
       assert.equal($$('#uploaded-database').textContent, 'Problems');
       assert.equal(storage.notionUploadedDatabase, 'Problems');
-      assert.equal(storage.notionUploadedDatabaseId, 'db-1');
+      assert.equal(storage.notionUploadedDataSourceId, 'ds-1');
     });
 
     it('shows why the list cannot be loaded', async () => {

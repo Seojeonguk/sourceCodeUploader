@@ -1,17 +1,26 @@
 import { notionRequest } from './request.js';
 
 /**
- * Searches pages and databases shared with the integration.
+ * Searches pages and data sources shared with the integration.
  * @param {Object} body - The search request body.
  * @returns {Promise<Object>} The search result.
  */
 export const search = async (body) => notionRequest('/v1/search', 'POST', body);
 
 /**
- * Queries the pages of a database.
- * @param {string} databaseId - The database to query.
+ * Retrieves a database, with the IDs and names of its data sources in `data_sources`.
+ * @param {string} databaseId - The database to retrieve.
+ * @returns {Promise<Object>} The database.
+ */
+export const getDatabase = async (databaseId) =>
+  notionRequest(`/v1/databases/${databaseId}`, 'GET');
+
+/**
+ * Queries the pages of a data source.
+ * Since Notion-Version 2025-09-03, the rows of a database belong to its data sources.
+ * @param {string} dataSourceId - The data source to query.
  * @param {Object} body - The query request body, such as a filter.
  * @returns {Promise<Object>} The query result.
  */
-export const queryDatabase = async (databaseId, body) =>
-  notionRequest(`/v1/databases/${databaseId}/query`, 'POST', body);
+export const queryDataSource = async (dataSourceId, body) =>
+  notionRequest(`/v1/data_sources/${dataSourceId}/query`, 'POST', body);

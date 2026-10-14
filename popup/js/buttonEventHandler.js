@@ -146,13 +146,13 @@ const handleUploadedDatabaseSelection = () => {
     }
 
     const uploadedDatabase = item.textContent;
-    const uploadedDatabaseId = item.getAttribute('database-id');
+    const uploadedDataSourceId = item.getAttribute('data-source-id');
 
     document.querySelector('#uploaded-database').textContent = uploadedDatabase;
 
     saveSettings({
       notionUploadedDatabase: uploadedDatabase,
-      notionUploadedDatabaseId: uploadedDatabaseId,
+      notionUploadedDataSourceId: uploadedDataSourceId,
     });
   });
 };
@@ -228,7 +228,7 @@ const showDatabases = () => {
         '#notion-database-list',
         response.message.map((database) =>
           createListItem(getDatabaseTitle(database), {
-            'database-id': database.id,
+            'data-source-id': database.id,
           }),
         ),
       );

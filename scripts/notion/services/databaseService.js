@@ -3,13 +3,21 @@ import {
   SetupRequiredException,
   TimeoutException,
 } from '../../common/exception/index.js';
-import { fetchAllPages, getChromeStorage } from '../../common/utils/index.js';
+import {
+  fetchAllPages,
+  getChromeStorage,
+  setChromeStorage,
+} from '../../common/utils/index.js';
 import {
   appendBlockChildren,
   getBlockChildren,
   updateBlock,
 } from '../endpoints/blocks.js';
-import { queryDatabase, search } from '../endpoints/databases.js';
+import {
+  getDatabase,
+  queryDataSource,
+  search,
+} from '../endpoints/databases.js';
 import { createPage, updatePageProperties } from '../endpoints/pages.js';
 import {
   createProblemPageData,
@@ -21,21 +29,23 @@ import {
 } from '../objects/problemPage.js';
 
 // The maximum page size of the Notion API.
-const DATABASES_PER_PAGE = 100;
+const DATA_SOURCES_PER_PAGE = 100;
 
 /**
- * Retrieves all databases shared with the integration, following every page.
+ * Retrieves all data sources shared with the integration, following every page.
+ * A database has one data source, or more if the user added them; each is listed on its own.
+ * The popup shows them as the databases to upload to.
  * @throws {Error} If the access token is missing or invalid.
- * @returns {Promise<Object[]>} A list of databases.
+ * @returns {Promise<Object[]>} A list of data sources, each with an `id` and a `title`.
  */
-export const getDatabases = async () =>
+export const getDataSources = async () =>
   fetchAllPages(async (startCursor) => {
     const response = await search({
       filter: {
-        value: 'database',
+        value: 'data_source',
         property: 'object',
       },
-      page_size: DATABASES_PER_PAGE,
+      page_size: DATA_SOURCES_PER_PAGE,
       start_cursor: startCursor,
     });
 
@@ -46,13 +56,41 @@ export const getDatabases = async () =>
   });
 
 /**
- * Finds the latest page of a problem in the database by its URL property.
- * @param {string} databaseId - The database to search.
+ * Returns the data source to upload to.
+ * Before Notion-Version 2025-09-03, the popup saved the database ID. That selection is moved
+ * to its data source once, if the database has only one.
+ * @throws {SetupRequiredException} If no database is selected, or the saved database does not
+ *   have exactly one data source, so the user has to choose one.
+ * @returns {Promise<string>} The data source ID.
+ */
+const getUploadDataSourceId = async () => {
+  const dataSourceId = await getChromeStorage('notionUploadedDataSourceId');
+  if (dataSourceId) {
+    return dataSourceId;
+  }
+
+  const databaseId = await getChromeStorage('notionUploadedDatabaseId');
+  if (!databaseId) {
+    throw new SetupRequiredException('Notion', 'database');
+  }
+
+  const { data_sources: dataSources = [] } = await getDatabase(databaseId);
+  if (dataSources.length !== 1) {
+    throw new SetupRequiredException('Notion', 'database-again');
+  }
+
+  await setChromeStorage('notionUploadedDataSourceId', dataSources[0].id);
+  return dataSources[0].id;
+};
+
+/**
+ * Finds the latest page of a problem in the data source by its URL property.
+ * @param {string} dataSourceId - The data source to search.
  * @param {string} url - The problem URL.
  * @returns {Promise<?Object>} The page, or null if the problem was not uploaded yet.
  */
-const findProblemPage = async (databaseId, url) => {
-  const response = await queryDatabase(databaseId, {
+const findProblemPage = async (dataSourceId, url) => {
+  const response = await queryDataSource(dataSourceId, {
     filter: { property: 'URL', url: { equals: url } },
     sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     page_size: 1,
@@ -63,13 +101,13 @@ const findProblemPage = async (databaseId, url) => {
 
 /**
  * Checks whether the problem page already has the source code.
- * @param {string} databaseId - The database to search.
+ * @param {string} dataSourceId - The data source to search.
  * @param {string} url - The problem URL.
  * @param {string} sourceCode - The source code that was uploaded.
  * @returns {Promise<?string>} The URL of the page, or null if the page does not have the source code.
  */
-const findUploadedPageUrl = async (databaseId, url, sourceCode) => {
-  const page = await findProblemPage(databaseId, url);
+const findUploadedPageUrl = async (dataSourceId, url, sourceCode) => {
+  const page = await findProblemPage(dataSourceId, url);
   if (!page) {
     return null;
   }
@@ -132,13 +170,10 @@ const replaceSourceCode = async (page, payload, properties) => {
  * @returns {Promise<string>} The URL of the created or updated page.
  */
 export const upload = async (payload, problemInfo) => {
-  const databaseId = await getChromeStorage('notionUploadedDatabaseId');
-  if (!databaseId) {
-    throw new SetupRequiredException('Notion', 'database');
-  }
+  const dataSourceId = await getUploadDataSourceId();
 
   const pageData = createProblemPageData({
-    databaseId,
+    dataSourceId,
     ...payload,
     ...problemInfo,
   });
@@ -146,7 +181,7 @@ export const upload = async (payload, problemInfo) => {
   const problemUrl = pageData.properties.URL.url;
 
   try {
-    const existingPage = await findProblemPage(databaseId, problemUrl);
+    const existingPage = await findProblemPage(dataSourceId, problemUrl);
     if (existingPage) {
       await replaceSourceCode(existingPage, payload, pageData.properties);
       return existingPage.url;
@@ -161,7 +196,7 @@ export const upload = async (payload, problemInfo) => {
 
     // Notion may have saved the page before the timeout, so check the page before reporting a failure.
     const uploadedPageUrl = await findUploadedPageUrl(
-      databaseId,
+      dataSourceId,
       problemUrl,
       payload.sourceCode,
     );

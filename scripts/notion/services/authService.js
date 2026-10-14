@@ -21,6 +21,7 @@ const SETTING_KEYS = Object.freeze([
   'notionUploadedDatabase',
   'notionUploadedDatabases',
   'notionUploadedDatabaseId',
+  'notionUploadedDataSourceId',
 ]);
 
 /**

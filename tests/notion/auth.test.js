@@ -20,6 +20,7 @@ const settings = {
   notionUploadedDatabase: 'Problems',
   notionUploadedDatabases: [],
   notionUploadedDatabaseId: 'database-id',
+  notionUploadedDataSourceId: 'data-source-id',
 };
 
 describe('Notion logout', () => {

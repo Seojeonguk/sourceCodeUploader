@@ -36,7 +36,7 @@ export const getCodeLanguage = (extension) =>
 /**
  * Creates the request body of a Notion page for a solved problem.
  * @param {Object} param
- * @param {string} param.databaseId - The database to create the page in.
+ * @param {string} param.dataSourceId - The data source of the database to create the page in.
  * @param {string} param.type - The platform, such as `Programmers`.
  * @param {string} param.problemId - The problem ID.
  * @param {string} param.title - The problem title.
@@ -49,7 +49,7 @@ export const getCodeLanguage = (extension) =>
  * @returns {Object} The request body for creating the page.
  */
 export const createProblemPageData = ({
-  databaseId,
+  dataSourceId,
   type,
   problemId,
   title,
@@ -60,7 +60,7 @@ export const createProblemPageData = ({
   sourceCode,
   createdAt = new Date(),
 }) => ({
-  parent: { database_id: databaseId },
+  parent: { type: 'data_source_id', data_source_id: dataSourceId },
   properties: {
     title: createPageProperty(PROPERTY_TYPE.TITLE, {
       text: title,
