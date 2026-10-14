@@ -13,7 +13,7 @@ import {
 const names = (property) => property.multi_select.map(({ name }) => name);
 
 const programmersProblem = {
-  databaseId: 'database-id',
+  dataSourceId: 'data-source-id',
   type: 'Programmers',
   problemId: '1845',
   title: '폰켓몬',
@@ -42,9 +42,10 @@ describe('getCodeLanguage', () => {
 });
 
 describe('createProblemPageData', () => {
-  it('creates the page in the selected database', () => {
+  it('creates the page in the data source of the selected database', () => {
     assert.deepEqual(createProblemPageData(programmersProblem).parent, {
-      database_id: 'database-id',
+      type: 'data_source_id',
+      data_source_id: 'data-source-id',
     });
   });
 

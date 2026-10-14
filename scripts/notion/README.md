@@ -53,6 +53,9 @@ Create a Notion database with the properties below before you authorize. The nam
 
 - Select the database to upload from the database list.
 
+  - A database with more than one data source is listed once for each data source; select the one to upload to.
+  - If you selected a database before this version, it is moved to its data source on the next upload. If the database has more than one data source, you are asked to select it again.
+
   ![Select database to upload](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/cd8144ef-64c1-4cd0-a535-7d8fcee70922)
 
 - Check the database to upload.
