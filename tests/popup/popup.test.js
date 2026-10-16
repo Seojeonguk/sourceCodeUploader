@@ -7,6 +7,7 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 import { initializeButtonEvents } from '../../popup/js/buttonEventHandler.js';
 import { initializeOnLoad } from '../../popup/js/onLoadInitialization.js';
 import { showToast } from '../../popup/js/toast.js';
+import { GITHUB_CONFIG } from '../../scripts/github/config/config.js';
 
 const POPUP_HTML = readFileSync(
   new URL('../../popup/html/index.html', import.meta.url),
@@ -257,6 +258,10 @@ describe('popup', () => {
       );
       assert.ok($$('#repository-list').classList.contains('is-active'));
       assert.ok($$('.content-wrapper').classList.contains('overlay'));
+      // The list ends with the page to install the GitHub App on more repositories.
+      const install = $$('#repository-list li.install a');
+      assert.equal(install.href, GITHUB_CONFIG.INSTALL_URL);
+      assert.equal(install.target, '_blank');
 
       items[1].click();
       await flush();
