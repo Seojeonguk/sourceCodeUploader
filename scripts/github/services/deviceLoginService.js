@@ -1,7 +1,7 @@
 import { NotFoundException } from '../../common/exception/index.js';
-import { request } from '../../common/utils/index.js';
 import { GITHUB_CONFIG } from '../config/config.js';
-import { getUserInfo, saveInfo } from './authService.js';
+import { getUserInfo, saveLogin } from './authService.js';
+import { postToGithubOAuth } from './oauthRequest.js';
 
 // The device code waiting for the user, kept until the login finishes.
 // chrome.storage.session survives the service worker restarting while the user enters the code.
@@ -17,18 +17,6 @@ export const DEVICE_LOGIN_STATUS = Object.freeze({
   DENIED: 'denied',
 });
 
-// The OAuth endpoints take a form body, and answer in JSON with `Accept: application/json`.
-const postToGithub = (path, body) =>
-  request(
-    `${GITHUB_CONFIG.BASE_URL}${path}`,
-    'POST',
-    {
-      Accept: 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    new URLSearchParams(body).toString(),
-  );
-
 const getDeviceLogin = async () =>
   (await chrome.storage.session.get(DEVICE_LOGIN_KEY))[DEVICE_LOGIN_KEY];
 
@@ -39,13 +27,14 @@ const removeDeviceLogin = () => chrome.storage.session.remove(DEVICE_LOGIN_KEY);
 
 /**
  * Starts the GitHub device flow, which needs only the client ID (no client secret).
+ * A GitHub App has no scopes: its permissions are set in the App and limited to the
+ * repositories the user installed it on.
  * @returns {Promise<{userCode: string, verificationUri: string, interval: number, expiresIn: number}>}
  *   The code the user enters on `verificationUri`, and how often to poll in seconds.
  */
 export const startDeviceLogin = async () => {
-  const response = await postToGithub('/login/device/code', {
+  const response = await postToGithubOAuth('/login/device/code', {
     client_id: GITHUB_CONFIG.CLIENT_ID,
-    scope: GITHUB_CONFIG.SCOPES.join(' '),
   });
 
   const deviceCode = response?.device_code;
@@ -83,7 +72,7 @@ export const pollDeviceLogin = async () => {
     return { status: DEVICE_LOGIN_STATUS.EXPIRED };
   }
 
-  const response = await postToGithub('/login/oauth/access_token', {
+  const response = await postToGithubOAuth('/login/oauth/access_token', {
     client_id: GITHUB_CONFIG.CLIENT_ID,
     device_code: deviceLogin.deviceCode,
     grant_type: DEVICE_GRANT_TYPE,
@@ -91,7 +80,8 @@ export const pollDeviceLogin = async () => {
 
   if (response?.access_token) {
     const githubID = await getUserInfo(response.access_token);
-    await saveInfo(response.access_token, githubID);
+    // The access token expires after 8 hours, and is refreshed with the refresh token.
+    await saveLogin(response, githubID);
     await removeDeviceLogin();
     return { status: DEVICE_LOGIN_STATUS.DONE };
   }

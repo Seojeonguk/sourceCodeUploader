@@ -16,6 +16,7 @@ import {
 } from '../../common/utils/index.js';
 
 import { createUploadPath, encodeGithubContentPath } from '../utils/path.js';
+import { getAccessToken } from './tokenService.js';
 
 // The maximum page size of the GitHub REST API. The default is 30.
 const REPOSITORIES_PER_PAGE = 100;
@@ -42,35 +43,56 @@ const isSameContent = (file, encodedContent) =>
   file?.content?.replaceAll(/\n/g, '') === encodedContent;
 
 /**
- * Retrieves all repositories of the authenticated user, following every page.
- * @throws {SetupRequiredException} If the user has not logged in to GitHub.
- * @returns {Promise<Object[]>} A list of repositories belonging to the authenticated user.
+ * Reads every page of a GitHub list that answers `{ [key]: items }`.
+ * @param {string} path - The API path, such as `/user/installations`.
+ * @param {string} key - The field of the items, such as `installations`.
+ * @param {Object} headers - The GitHub auth headers.
+ * @returns {Promise<Object[]>} All the items.
  */
-export const getAuthenticatedUserRepositories = async () => {
-  const githubAccessToken = await getChromeStorage('githubAccessToken');
-  if (!githubAccessToken) {
-    throw new SetupRequiredException('GitHub', 'login');
-  }
-
-  const headers = createGithubAuthHeader(githubAccessToken);
-
-  return fetchAllPages(async (page = 1) => {
+const getAllItems = (path, key, headers) =>
+  fetchAllPages(async (page = 1) => {
     const params = new URLSearchParams({
-      type: 'owner',
       per_page: REPOSITORIES_PER_PAGE,
       page,
     });
-    const url = `${GITHUB_CONFIG.API_BASE_URL}/user/repos?${params}`;
+    const url = `${GITHUB_CONFIG.API_BASE_URL}${path}?${params}`;
 
-    const repositories = await request(url, 'GET', headers, undefined);
+    const items = (await request(url, 'GET', headers, undefined))?.[key] ?? [];
 
-    // A full page means there can be more repositories on the next page.
+    // A full page means there can be more items on the next page.
     return {
-      items: repositories,
-      nextCursor:
-        repositories.length === REPOSITORIES_PER_PAGE ? page + 1 : null,
+      items,
+      nextCursor: items.length === REPOSITORIES_PER_PAGE ? page + 1 : null,
     };
   });
+
+/**
+ * Retrieves the user's own repositories that the GitHub App is installed on.
+ * The token of the App can reach only those, so they are the ones to upload to.
+ * @throws {SetupRequiredException} If the user has not logged in to GitHub.
+ * @returns {Promise<Object[]>} The repositories, which is empty until the App is installed.
+ */
+export const getAuthenticatedUserRepositories = async () => {
+  const headers = createGithubAuthHeader(await getAccessToken());
+  const githubID = await getChromeStorage('githubID');
+
+  const installations = await getAllItems(
+    '/user/installations',
+    'installations',
+    headers,
+  );
+  const repositories = await Promise.all(
+    installations.map(({ id }) =>
+      getAllItems(
+        `/user/installations/${id}/repositories`,
+        'repositories',
+        headers,
+      ),
+    ),
+  );
+
+  // The upload path is `{githubID}/{repository}`, so only the user's own repositories are listed.
+  return repositories.flat().filter(({ owner }) => owner?.login === githubID);
 };
 
 /**
@@ -86,10 +108,10 @@ export const getAuthenticatedUserRepositories = async () => {
  * @returns {Promise<string>} The URL of the committed file or an error message.
  */
 export const commit = async (payload) => {
-  const githubAccessToken = await getChromeStorage('githubAccessToken');
+  const githubAccessToken = await getAccessToken();
   const githubID = await getChromeStorage('githubID');
   // The GitHub ID is saved with the access token, so log in again if it is missing.
-  if (!githubAccessToken || !githubID) {
+  if (!githubID) {
     throw new SetupRequiredException('GitHub', 'login');
   }
 

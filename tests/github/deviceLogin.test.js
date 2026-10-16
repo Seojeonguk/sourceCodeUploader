@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 
+import { GITHUB_CONFIG } from '../../scripts/github/config/config.js';
 import { dispatch } from '../../scripts/github/index.js';
 import {
   jsonResponse,
@@ -83,10 +84,10 @@ describe('GitHub device login', () => {
       interval: 5,
       expiresIn: 900,
     });
-    assert.deepEqual(Object.keys(bodyOf('/login/device/code')), [
-      'client_id',
-      'scope',
-    ]);
+    // A GitHub App has no scopes: its permissions are set in the App.
+    assert.deepEqual(bodyOf('/login/device/code'), {
+      client_id: GITHUB_CONFIG.CLIENT_ID,
+    });
     // The device code stays in the background.
     assert.equal(tabs.session.githubDeviceLogin.deviceCode, 'device-code');
   });
@@ -128,16 +129,31 @@ describe('GitHub device login', () => {
     });
   });
 
-  it('saves the login when the code is entered', async () => {
-    mockGithub([{ access_token: 'github-token', token_type: 'bearer' }]);
+  it('saves the login with the refresh token and the expiry when the code is entered', async () => {
+    mockGithub([
+      {
+        access_token: 'ghu_token',
+        expires_in: 28800,
+        refresh_token: 'ghr_token',
+        refresh_token_expires_in: 15897600,
+        token_type: 'bearer',
+        scope: '',
+      },
+    ]);
     await dispatch('startDeviceLogin');
 
     assert.deepEqual(await dispatch('pollDeviceLogin'), { status: 'done' });
 
-    assert.equal(storage.githubAccessToken, 'github-token');
+    assert.equal(storage.githubAccessToken, 'ghu_token');
+    assert.equal(storage.githubRefreshToken, 'ghr_token');
+    assert.ok(
+      Math.abs(storage.githubTokenExpiresAt - (Date.now() + 28800 * 1000)) <
+        5000,
+    );
+    assert.equal(storage.githubLoginType, 'app');
     assert.equal(storage.githubID, 'user');
     assert.deepEqual(bodyOf('/login/oauth/access_token'), {
-      client_id: '2cfd0f1fae095d5a1684',
+      client_id: GITHUB_CONFIG.CLIENT_ID,
       device_code: 'device-code',
       grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
     });

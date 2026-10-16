@@ -1,3 +1,4 @@
+import { GITHUB_CONFIG } from '../../scripts/github/config/config.js';
 import { ACTIONS } from '../../scripts/github/constants/actions.js';
 import { getDatabaseTitle } from '../../scripts/notion/objects/database.js';
 
@@ -198,6 +199,24 @@ const createListItem = (text, attributes = {}) => {
 };
 
 /**
+ * Creates the last item of the repository list, which opens the page to install the
+ * GitHub App on more repositories.
+ * @returns {HTMLLIElement} The `<li>` element.
+ */
+const createInstallItem = () => {
+  const link = document.createElement('a');
+  link.href = GITHUB_CONFIG.INSTALL_URL;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = '+ Add repositories';
+
+  const item = document.createElement('li');
+  item.className = 'install';
+  item.append(link);
+  return item;
+};
+
+/**
  * Replaces the items of a select list, and opens it.
  * @param {string} listSelector - The selector of the `<ul>`.
  * @param {HTMLLIElement[]} items - The new items.
@@ -249,10 +268,14 @@ const showRepositories = () => {
         return;
       }
 
-      openSelectList(
-        '#repository-list',
-        response.message.map((repository) => createListItem(repository.name)),
-      );
+      // Only the repositories the GitHub App is installed on are listed,
+      // so the list ends with a link to install it on more.
+      openSelectList('#repository-list', [
+        ...response.message.map((repository) =>
+          createListItem(repository.name),
+        ),
+        createInstallItem(),
+      ]);
     });
 };
 

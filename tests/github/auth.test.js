@@ -6,6 +6,10 @@ import { jsonResponse, mockChromeStorage } from '../helpers/chrome.js';
 
 const settings = {
   githubAccessToken: 'token',
+  githubRefreshToken: 'refresh-token',
+  // Valid for another hour, so it is not refreshed.
+  githubTokenExpiresAt: Date.now() + 60 * 60 * 1000,
+  githubLoginType: 'app',
   githubID: 'user',
   githubUploadedRepository: 'solutions',
 };
@@ -33,7 +37,7 @@ describe('GitHub logout', () => {
     assert.equal(globalThis.fetch.mock.callCount(), 0);
     // The user can revoke the access on this page.
     assert.deepEqual(result, {
-      authorizedAppsUrl: 'https://github.com/settings/applications',
+      authorizedAppsUrl: 'https://github.com/settings/apps/authorizations',
     });
   });
 });

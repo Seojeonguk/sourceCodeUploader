@@ -9,8 +9,18 @@ import {
   removeChromeStorage,
 } from '../../common/utils/index.js';
 
+// Marks a login made with the GitHub App. A token saved without it is from the old OAuth App,
+// which had the `repo` scope on every repository, so it is not used any more.
+export const LOGIN_TYPE = 'app';
+
 // Saved when the user logs in.
-const LOGIN_KEYS = Object.freeze(['githubAccessToken', 'githubID']);
+const LOGIN_KEYS = Object.freeze([
+  'githubAccessToken',
+  'githubRefreshToken',
+  'githubTokenExpiresAt',
+  'githubLoginType',
+  'githubID',
+]);
 // Selected by the user in the popup.
 const SETTING_KEYS = Object.freeze(['githubUploadedRepository']);
 
@@ -24,9 +34,9 @@ export const openLoginPage = () =>
   });
 
 /**
- * Saves the user's access token and GitHub ID in Chrome storage.
+ * Reads the GitHub user ID of the access token.
  * @param {string} accessToken - The GitHub access token.
- * @param {string} githubID - The GitHub user ID.
+ * @returns {Promise<string>} The GitHub user ID.
  */
 export const getUserInfo = async (accessToken) => {
   const url = `${GITHUB_CONFIG.API_BASE_URL}/user`;
@@ -41,9 +51,32 @@ export const getUserInfo = async (accessToken) => {
   return githubID;
 };
 
-export const saveInfo = async (accessToken, githubID) => {
+/**
+ * Saves the tokens from GitHub's token endpoint.
+ * A GitHub App user access token expires after 8 hours, and comes with a refresh token.
+ * @param {Object} response - The response of `/login/oauth/access_token`.
+ * @param {number} [now=Date.now()] - The time the response was received.
+ */
+export const saveTokens = async (response, now = Date.now()) => {
   await Promise.all([
-    setChromeStorage('githubAccessToken', accessToken),
+    setChromeStorage('githubAccessToken', response.access_token),
+    setChromeStorage('githubRefreshToken', response.refresh_token ?? null),
+    setChromeStorage(
+      'githubTokenExpiresAt',
+      response.expires_in ? now + response.expires_in * 1000 : null,
+    ),
+    setChromeStorage('githubLoginType', LOGIN_TYPE),
+  ]);
+};
+
+/**
+ * Saves a new login: the tokens and the GitHub ID.
+ * @param {Object} response - The response of `/login/oauth/access_token`.
+ * @param {string} githubID - The GitHub user ID.
+ */
+export const saveLogin = async (response, githubID) => {
+  await Promise.all([
+    saveTokens(response),
     setChromeStorage('githubID', githubID),
   ]);
 };

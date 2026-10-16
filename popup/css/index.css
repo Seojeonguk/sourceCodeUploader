@@ -217,6 +217,16 @@ svg {
   font-size: 13px;
 }
 
+/* The link to install the GitHub App on more repositories. */
+.select-list ul li.install a {
+  display: block;
+  line-height: 25px;
+  font-size: 13px;
+  color: inherit;
+  opacity: 0.8;
+  text-decoration: none;
+}
+
 label {
   display: inline-flex;
   align-items: center;
