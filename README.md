@@ -4,7 +4,7 @@
 
 A Chrome extension that uploads your accepted solutions from algorithm judge sites to **GitHub** and **Notion** with a single click — no server, no manual token setup.
 
-<!-- TODO: demo GIF (Programmers problem page → upload button → GitHub commit / Notion page) -->
+![Demo: on a Programmers problem page, the GitHub button next to the editor uploads the accepted solution, and the commit opens on GitHub](docs/demo.gif)
 
 > **Note** — Baekjoon Online Judge has been shut down, so its support was removed. The last version with it is kept at the [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) tag.
 
