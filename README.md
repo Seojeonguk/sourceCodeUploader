@@ -66,12 +66,15 @@ flowchart LR
 | `storage` | Keep access tokens, the selected repository / database and options |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
 
+What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md).
+
 ## Project Structure
 
 ```text
 ├─ manifest.json
 ├─ popup/                   # popup UI and the GitHub login page (html · css · js)
 ├─ proxy/notion-oauth/      # Cloudflare Worker that keeps the Notion client secret
+├─ tools/                   # packages the zip for the Chrome Web Store
 └─ scripts/
    ├─ background.js         # service worker, message routing
    ├─ programmers/          # Programmers content script + page-context extractor
@@ -91,11 +94,14 @@ npm run lint:fix        # fix auto-fixable lint errors
 npm run format:check    # prettier check
 npm run format          # format with prettier
 npm test                # unit tests (node:test)
+npm run package         # zip for the Chrome Web Store (dist/)
 ```
 
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
 
 The `key` in `manifest.json` fixes the extension ID to `mfhbpmbchemfhijjamldbkidlegfmaff` wherever the folder is loaded from, so the deployed [Notion OAuth proxy](proxy/notion-oauth/README.md) accepts everyone's login. Users do not deploy anything; the maintainer deploys the proxy once and keeps its URL in `TOKEN_PROXY_URL` of `scripts/notion/config/config.js`.
+
+Publishing on the Chrome Web Store: [docs/chrome-web-store.md](docs/chrome-web-store.md).
 
 Conventions: branch from `master` and open a PR; commit messages start with an English verb and end with the PR number, e.g. `Refactor notion (#177)`, signed off with `-s`.
 

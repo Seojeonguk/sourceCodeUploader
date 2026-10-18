@@ -1,4 +1,4 @@
-# Lint, format check and tests for every pull request and every push to master.
+# Lint, format check, tests and the Chrome Web Store zip for every pull request and every push to master.
 name: CI
 
 on:
@@ -27,3 +27,11 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Package
+        run: npm run package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chrome-web-store-zip
+          path: dist/*.zip

@@ -4,6 +4,8 @@ venv
 _metadata
 .idea
 node_modules
+# The zip for the Chrome Web Store (npm run package)
+dist
 
 
 # The private key of the extension (kept outside the repository)
