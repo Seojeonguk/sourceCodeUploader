@@ -14,7 +14,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 - **Auto upload** — Optionally uploads automatically as soon as a submission turns *Accepted*.
 - **GitHub** — Commits the source to `{platform}/{problem}.{ext}` in the repository you choose. Skips the commit if the file content is unchanged.
 - **Notion** — Creates a page in the database you choose, with the problem title, level and tags as properties and the source as a code block.
-- **Login** — Sign in with GitHub (device code) and Notion (OAuth) from the popup; pick a repository or database from a list. No client secret is shipped in the extension.
+- **Login** — Sign in with GitHub (device code) and Notion (OAuth) from the popup; pick a repository or database from a list. No client secret is shipped in the extension, and the GitHub token reaches only the repositories you install the GitHub App on.
 
 ## Supported Platforms
 
@@ -34,7 +34,7 @@ The extension is not on the Chrome Web Store yet. Load it manually:
 ## Usage
 
 1. Click the extension icon to open the popup.
-2. **GitHub** — Click `Authorize`. A login page shows a code: enter it on GitHub and approve access, then select the repository to upload to. ([guide](scripts/github/README.md))
+2. **GitHub** — Click `Authorize`. A login page shows a code: enter it on GitHub and approve access. Install the GitHub App on the repositories to upload to (`+ Add repositories` in the repository list), then select one. ([guide](scripts/github/README.md))
 3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. The database needs the properties listed in the [guide](scripts/notion/README.md#prepare-the-database).
 4. (Optional) Turn on **Auto upload** for each platform.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
@@ -55,7 +55,7 @@ flowchart LR
 - **Content scripts** parse the judge page (problem, language, submission) and render the upload buttons.
 - **The background service worker** does every network call. Thanks to `host_permissions`, it can call the GitHub and Notion APIs without CORS issues — which is why no server is needed.
 - **Programmers** keeps the code inside the page's editor object, which the isolated content script cannot read. `scripts/programmers/sourceExtractor.js` is injected into the page context and returns the code via `window.postMessage`.
-- **Secrets** — GitHub logs in with the device flow, which needs only the client ID. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The Notion login opens in a window from `chrome.identity.launchWebAuthFlow`, which catches the redirect to `https://<extension-id>.chromiumapp.org/`, so the code never reaches another site, and the redirect is accepted only with the `state` sent for that login.
+- **Secrets** — GitHub logs in to a GitHub App with the device flow, which needs only the client ID; its token expires after 8 hours, is refreshed without the client secret, and reaches only the repositories the App is installed on. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The Notion login opens in a window from `chrome.identity.launchWebAuthFlow`, which catches the redirect to `https://<extension-id>.chromiumapp.org/`, so the code never reaches another site, and the redirect is accepted only with the `state` sent for that login.
 - **Messages and storage** — The background accepts only the upload messages (`commit`, `upload`, and reading the auto upload option) from the judge pages, and every other message only from the extension's own pages (`scripts/senders.js`). `chrome.storage.local`, which keeps the access tokens, is hidden from content scripts, and the uploaded path takes only a known platform folder and file extension.
 
 ### Permissions
