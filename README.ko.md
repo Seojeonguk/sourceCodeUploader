@@ -4,7 +4,7 @@
 
 알고리즘 문제 사이트에서 통과한 소스 코드를 **버튼 한 번으로 GitHub · Notion에 업로드**하는 Chrome 확장 프로그램이에요. 별도 서버도, 토큰 직접 설정도 필요 없어요.
 
-<!-- TODO: 데모 GIF (프로그래머스 문제 페이지 → 업로드 버튼 → GitHub 커밋 / Notion 페이지) -->
+![데모: 프로그래머스 문제 페이지에서 에디터 옆 GitHub 버튼으로 정답 코드를 올리고, GitHub에서 커밋을 열어요](docs/demo.gif)
 
 > **참고** — 백준 온라인 저지가 서비스를 종료해서 백준 지원을 제거했어요. 백준 지원이 있던 마지막 버전은 [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) 태그에 남겨 두었어요.
 
