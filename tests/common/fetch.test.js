@@ -202,6 +202,47 @@ describe('request', () => {
     });
   });
 
+  describe('a POST that only reads (idempotent)', () => {
+    const readOptions = { ...options, idempotent: true };
+
+    it('is sent again after a server error', async () => {
+      globalThis.fetch = fetchFailingWith(() => jsonResponse({}, 502));
+
+      const response = await request(URL, 'POST', undefined, '{}', readOptions);
+
+      assert.deepEqual(response, { ok: true });
+      assert.equal(globalThis.fetch.mock.callCount(), 2);
+    });
+
+    it('is sent again after a network error', async () => {
+      globalThis.fetch = fetchFailingWith(() => {
+        throw networkError();
+      });
+
+      const response = await request(URL, 'POST', undefined, '{}', readOptions);
+
+      assert.deepEqual(response, { ok: true });
+      assert.equal(globalThis.fetch.mock.callCount(), 2);
+    });
+
+    it('reports a timeout as a read, which was not applied', async () => {
+      globalThis.fetch = mock.fn(hangingFetch);
+
+      await assert.rejects(
+        request(URL, 'POST', undefined, '{}', {
+          ...readOptions,
+          retries: 0,
+          timeout: 10,
+        }),
+        {
+          name: 'TimeoutException',
+          message: 'The request timed out. Try again later.',
+          mayBeApplied: false,
+        },
+      );
+    });
+  });
+
   describe('rate limits', () => {
     ['GET', 'POST', 'PATCH'].forEach((method) => {
       it(`retries ${method} after 429, since it was not applied`, async () => {

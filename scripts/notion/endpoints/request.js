@@ -7,10 +7,16 @@ import { NOTION_CONFIG } from '../config/config.js';
  * @param {string} path - The API path, such as `/v1/pages`.
  * @param {string} method - The HTTP method.
  * @param {Object} [body] - The request body. It is sent as JSON.
+ * @param {Object} [options] - The options of `request`, such as `{ idempotent: true }`.
  * @throws {SetupRequiredException} If the user has not logged in to Notion.
  * @returns {Promise<Object>} The response body.
  */
-export const notionRequest = async (path, method, body = undefined) => {
+export const notionRequest = async (
+  path,
+  method,
+  body = undefined,
+  options = {},
+) => {
   const accessToken = await getChromeStorage('notionAccessToken');
   if (!accessToken) {
     throw new SetupRequiredException('Notion', 'login');
@@ -27,5 +33,6 @@ export const notionRequest = async (path, method, body = undefined) => {
     method,
     headers,
     body && JSON.stringify(body),
+    options,
   );
 };

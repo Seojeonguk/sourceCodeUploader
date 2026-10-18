@@ -272,6 +272,23 @@ describe('Notion authorize', () => {
       assert.equal(await dispatch('takeLoginError'), null);
       assert.equal(storage.notionAccessToken, 'notion-token');
     });
+
+    it('clears an error that another login kept while this one was running', async () => {
+      mockLoginWindow((state) => ({ code: 'code', state }));
+      globalThis.chrome.identity.launchWebAuthFlow = async ({ url }) => {
+        // Another login, started from a reopened popup, fails while this window is open.
+        await globalThis.chrome.storage.session.set({
+          notionLoginError:
+            'The Notion login window was closed before the login finished.',
+        });
+        const state = new URL(url).searchParams.get('state');
+        return `${REDIRECT_URI}?${new URLSearchParams({ code: 'code', state })}`;
+      };
+
+      await dispatch('openOauthPage');
+
+      assert.equal(await dispatch('takeLoginError'), null);
+    });
   });
 });
 

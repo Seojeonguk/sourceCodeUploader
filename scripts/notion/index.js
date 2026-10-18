@@ -21,6 +21,9 @@ const loginAndKeepError = async () => {
     await saveLoginError(e.message);
     throw e;
   }
+  // Another login started meanwhile may have failed and kept its error, so clear it now
+  // that the user is logged in.
+  await saveLoginError(null);
 };
 
 /**
