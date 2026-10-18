@@ -53,6 +53,61 @@ const createPageHtml = ({
 
 let dom;
 
+// Lets the pending promises and the zero-delay timers of the test (such as the mocked
+// chrome.runtime.sendMessage) run.
+const settle = async () => {
+  await new Promise(setImmediate);
+  await new Promise(setImmediate);
+};
+
+/**
+ * A clock for the timers of the content script, so the tests advance them instead of waiting.
+ * Only the page's setTimeout / clearTimeout use it: jsdom still delivers postMessage with the
+ * real timers, which the source extractor needs.
+ * @returns {{ setTimeout: Function, clearTimeout: Function, tick: (ms: number) => Promise<void> }}
+ */
+const createClock = () => {
+  let now = 0;
+  let lastId = 0;
+  const timers = new Map();
+
+  const nextDueTimer = (end) =>
+    [...timers]
+      .filter(([, timer]) => timer.at <= end)
+      .sort(([, a], [, b]) => a.at - b.at)[0];
+
+  return {
+    setTimeout: (callback, delay = 0, ...args) => {
+      lastId += 1;
+      timers.set(lastId, { at: now + delay, callback, args });
+      return lastId;
+    },
+    clearTimeout: (id) => {
+      timers.delete(id);
+    },
+    /**
+     * Moves the clock forward, running the timers that are due in order.
+     * @param {number} ms - How far to move it, in milliseconds.
+     */
+    tick: async (ms) => {
+      const end = now + ms;
+      // A DOM change schedules its check in a MutationObserver callback, which runs first.
+      await settle();
+      let due = nextDueTimer(end);
+      while (due) {
+        const [id, timer] = due;
+        timers.delete(id);
+        now = timer.at;
+        timer.callback(...timer.args);
+        // eslint-disable-next-line no-await-in-loop -- run each timer's follow-up before the next
+        await settle();
+        due = nextDueTimer(end);
+      }
+      now = end;
+    },
+  };
+};
+
 /**
  * Opens the page and runs helpers.js and index.js in it, like Chrome runs the content scripts.
  * @param {Object} [options]
@@ -60,7 +115,7 @@ let dom;
  * @param {string} [options.html] - The page HTML.
  * @param {Object} [options.responses] - The background responses, keyed by `platform/action`.
  * @param {string} [options.sourceCode] - The code that the page-context extractor returns.
- * @returns {{ window: Window, document: Document, sent: Object[] }}
+ * @returns {{ window: Window, document: Document, sent: Object[], clock: Object }}
  */
 const openPage = ({
   url = `https://school.programmers.co.kr${LESSON_PATH}`,
@@ -118,10 +173,14 @@ const openPage = ({
     );
   });
 
+  const clock = createClock();
+  window.setTimeout = clock.setTimeout;
+  window.clearTimeout = clock.clearTimeout;
+
   window.eval(HELPERS_SOURCE);
   window.eval(INDEX_SOURCE);
 
-  return { window, document: window.document, sent };
+  return { window, document: window.document, sent, clock };
 };
 
 const wait = (ms) =>
@@ -166,8 +225,16 @@ const closeResult = (document) => {
   modal.style.display = 'none';
 };
 
-// More than the 300 ms that the content script waits before checking the modal.
-const RESULT_CHECK_WAIT = 400;
+// How long the content script waits after the page changes before checking the modal.
+const RESULT_CHECK_DELAY = 300;
+
+/**
+ * Waits long enough for an upload to be sent if the content script started one.
+ * After the check, the upload still goes through the background answers and the
+ * postMessage round trip, which use the real timers, so a test that expects nothing
+ * to happen waits for them before asserting.
+ */
+const waitForQuiet = () => wait(50);
 
 describe('Programmers content script', () => {
   afterEach(() => {
@@ -346,7 +413,7 @@ describe('Programmers content script', () => {
     };
 
     it('uploads to the platforms that are on, one by one, when the result is accepted', async () => {
-      const { document, sent } = openPage({
+      const { document, sent, clock } = openPage({
         responses: {
           ...bothOn,
           'notion/getAutoUpload': { ok: true, message: false },
@@ -354,8 +421,11 @@ describe('Programmers content script', () => {
       });
 
       showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => toastCount(document) === 1);
-      await wait(RESULT_CHECK_WAIT);
+      // The toast changes the page again, which must not upload again.
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitForQuiet();
 
       assert.deepEqual(actionsOf(sent), [
         'github/getAutoUpload',
@@ -365,43 +435,48 @@ describe('Programmers content script', () => {
     });
 
     it('uploads to GitHub first, then to Notion', async () => {
-      const { document, sent } = openPage({ responses: bothOn });
+      const { document, sent, clock } = openPage({ responses: bothOn });
 
       showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => toastCount(document) === 2);
 
       assert.deepEqual(uploadsOf(sent), ['github/commit', 'notion/upload']);
     });
 
     it('uploads once per result, and again after the modal is closed and opened', async () => {
-      const { document, sent } = openPage({ responses: bothOn });
+      const { document, sent, clock } = openPage({ responses: bothOn });
 
       showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => toastCount(document) === 2);
 
       // The page keeps changing while the modal is open.
       document.body.append(document.createElement('div'));
-      await wait(RESULT_CHECK_WAIT);
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitForQuiet();
       assert.equal(uploadsOf(sent).length, 2);
 
       closeResult(document);
-      await wait(RESULT_CHECK_WAIT);
+      await clock.tick(RESULT_CHECK_DELAY);
       showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => toastCount(document) === 4);
       assert.equal(uploadsOf(sent).length, 4);
     });
 
     it('does not upload a wrong answer', async () => {
-      const { document, sent } = openPage({ responses: bothOn });
+      const { document, sent, clock } = openPage({ responses: bothOn });
 
       showResult(document, '틀렸습니다.');
-      await wait(RESULT_CHECK_WAIT);
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitForQuiet();
 
       assert.deepEqual(sent, []);
     });
 
     it('does not upload when the options cannot be read', async () => {
-      const { document, sent } = openPage({
+      const { document, sent, clock } = openPage({
         responses: {
           'github/getAutoUpload': { ok: false, message: 'Refused.' },
           'notion/getAutoUpload': { ok: true, message: null },
@@ -409,8 +484,9 @@ describe('Programmers content script', () => {
       });
 
       showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => sent.length === 2);
-      await wait(RESULT_CHECK_WAIT);
+      await waitForQuiet();
 
       assert.deepEqual(uploadsOf(sent), []);
     });
