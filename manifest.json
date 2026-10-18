@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Source Code Uploader",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "minimum_chrome_version": "102",
   "description": "A extension enabling seamless uploading of source code to platforms.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvpaaTFVtMeJPSgaEDXYJh6BJY8XbDzqJj0dHH3VKXWvTPijm5d5RNpa1tvDpUyMtd7GYRK4p8aluElbxYXtpibKfPbGA/JzdT57MioCXFl8maWjfY7WCaGJ91SrrB+oavR96fjf8qd4QIaFYFDOpmLlsgxt21mJqo+VFmn1q6bx5Y8jh7dDG8F8M+2Lb5T2Fvcau2E6KwHQ26ZNmJH45WodaB1krbLgdDqxSBU4UtH3Gqh/O/KZwDNjNL35A1h93vzKHmWk9rXjWSKz6IhXQDnCpiXMvojZg/u3C/XXBz7Mxvk4nXqdWFGJYJyUdYQo0CtBINMfdTGJbHTXnVLdZeQIDAQAB",
