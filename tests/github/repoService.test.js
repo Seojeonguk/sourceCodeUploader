@@ -72,6 +72,25 @@ describe('commit', () => {
     assert.equal(globalThis.fetch.mock.callCount(), 0);
   });
 
+  it('asks to install the App when GitHub cannot reach the repository', async () => {
+    mockStorage(settings);
+    mock.method(console, 'warn', () => {});
+    // GitHub answers 404 for a repository the App is not installed on.
+    globalThis.fetch = mock.fn(async () =>
+      jsonResponse({ message: 'Not Found' }, 404),
+    );
+
+    await assert.rejects(commit(payload), {
+      name: 'SetupRequiredException',
+      message:
+        'Install the Source Code Uploader GitHub App on the selected repository, or select another repository in the extension popup.',
+    });
+    assert.deepEqual(
+      globalThis.fetch.mock.calls.map(({ arguments: [, init] }) => init.method),
+      ['GET', 'PUT'],
+    );
+  });
+
   describe('when the commit times out', () => {
     const FILE_URL =
       'https://github.com/user/solutions/blob/main/Programmers/폰켓몬.py';

@@ -150,6 +150,11 @@ export const commit = async (payload) => {
     const response = await request(url, 'PUT', headers, body);
     return response?.commit?.html_url ?? response.message;
   } catch (e) {
+    // The App token cannot reach a repository the App is not installed on, and GitHub
+    // answers 404 for it, such as for a repository selected with the old OAuth App.
+    if (e.status === 404) {
+      throw new SetupRequiredException('GitHub', 'app-install');
+    }
     if (!(e instanceof TimeoutException && e.mayBeApplied)) {
       throw e;
     }
