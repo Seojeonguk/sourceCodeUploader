@@ -144,5 +144,27 @@ describe('isAllowedSender', () => {
     it('refuse a message without a sender', () => {
       assert.equal(isAllowedSender('github', 'commit', undefined), false);
     });
+
+    // In Node, `new URL(url).origin` is "null" for these URLs and for chrome-extension: ones,
+    // so comparing origins would let them pass as extension pages.
+    [
+      ['about:blank', 'about:blank'],
+      ['a data: URL', 'data:text/html,<p>page</p>'],
+      [
+        'a look-alike extension URL',
+        `${EXTENSION_ORIGIN}x/popup/html/index.html`,
+      ],
+      ['no URL', undefined],
+    ].forEach(([name, url]) => {
+      it(`refuse ${name} from this extension's process as an extension page`, () => {
+        assert.equal(
+          isAllowedSender('github', 'getRepositories', {
+            id: EXTENSION_ID,
+            url,
+          }),
+          false,
+        );
+      });
+    });
   });
 });
