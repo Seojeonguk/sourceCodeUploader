@@ -24,11 +24,14 @@ const getOrigin = (url) => {
 /**
  * Checks whether the message comes from a page of the extension, such as the popup
  * or the GitHub login page.
+ * The URL is compared with `chrome-extension://<id>/` instead of its origin: outside Chrome
+ * (such as in the tests), the origin of a chrome-extension: URL is "null", like about:blank's.
  * @param {chrome.runtime.MessageSender} sender
  * @returns {boolean}
  */
 const isExtensionPage = (sender) =>
-  getOrigin(sender.url) === getOrigin(chrome.runtime.getURL(''));
+  typeof sender.url === 'string' &&
+  sender.url.startsWith(chrome.runtime.getURL(''));
 
 /**
  * Checks whether the message comes from the content script of a judge page.
