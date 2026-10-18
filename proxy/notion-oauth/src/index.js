@@ -9,8 +9,10 @@
  *
  * Environment variables:
  * - NOTION_CLIENT_ID, NOTION_CLIENT_SECRET (secrets)
- * - NOTION_REDIRECT_URI: the redirect URI registered in the Notion integration
  * - ALLOWED_EXTENSION_IDS: the comma-separated IDs of the extensions allowed to call this worker
+ *
+ * The redirect URI of each allowed extension, https://<extension-id>.chromiumapp.org/, must be
+ * registered in the Notion integration.
  */
 
 const NOTION_API_BASE_URL = 'https://api.notion.com';
@@ -86,18 +88,31 @@ const forbidOrigin = (request) => {
 };
 
 /**
- * Creates the request to Notion for the path. The redirect URI comes from the worker
- * settings, not from the request, so the worker only completes this extension's logins.
+ * Returns the redirect URI of an extension: what chrome.identity.getRedirectURL() returns in it,
+ * and what it sends when it opens the Notion login page.
+ * @param {string} origin - An allowed origin, `chrome-extension://<extension-id>`.
+ * @returns {string} `https://<extension-id>.chromiumapp.org/`
+ */
+const getRedirectUri = (origin) =>
+  `https://${origin.slice(EXTENSION_ORIGIN_PREFIX.length)}.chromiumapp.org/`;
+
+/**
+ * Creates the request to Notion for the path. The redirect URI comes from the allowed
+ * extension that sent the request, not from its body, so the worker only completes the
+ * logins of the allowed extensions, each with its own redirect URI.
+ * @param {string} pathname - `/token` or `/revoke`.
+ * @param {?Object} body - The request body.
+ * @param {string} origin - The allowed origin of the request.
  * @returns {?{path: string, body: Object}} The Notion request, or null if the input is invalid.
  */
-const createNotionRequest = (pathname, body, env) => {
+const createNotionRequest = (pathname, body, origin) => {
   if (pathname === '/token' && isNonEmptyString(body?.code)) {
     return {
       path: '/v1/oauth/token',
       body: {
         grant_type: 'authorization_code',
         code: body.code,
-        redirect_uri: env.NOTION_REDIRECT_URI,
+        redirect_uri: getRedirectUri(origin),
       },
     };
   }
@@ -132,7 +147,7 @@ export default {
     const notionRequest = createNotionRequest(
       pathname,
       await readJson(request),
-      env,
+      allowedOrigin,
     );
     if (!notionRequest) {
       return jsonResponse({ error: 'invalid_request' }, 400, corsHeaders);
