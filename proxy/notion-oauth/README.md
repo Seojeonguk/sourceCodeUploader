@@ -38,7 +38,7 @@ On Windows, run `wrangler secret put` in PowerShell or cmd: Git Bash does not sh
 
 ## The extension key
 
-The `key` in `manifest.json` is the public key of a key pair; it only fixes the extension ID. Keep the private key out of the repository (`*.pem` is ignored). Remove the `key` before uploading to the Chrome Web Store, which gives the extension its own ID. Add that ID to `ALLOWED_EXTENSION_IDS`, register `https://<store-id>.chromiumapp.org/` as a redirect URI in the Notion integration, and deploy the worker again.
+The `key` in `manifest.json` is the public key of a key pair; it only fixes the extension ID. Keep the private key out of the repository (`*.pem` is ignored). The Chrome Web Store rejects the `key` and gives the extension its own ID, so upload the zip from `npm run package`, which leaves it out ([docs/chrome-web-store.md](../../docs/chrome-web-store.md)). Add that ID to `ALLOWED_EXTENSION_IDS`, register `https://<store-id>.chromiumapp.org/` as a redirect URI in the Notion integration, and deploy the worker again.
 
 ## Rotating the secret
 

@@ -62,8 +62,8 @@ export default [
     },
   },
   {
-    // The tests run in Node.js (node:test).
-    files: ['tests/**'],
+    // The tests and the packaging script run in Node.js.
+    files: ['tests/**', 'tools/**'],
     languageOptions: {
       globals: globals.node,
     },

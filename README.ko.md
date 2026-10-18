@@ -66,12 +66,15 @@ flowchart LR
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
+확장 프로그램이 무엇을 읽고, 보내고, 보관하는지는 [개인정보처리방침](PRIVACY.md)(영어)에 있어요.
+
 ## 프로젝트 구조
 
 ```text
 ├─ manifest.json
 ├─ popup/                   # 팝업 UI와 GitHub 로그인 페이지 (html · css · js)
 ├─ proxy/notion-oauth/      # Notion client secret을 보관하는 Cloudflare Worker
+├─ tools/                   # Chrome 웹 스토어용 zip 만들기
 └─ scripts/
    ├─ background.js         # service worker, 메시지 라우팅
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
@@ -91,11 +94,14 @@ npm run lint:fix        # 자동 수정 가능한 린트 오류 고치기
 npm run format:check    # 포맷 검사 (prettier)
 npm run format          # prettier로 포맷 적용
 npm test                # 단위 테스트 (node:test)
+npm run package         # Chrome 웹 스토어용 zip (dist/)
 ```
 
 파일을 고친 뒤에는 `chrome://extensions/`의 확장 프로그램 카드에서 **새로고침**을 눌러요.
 
 `manifest.json`의 `key` 덕분에 어느 폴더에서 불러오든 확장 프로그램 ID가 `mfhbpmbchemfhijjamldbkidlegfmaff`로 같아서, 배포된 [Notion OAuth 프록시](proxy/notion-oauth/README.md)가 모든 사용자의 로그인을 받아요. 사용자는 아무것도 배포하지 않아도 돼요. 관리자가 프록시를 한 번 배포하고 그 URL을 `scripts/notion/config/config.js`의 `TOKEN_PROXY_URL`에 넣어 두면 돼요.
+
+Chrome 웹 스토어 등록 방법: [docs/chrome-web-store.md](docs/chrome-web-store.md)(영어)
 
 컨벤션: `master`에서 브랜치를 따서 PR을 열어요. 커밋 메시지는 영어 동사로 시작하고 PR 번호로 끝내요(예: `Refactor notion (#177)`). `-s`로 서명을 남겨요.
 
