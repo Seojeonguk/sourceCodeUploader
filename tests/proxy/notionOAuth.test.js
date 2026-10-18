@@ -11,9 +11,10 @@ const env = {
   ALLOWED_EXTENSION_IDS: `${EXTENSION_ID}, ${OTHER_EXTENSION_ID}`,
   NOTION_CLIENT_ID: 'client-id',
   NOTION_CLIENT_SECRET: 'client-secret',
-  NOTION_REDIRECT_URI:
-    'https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/',
 };
+
+const tokenRequestBody = () =>
+  JSON.parse(globalThis.fetch.mock.calls[0].arguments[1].body);
 
 const call = (path, { method = 'POST', origin = ORIGIN, body } = {}) =>
   worker.fetch(
@@ -40,7 +41,7 @@ describe('Notion OAuth proxy', () => {
     mock.restoreAll();
   });
 
-  it('exchanges the code with the client secret and the configured redirect URI', async () => {
+  it('exchanges the code with the client secret and the redirect URI of the extension', async () => {
     const response = await call('/token', {
       body: { code: 'code', redirect_uri: 'https://attacker.example' },
     });
@@ -58,8 +59,21 @@ describe('Notion OAuth proxy', () => {
     assert.deepEqual(JSON.parse(body), {
       grant_type: 'authorization_code',
       code: 'code',
-      redirect_uri: 'https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/',
+      redirect_uri: `https://${EXTENSION_ID}.chromiumapp.org/`,
     });
+  });
+
+  it('uses the redirect URI of each allowed extension, such as a Chrome Web Store build', async () => {
+    const response = await call('/token', {
+      origin: `chrome-extension://${OTHER_EXTENSION_ID}`,
+      body: { code: 'code' },
+    });
+
+    assert.equal(response.status, 200);
+    assert.equal(
+      tokenRequestBody().redirect_uri,
+      `https://${OTHER_EXTENSION_ID}.chromiumapp.org/`,
+    );
   });
 
   it('revokes a token', async () => {
