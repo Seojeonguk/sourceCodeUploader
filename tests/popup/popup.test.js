@@ -251,7 +251,9 @@ describe('popup', () => {
       $$('#uploaded-repository').click();
       await flush();
 
-      const items = [...document.querySelectorAll('#repository-list li p')];
+      const items = [
+        ...document.querySelectorAll('#repository-list li button'),
+      ];
       assert.deepEqual(
         items.map((item) => item.textContent),
         ['solutions', 'algorithms'],
@@ -289,7 +291,7 @@ describe('popup', () => {
 
       assert.equal($$('#repository-list img'), null);
       assert.equal(
-        $$('#repository-list li p').textContent,
+        $$('#repository-list li button').textContent,
         '<img src=x onerror=alert(1)>',
       );
     });
@@ -339,7 +341,7 @@ describe('popup', () => {
       await flush();
 
       const items = [
-        ...document.querySelectorAll('#notion-database-list li p'),
+        ...document.querySelectorAll('#notion-database-list li button'),
       ];
       assert.deepEqual(
         items.map((item) => [
@@ -390,10 +392,124 @@ describe('popup', () => {
 
       $$('.dark-light').click();
       assert.ok(document.body.classList.contains('light-mode'));
+      assert.equal($$('.dark-light').getAttribute('aria-pressed'), 'true');
       assert.ok($$('#repository-list').classList.contains('is-active'));
 
       $$('.dark-light').click();
       assert.ok(!document.body.classList.contains('light-mode'));
+      assert.equal($$('.dark-light').getAttribute('aria-pressed'), 'false');
+    });
+  });
+
+  describe('keyboard', () => {
+    const repositories = {
+      'github/getRepositories': {
+        ok: true,
+        message: [{ name: 'solutions' }, { name: 'algorithms' }],
+      },
+    };
+
+    const pressEscape = () =>
+      document.dispatchEvent(
+        new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+      );
+
+    it('uses buttons for the controls, which Tab, Enter and Space reach', () => {
+      ['.dark-light', '#uploaded-repository', '#uploaded-database'].forEach(
+        (selector) => {
+          assert.equal($$(selector).tagName, 'BUTTON', selector);
+          assert.equal($$(selector).type, 'button', selector);
+        },
+      );
+      assert.equal($$('.dark-light').getAttribute('aria-label'), 'Light mode');
+      assert.equal(
+        $$('#uploaded-repository').getAttribute('aria-controls'),
+        'repository-list',
+      );
+      assert.equal(
+        $$('#uploaded-database').getAttribute('aria-controls'),
+        'notion-database-list',
+      );
+    });
+
+    it('opens a list with its first item focused, and tells that it is open', async () => {
+      mockChrome({ responses: repositories });
+      initializeButtonEvents();
+      assert.equal(
+        $$('#uploaded-repository').getAttribute('aria-expanded'),
+        'false',
+      );
+
+      $$('#uploaded-repository').click();
+      await flush();
+
+      assert.equal(
+        $$('#uploaded-repository').getAttribute('aria-expanded'),
+        'true',
+      );
+      assert.equal(document.activeElement, $$('#repository-list li button'));
+      assert.equal(document.activeElement.textContent, 'solutions');
+    });
+
+    it('closes the list with Escape and moves the focus back to its button', async () => {
+      mockChrome({ responses: repositories });
+      initializeButtonEvents();
+      $$('#uploaded-repository').click();
+      await flush();
+
+      pressEscape();
+
+      assert.ok(!$$('#repository-list').classList.contains('is-active'));
+      assert.ok(!$$('.content-wrapper').classList.contains('overlay'));
+      assert.equal(
+        $$('#uploaded-repository').getAttribute('aria-expanded'),
+        'false',
+      );
+      assert.equal(document.activeElement, $$('#uploaded-repository'));
+    });
+
+    it('moves the focus back to the button after an item is selected', async () => {
+      const { storage } = mockChrome({ responses: repositories });
+      initializeButtonEvents();
+      $$('#uploaded-repository').click();
+      await flush();
+
+      // Enter or Space on a focused button clicks it.
+      document.querySelectorAll('#repository-list li button')[1].click();
+      await flush();
+
+      assert.equal(storage.githubUploadedRepository, 'algorithms');
+      assert.equal(document.activeElement, $$('#uploaded-repository'));
+      assert.equal(
+        $$('#uploaded-repository').getAttribute('aria-expanded'),
+        'false',
+      );
+    });
+
+    it('focuses the install link when no repository is listed yet', async () => {
+      mockChrome({
+        responses: { 'github/getRepositories': { ok: true, message: [] } },
+      });
+      initializeButtonEvents();
+
+      $$('#uploaded-repository').click();
+      await flush();
+
+      assert.equal(document.activeElement, $$('#repository-list li.install a'));
+    });
+
+    it('does not select the placeholder text of a list', async () => {
+      const { storage } = mockChrome();
+      initializeButtonEvents();
+
+      $$('#repository-list li p').click();
+      await flush();
+
+      assert.equal(storage.githubUploadedRepository, undefined);
+      assert.equal(
+        $$('#uploaded-repository').textContent.trim(),
+        'Select Repository',
+      );
     });
   });
 

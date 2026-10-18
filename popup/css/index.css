@@ -161,11 +161,14 @@ svg {
   width: 150px;
 }
 
-.select-list > p {
+.select-list > button {
+  width: 100%;
   border-radius: 5px;
   background: var(--theme-bg-color);
   padding: 5px 10px;
   cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .select-list ul {
@@ -182,6 +185,8 @@ svg {
   opacity: 0;
   transition: all 0.5s;
   pointer-events: none;
+  /* A closed list stays out of the Tab order. */
+  visibility: hidden;
   z-index: 2;
 }
 
@@ -189,6 +194,7 @@ svg {
   transform: translateY(10px);
   opacity: 1;
   pointer-events: all;
+  visibility: visible;
 }
 
 .select-list ul::-webkit-scrollbar {
@@ -209,12 +215,17 @@ svg {
   border-top: 1px solid var(--theme-bg-color);
 }
 
-.select-list ul li p {
+.select-list ul li p,
+.select-list ul li button {
+  display: block;
+  width: 100%;
   text-overflow: ellipsis;
   text-wrap: nowrap;
   overflow: hidden;
   line-height: 25px;
+  font: inherit;
   font-size: 13px;
+  text-align: left;
 }
 
 /* The link to install the GitHub App on more repositories. */
@@ -266,6 +277,8 @@ label {
   border-color: tomato;
 }
 
+button:focus-visible,
+a:focus-visible,
 [type='checkbox']:focus-visible {
   outline-offset: max(2px, 0.1em);
   outline: max(2px, 0.1em) solid tomato;
