@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 
 import worker from '../../proxy/notion-oauth/src/index.js';
@@ -214,5 +216,57 @@ describe('Notion OAuth proxy', () => {
     const response = await call('/token', { method: 'GET' });
 
     assert.equal(response.status, 405);
+  });
+
+  describe('the deployed IDs in wrangler.toml', () => {
+    const readRepoFile = (path) =>
+      readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
+    const deployedEnv = {
+      ...env,
+      ALLOWED_EXTENSION_IDS: readRepoFile(
+        'proxy/notion-oauth/wrangler.toml',
+      ).match(/^ALLOWED_EXTENSION_IDS = "([^"]*)"$/m)[1],
+    };
+    // Chrome derives the ID from the key: the first 16 bytes of its SHA-256, each hex digit as a-p.
+    const unpackedId = [
+      ...createHash('sha256')
+        .update(
+          Buffer.from(JSON.parse(readRepoFile('manifest.json')).key, 'base64'),
+        )
+        .digest('hex')
+        .slice(0, 32),
+    ]
+      .map((digit) => String.fromCharCode(97 + parseInt(digit, 16)))
+      .join('');
+    const STORE_ID = 'kgpilkohekdjpfpcckdlnlolddiheijn';
+
+    [
+      ['the unpacked extension (the key in manifest.json)', unpackedId],
+      ['the Chrome Web Store build', STORE_ID],
+    ].forEach(([name, id]) => {
+      it(`logs in ${name} with its redirect URI`, async () => {
+        const response = await worker.fetch(
+          new Request('https://proxy.example.workers.dev/token', {
+            method: 'POST',
+            headers: {
+              Origin: `chrome-extension://${id}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code: 'code' }),
+          }),
+          deployedEnv,
+        );
+
+        assert.equal(response.status, 200);
+        assert.equal(
+          tokenRequestBody().redirect_uri,
+          `https://${id}.chromiumapp.org/`,
+        );
+      });
+    });
+
+    it('derives the documented ID from the key in manifest.json', () => {
+      assert.equal(unpackedId, 'mfhbpmbchemfhijjamldbkidlegfmaff');
+    });
   });
 });

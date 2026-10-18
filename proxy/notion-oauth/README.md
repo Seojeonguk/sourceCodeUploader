@@ -15,8 +15,8 @@ GitHub does not need a proxy: the extension logs in to its GitHub App with the [
 
 ## Deploy
 
-1. Check `ALLOWED_EXTENSION_IDS` in `wrangler.toml`. It already has the ID fixed by `manifest.json`; add others separated by commas, such as the Chrome Web Store ID.
-2. Register the redirect URI of **each** ID in `ALLOWED_EXTENSION_IDS` in the Notion integration (<https://www.notion.so/my-integrations> → the integration → **OAuth** → Redirect URIs): `https://<extension-id>.chromiumapp.org/`, with the trailing slash. For the fixed ID it is `https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/`. The extension sends this URI (`chrome.identity.getRedirectURL()`) when it opens the login page, and the worker exchanges the code with the URI of the extension that called it, never with one from the request.
+1. Check `ALLOWED_EXTENSION_IDS` in `wrangler.toml`. It has the ID fixed by `manifest.json` and the Chrome Web Store ID, `kgpilkohekdjpfpcckdlnlolddiheijn`; add others separated by commas.
+2. Register the redirect URI of **each** ID in `ALLOWED_EXTENSION_IDS` in the Notion integration (<https://www.notion.so/my-integrations> → the integration → **OAuth** → Redirect URIs): `https://<extension-id>.chromiumapp.org/`, with the trailing slash. They are `https://mfhbpmbchemfhijjamldbkidlegfmaff.chromiumapp.org/` for the fixed ID and `https://kgpilkohekdjpfpcckdlnlolddiheijn.chromiumapp.org/` for the store. The extension sends this URI (`chrome.identity.getRedirectURL()`) when it opens the login page, and the worker exchanges the code with the URI of the extension that called it, never with one from the request.
 3. Log in to Cloudflare and set the Notion credentials as secrets (from <https://www.notion.so/my-integrations> → the integration → **Secrets**):
 
    ```bash
