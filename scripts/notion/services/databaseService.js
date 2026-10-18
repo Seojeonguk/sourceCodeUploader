@@ -74,7 +74,20 @@ const getUploadDataSourceId = async () => {
     throw new SetupRequiredException('Notion', 'database');
   }
 
-  const { data_sources: dataSources = [] } = await getDatabase(databaseId);
+  let database;
+  try {
+    database = await getDatabase(databaseId);
+  } catch (e) {
+    // The database is no longer shared with the integration, or was deleted.
+    if (e.status === 404) {
+      throw new SetupRequiredException('Notion', 'database-again', {
+        cause: e,
+      });
+    }
+    throw e;
+  }
+
+  const dataSources = database?.data_sources ?? [];
   if (dataSources.length !== 1) {
     throw new SetupRequiredException('Notion', 'database-again');
   }

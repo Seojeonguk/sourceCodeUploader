@@ -81,7 +81,7 @@ const readBody = async (response) => {
  * @throws {TimeoutException} If there is no response in time.
  * @throws {Error} A network error, such as `TypeError`.
  */
-const send = async (url, method, headers, body, timeout) => {
+const send = async (url, method, headers, body, timeout, isRead) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -112,7 +112,7 @@ const send = async (url, method, headers, body, timeout) => {
     return responseBody;
   } catch (error) {
     if (error.name === 'AbortError') {
-      throw new TimeoutException(method);
+      throw new TimeoutException(method, isRead);
     }
     throw error;
   } finally {
@@ -155,6 +155,8 @@ const getRetryDelay = (error, isRead, retryDelay) => {
  * @param {number} [options.timeout] - The timeout of each attempt in milliseconds.
  *   5 seconds for GET / HEAD, and 30 seconds for the other methods.
  * @param {number} [options.retryDelay=500] - The delay before the first retry, doubled each time.
+ * @param {boolean} [options.idempotent=false] - Whether a POST only reads, such as a search.
+ *   It is then sent again and timed out like a GET.
  * @throws {HttpException} If the response has an error status, after the retries.
  * @returns {Promise<*>} The response body: JSON, text, or an empty string.
  */
@@ -163,13 +165,18 @@ export const request = async (
   method,
   headers,
   body,
-  { retries = 3, timeout = undefined, retryDelay = 500 } = {},
+  {
+    retries = 3,
+    timeout = undefined,
+    retryDelay = 500,
+    idempotent = false,
+  } = {},
 ) => {
-  const isRead = RETRYABLE_METHODS.includes(method.toUpperCase());
+  const isRead = idempotent || RETRYABLE_METHODS.includes(method.toUpperCase());
   const attemptTimeout = timeout ?? (isRead ? READ_TIMEOUT : WRITE_TIMEOUT);
 
   try {
-    return await send(url, method, headers, body, attemptTimeout);
+    return await send(url, method, headers, body, attemptTimeout, isRead);
   } catch (error) {
     const delay = getRetryDelay(error, isRead, retryDelay);
     if (retries <= 0 || delay === null) {
@@ -183,6 +190,7 @@ export const request = async (
       retries: retries - 1,
       timeout: attemptTimeout,
       retryDelay: retryDelay * 2,
+      idempotent,
     });
   }
 };

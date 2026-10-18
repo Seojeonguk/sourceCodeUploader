@@ -194,6 +194,63 @@ describe('upload', () => {
     });
   });
 
+  it('asks to select the database again when it is no longer shared', async () => {
+    const storage = mockStorage({
+      notionAccessToken: 'token',
+      notionUploadedDatabaseId: 'database-id',
+    });
+    globalThis.fetch = mock.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            object: 'error',
+            status: 404,
+            code: 'object_not_found',
+            message: 'Could not find database with ID: database-id.',
+          }),
+          { status: 404, headers: { 'Content-Type': 'application/json' } },
+        ),
+    );
+
+    await assert.rejects(upload(payload, problemInfo), {
+      name: 'SetupRequiredException',
+      message:
+        'Select the Notion database again in the extension popup. The saved one could not be matched to a single data source.',
+    });
+    assert.equal(storage.notionUploadedDataSourceId, undefined);
+    assert.equal(globalThis.fetch.mock.callCount(), 1);
+  });
+
+  it('sends the query again after a server error, since it only reads', async () => {
+    let queries = 0;
+    const requests = [];
+    globalThis.fetch = mock.fn(async (url, { method }) => {
+      const { pathname } = new URL(url);
+      requests.push(`${method} ${pathname}`);
+      if (pathname.endsWith('/query')) {
+        queries += 1;
+        return queries === 1
+          ? new Response('{}', {
+              status: 502,
+              headers: { 'Content-Type': 'application/json' },
+            })
+          : jsonResponse({ results: [] });
+      }
+      return jsonResponse({ url: 'https://www.notion.so/new-page' });
+    });
+    mock.method(console, 'warn', () => {});
+
+    assert.equal(
+      await upload(payload, problemInfo),
+      'https://www.notion.so/new-page',
+    );
+    assert.deepEqual(requests, [
+      'POST /v1/data_sources/data-source-id/query',
+      'POST /v1/data_sources/data-source-id/query',
+      'POST /v1/pages',
+    ]);
+  });
+
   it('does not upload the same source code again', async () => {
     const requests = mockNotion({
       existingPage: { id: 'page-id', url: PAGE_URL },

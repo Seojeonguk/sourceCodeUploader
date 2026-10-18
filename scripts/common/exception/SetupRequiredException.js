@@ -3,9 +3,10 @@ export class SetupRequiredException extends Error {
    * Thrown when the user has not finished the setup in the popup.
    * @param {string} platform - The platform, such as `GitHub`.
    * @param {'login'|'login-expired'|'proxy'|'repository'|'database'|'database-again'|'login-upgrade'|'app-install'} setting - The missing setting.
+   * @param {{ cause?: Error }} [options] - The error that showed the setting is missing.
    */
-  constructor(platform, setting) {
-    super(SetupRequiredException.createMessage(platform, setting));
+  constructor(platform, setting, options = undefined) {
+    super(SetupRequiredException.createMessage(platform, setting), options);
     this.name = 'SetupRequiredException';
     this.statusCode = 400;
 

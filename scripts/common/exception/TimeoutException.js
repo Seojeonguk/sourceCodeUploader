@@ -2,9 +2,11 @@ export class TimeoutException extends Error {
   /**
    * Thrown when a request gets no response in time.
    * @param {string} method - The HTTP method of the request.
+   * @param {boolean} [isRead] - Whether the request only reads, such as a POST that searches.
+   *   By default, only GET and HEAD are.
    */
-  constructor(method) {
-    const mayBeApplied = !['GET', 'HEAD'].includes(method.toUpperCase());
+  constructor(method, isRead = ['GET', 'HEAD'].includes(method.toUpperCase())) {
+    const mayBeApplied = !isRead;
 
     super(
       mayBeApplied
