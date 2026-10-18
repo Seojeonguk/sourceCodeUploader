@@ -68,6 +68,8 @@ const launchAuthorizationPage = async (state) => {
   });
 
   try {
+    // From Chrome 116 (minimum_chrome_version), the service worker is kept past the
+    // 5-minute limit while this window is open, so a slow login is not lost.
     const redirectUrl = await chrome.identity.launchWebAuthFlow({
       url: `${NOTION_CONFIG.API_BASE_URL}/v1/oauth/authorize?${params}`,
       interactive: true,
