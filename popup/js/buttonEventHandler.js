@@ -28,6 +28,7 @@ const saveSettings = async (values) => {
 
 export function initializeButtonEvents() {
   closeSelectListOnOutsideClick();
+  closeSelectListOnEscape();
   handleAutoUploadBtn();
   handleGithubAuthenticationBtn();
   handleNotionAuthenticationBtn();
@@ -41,12 +42,45 @@ export function initializeButtonEvents() {
 /**
  * Closes the select list when clicking outside of it.
  */
+/**
+ * Returns the button that opens the select list.
+ * @param {HTMLUListElement} list
+ * @returns {HTMLButtonElement}
+ */
+const getPicker = (list) =>
+  document.querySelector(`[aria-controls="${list.id}"]`);
+
+/**
+ * Closes the open select lists.
+ * @returns {?HTMLUListElement} The list that was open, if any.
+ */
+const closeSelectLists = () => {
+  const openList = document.querySelector('.select-list ul.is-active');
+  document.querySelectorAll('.select-list ul').forEach((list) => {
+    list.classList.remove('is-active');
+    getPicker(list).setAttribute('aria-expanded', 'false');
+  });
+  document.querySelector('.content-wrapper').classList.remove('overlay');
+  return openList;
+};
+
 const closeSelectListOnOutsideClick = () => {
   document.addEventListener('click', () => {
-    document
-      .querySelectorAll('.select-list ul')
-      .forEach((list) => list.classList.remove('is-active'));
-    document.querySelector('.content-wrapper').classList.remove('overlay');
+    closeSelectLists();
+  });
+};
+
+/**
+ * Closes the open select list with Escape, and moves the focus back to its button.
+ */
+const closeSelectListOnEscape = () => {
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') {
+      return;
+    }
+
+    const openList = closeSelectLists();
+    getPicker(openList ?? {})?.focus();
   });
 };
 
@@ -141,7 +175,7 @@ const handleNotionAuthenticationBtn = () => {
 const handleUploadedDatabaseSelection = () => {
   // The items are added later, so the click is handled on the document.
   document.addEventListener('click', (e) => {
-    const item = e.target.closest('#notion-database-list li p');
+    const item = e.target.closest('#notion-database-list li button');
     if (!item) {
       return;
     }
@@ -149,7 +183,9 @@ const handleUploadedDatabaseSelection = () => {
     const uploadedDatabase = item.textContent;
     const uploadedDataSourceId = item.getAttribute('data-source-id');
 
-    document.querySelector('#uploaded-database').textContent = uploadedDatabase;
+    const picker = document.querySelector('#uploaded-database');
+    picker.textContent = uploadedDatabase;
+    picker.focus();
 
     saveSettings({
       notionUploadedDatabase: uploadedDatabase,
@@ -165,15 +201,16 @@ const handleUploadedDatabaseSelection = () => {
 const handleUploadedRepositorySelection = () => {
   // The items are added later, so the click is handled on the document.
   document.addEventListener('click', (e) => {
-    const item = e.target.closest('#repository-list li p');
+    const item = e.target.closest('#repository-list li button');
     if (!item) {
       return;
     }
 
     const uploadedRepository = item.textContent;
 
-    document.querySelector('#uploaded-repository').textContent =
-      uploadedRepository;
+    const picker = document.querySelector('#uploaded-repository');
+    picker.textContent = uploadedRepository;
+    picker.focus();
 
     saveSettings({ githubUploadedRepository: uploadedRepository });
   });
@@ -187,14 +224,16 @@ const handleUploadedRepositorySelection = () => {
  * @returns {HTMLLIElement} The `<li>` element.
  */
 const createListItem = (text, attributes = {}) => {
-  const paragraph = document.createElement('p');
+  // A button, so the item can be reached with Tab and selected with Enter or Space.
+  const button = document.createElement('button');
+  button.type = 'button';
   Object.entries(attributes).forEach(([name, value]) =>
-    paragraph.setAttribute(name, value),
+    button.setAttribute(name, value),
   );
-  paragraph.textContent = text;
+  button.textContent = text;
 
   const item = document.createElement('li');
-  item.append(paragraph);
+  item.append(button);
   return item;
 };
 
@@ -225,7 +264,10 @@ const openSelectList = (listSelector, items) => {
   const list = document.querySelector(listSelector);
   list.replaceChildren(...items);
   list.classList.add('is-active');
+  getPicker(list).setAttribute('aria-expanded', 'true');
   document.querySelector('.content-wrapper').classList.add('overlay');
+  // Move the focus into the list, so the keyboard can go through its items.
+  list.querySelector('button, a')?.focus();
 };
 
 /**
@@ -286,7 +328,8 @@ const showRepositories = () => {
  */
 const toggleDarkMode = () => {
   document.querySelector('.dark-light').addEventListener('click', (e) => {
-    document.body.classList.toggle('light-mode');
+    const isLightMode = document.body.classList.toggle('light-mode');
+    e.currentTarget.setAttribute('aria-pressed', String(isLightMode));
     e.stopPropagation();
   });
 };
