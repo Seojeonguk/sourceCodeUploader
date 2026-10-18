@@ -2,7 +2,7 @@ export class SetupRequiredException extends Error {
   /**
    * Thrown when the user has not finished the setup in the popup.
    * @param {string} platform - The platform, such as `GitHub`.
-   * @param {'login'|'login-expired'|'proxy'|'repository'|'database'|'database-again'|'login-upgrade'} setting - The missing setting.
+   * @param {'login'|'login-expired'|'proxy'|'repository'|'database'|'database-again'|'login-upgrade'|'app-install'} setting - The missing setting.
    */
   constructor(platform, setting) {
     super(SetupRequiredException.createMessage(platform, setting));
@@ -23,6 +23,8 @@ export class SetupRequiredException extends Error {
         return `Your ${platform} login has expired. Log in again in the extension popup.`;
       case 'login-upgrade':
         return `The ${platform} login now uses only the repositories you choose. Log in again in the extension popup.`;
+      case 'app-install':
+        return `Install the Source Code Uploader ${platform} App on the selected repository, or select another repository in the extension popup.`;
       case 'database-again':
         return `Select the ${platform} database again in the extension popup. The saved one could not be matched to a single data source.`;
       default:

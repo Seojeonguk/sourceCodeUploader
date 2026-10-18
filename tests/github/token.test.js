@@ -115,6 +115,78 @@ describe('getAccessToken', () => {
     assert.equal(globalThis.fetch.mock.callCount(), 0);
   });
 
+  it('uses a token without an expiry as it is', async () => {
+    mockChromeStorage({
+      ...login(null),
+      githubRefreshToken: null,
+    });
+    globalThis.fetch = mock.fn();
+
+    assert.equal(await getAccessToken(), 'ghu_old');
+    assert.equal(globalThis.fetch.mock.callCount(), 0);
+  });
+
+  [
+    [
+      'a network error',
+      async () => {
+        throw new TypeError('Failed to fetch');
+      },
+    ],
+    ['a server error', async () => jsonResponse({}, 502)],
+  ].forEach(([name, respond]) => {
+    it(`keeps the login and asks to try again after ${name}`, async () => {
+      const saved = login(Date.now() - HOUR);
+      const storage = mockChromeStorage(saved);
+      globalThis.fetch = mock.fn(respond);
+
+      await assert.rejects(getAccessToken(), {
+        message:
+          'Could not refresh the GitHub login. Check the network and try again.',
+      });
+      assert.deepEqual(storage, saved);
+    });
+  });
+
+  it('does not bring the login back when the user logs out during the refresh', async () => {
+    const storage = mockChromeStorage(login(Date.now() - HOUR));
+    globalThis.fetch = mock.fn(async () => {
+      // `Remove` in the popup, before GitHub answers.
+      [
+        'githubAccessToken',
+        'githubRefreshToken',
+        'githubTokenExpiresAt',
+        'githubLoginType',
+        'githubID',
+        'githubUploadedRepository',
+      ].forEach((key) => delete storage[key]);
+      return jsonResponse(REFRESHED);
+    });
+
+    await assert.rejects(getAccessToken(), {
+      name: 'SetupRequiredException',
+      message: 'Log in to GitHub in the extension popup first.',
+    });
+    assert.deepEqual(storage, {});
+  });
+
+  it('keeps a new login made during the refresh, and uses its token', async () => {
+    const storage = mockChromeStorage(login(Date.now() - HOUR));
+    globalThis.fetch = mock.fn(async () => {
+      // A new login on the GitHub login page, before GitHub answers.
+      Object.assign(storage, {
+        githubAccessToken: 'ghu_relogin',
+        githubRefreshToken: 'ghr_relogin',
+        githubTokenExpiresAt: Date.now() + 8 * HOUR,
+      });
+      return jsonResponse(REFRESHED);
+    });
+
+    assert.equal(await getAccessToken(), 'ghu_relogin');
+    assert.equal(storage.githubAccessToken, 'ghu_relogin');
+    assert.equal(storage.githubRefreshToken, 'ghr_relogin');
+  });
+
   it('asks to log in without a token', async () => {
     mockChromeStorage({});
 

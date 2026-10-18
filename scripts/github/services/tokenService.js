@@ -1,4 +1,7 @@
-import { SetupRequiredException } from '../../common/exception/index.js';
+import {
+  HttpException,
+  SetupRequiredException,
+} from '../../common/exception/index.js';
 import { getChromeStorage } from '../../common/utils/index.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { clearExpiredLogin, LOGIN_TYPE, saveTokens } from './authService.js';
@@ -14,7 +17,9 @@ let runningRefresh = null;
 /**
  * Exchanges the refresh token for a new access token and refresh token.
  * A token from the device flow is refreshed without the client secret.
- * @throws {SetupRequiredException} If the refresh token is missing, expired or revoked.
+ * @throws {SetupRequiredException} If the refresh token is missing, expired or revoked,
+ *   or the user logged out during the refresh.
+ * @throws {Error} If the refresh could not reach GitHub. The login is kept.
  * @returns {Promise<string>} The new access token.
  */
 const refreshAccessToken = async () => {
@@ -24,16 +29,40 @@ const refreshAccessToken = async () => {
     throw new SetupRequiredException('GitHub', 'login-expired');
   }
 
-  const response = await postToGithubOAuth('/login/oauth/access_token', {
-    client_id: GITHUB_CONFIG.CLIENT_ID,
-    grant_type: 'refresh_token',
-    refresh_token: refreshToken,
-  });
+  let response;
+  try {
+    response = await postToGithubOAuth('/login/oauth/access_token', {
+      client_id: GITHUB_CONFIG.CLIENT_ID,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    });
+  } catch (e) {
+    // A network error, a timeout or a server error says nothing about the refresh token,
+    // so the login is kept and the user tries again.
+    if (!(e instanceof HttpException) || e.status >= 500) {
+      throw new Error(
+        'Could not refresh the GitHub login. Check the network and try again.',
+        { cause: e },
+      );
+    }
+    throw e;
+  }
 
   // Such as `bad_refresh_token` when it has expired after 6 months or was revoked.
   if (!response?.access_token) {
     await clearExpiredLogin();
     throw new SetupRequiredException('GitHub', 'login-expired');
+  }
+
+  // The user may have logged out, or logged in again, while the refresh was running.
+  // Saving then would bring back a login without the GitHub ID, or replace the new one,
+  // so the refreshed tokens are dropped and the current login, if any, is used.
+  if ((await getChromeStorage('githubRefreshToken')) !== refreshToken) {
+    const currentToken = await getChromeStorage('githubAccessToken');
+    if (!currentToken) {
+      throw new SetupRequiredException('GitHub', 'login');
+    }
+    return currentToken;
   }
 
   await saveTokens(response);
