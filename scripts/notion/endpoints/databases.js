@@ -21,6 +21,23 @@ export const getDatabase = async (databaseId) =>
   notionRequest(`/v1/databases/${databaseId}`, 'GET');
 
 /**
+ * Retrieves a data source, with its properties keyed by name.
+ * @param {string} dataSourceId - The data source to retrieve.
+ * @returns {Promise<Object>} The data source.
+ */
+export const getDataSource = async (dataSourceId) =>
+  notionRequest(`/v1/data_sources/${dataSourceId}`, 'GET');
+
+/**
+ * Updates a data source, such as adding properties.
+ * @param {string} dataSourceId - The data source to update.
+ * @param {Object} body - The update request body, such as `{ properties }`.
+ * @returns {Promise<Object>} The updated data source.
+ */
+export const updateDataSource = async (dataSourceId, body) =>
+  notionRequest(`/v1/data_sources/${dataSourceId}`, 'PATCH', body);
+
+/**
  * Queries the pages of a data source.
  * Since Notion-Version 2025-09-03, the rows of a database belong to its data sources.
  * @param {string} dataSourceId - The data source to query.

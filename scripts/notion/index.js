@@ -8,7 +8,11 @@ import {
   saveLoginError,
   takeLoginError,
 } from './services/authService.js';
-import { getDataSources, upload } from './services/databaseService.js';
+import {
+  getDataSources,
+  prepareDataSource,
+  upload,
+} from './services/databaseService.js';
 
 /**
  * Logs in, and keeps why it failed for the popup, which is closed by the login window.
@@ -43,6 +47,9 @@ export async function dispatch(action, payload) {
       Boolean(await getChromeStorage('notionAutoUpload')),
     // The popup lists the data sources as the databases to upload to.
     [ACTIONS.GET_DATABASES]: async () => getDataSources(),
+    // The popup asks when the user selects a database, to add the properties uploads need.
+    [ACTIONS.PREPARE_DATABASE]: async () =>
+      prepareDataSource(payload?.dataSourceId),
     // The content script sends the problem info read from the page.
     [ACTIONS.UPLOAD]: async () => upload(payload, payload.problemInfo),
     [ACTIONS.LOGOUT]: async () => logout(),

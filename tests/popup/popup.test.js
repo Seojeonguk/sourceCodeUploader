@@ -363,6 +363,66 @@ describe('popup', () => {
       assert.equal(storage.notionUploadedDataSourceId, 'ds-1');
     });
 
+    describe('preparing the selected database', () => {
+      /**
+       * Opens the database list and selects its only database, `ds-1`.
+       * @param {Object} prepareResponse - The response to `prepareDatabase`.
+       * @returns {Object[]} The messages sent to the background.
+       */
+      const selectDatabase = async (prepareResponse) => {
+        const { sent } = mockChrome({
+          responses: {
+            'notion/getDatabases': {
+              ok: true,
+              message: [{ id: 'ds-1', title: [{ plain_text: 'Problems' }] }],
+            },
+            'notion/prepareDatabase': prepareResponse,
+          },
+        });
+        initializeButtonEvents();
+
+        $$('#uploaded-database').click();
+        await flush();
+        $$('#notion-database-list li button').click();
+        await flush();
+        return sent;
+      };
+
+      it('asks the background to add the properties to the selected database', async () => {
+        const sent = await selectDatabase({ ok: true, message: [] });
+
+        assert.deepEqual(sent.at(-1), {
+          platform: 'notion',
+          action: 'prepareDatabase',
+          payload: { dataSourceId: 'ds-1' },
+        });
+        assert.equal(toast(), null);
+      });
+
+      it('tells which properties were added', async () => {
+        await selectDatabase({ ok: true, message: ['info', 'URL'] });
+
+        assert.equal(
+          toast().textContent,
+          'Added info, URL to the database for the uploads.',
+        );
+        assert.ok(!toast().classList.contains('scu-toast-error'));
+      });
+
+      it('shows why the database cannot be used', async () => {
+        await selectDatabase({
+          ok: false,
+          message: 'The Notion database has properties of the wrong type.',
+        });
+
+        assert.equal(
+          toast().textContent,
+          'The Notion database has properties of the wrong type.',
+        );
+        assert.ok(toast().classList.contains('scu-toast-error'));
+      });
+    });
+
     it('shows why the list cannot be loaded', async () => {
       mockChrome({
         responses: {

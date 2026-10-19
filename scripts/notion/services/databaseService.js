@@ -1,11 +1,14 @@
 import {
+  DatabasePropertyException,
   DuplicateResourceException,
+  InvalidRequestException,
   SetupRequiredException,
   TimeoutException,
 } from '../../common/exception/index.js';
 import {
   fetchAllPages,
   getChromeStorage,
+  logger,
   setChromeStorage,
 } from '../../common/utils/index.js';
 import {
@@ -15,8 +18,10 @@ import {
 } from '../endpoints/blocks.js';
 import {
   getDatabase,
+  getDataSource,
   queryDataSource,
   search,
+  updateDataSource,
 } from '../endpoints/databases.js';
 import { createPage, updatePageProperties } from '../endpoints/pages.js';
 import {
@@ -26,6 +31,7 @@ import {
   findSourceCodeBlock,
   getPlainText,
   isSameSourceCode,
+  PROBLEM_PAGE_PROPERTIES,
 } from '../objects/problemPage.js';
 
 // The maximum page size of the Notion API.
@@ -54,6 +60,44 @@ export const getDataSources = async () =>
       nextCursor: response.has_more ? response.next_cursor : null,
     };
   });
+
+/**
+ * Adds the properties that problem pages need to the data source, so a new database works
+ * without creating them by hand. The other properties are left as they are.
+ * @param {string} dataSourceId - The data source to prepare.
+ * @throws {InvalidRequestException} If the data source ID is missing.
+ * @throws {DatabasePropertyException} If a property the uploads need has another type.
+ *   Nothing is added then, so the user can fix the property first.
+ * @returns {Promise<string[]>} The names of the added properties, empty if none was missing.
+ */
+export const prepareDataSource = async (dataSourceId) => {
+  if (typeof dataSourceId !== 'string' || dataSourceId === '') {
+    throw new InvalidRequestException('Notion', 'database');
+  }
+
+  const { properties = {} } = await getDataSource(dataSourceId);
+  const existing = new Map(
+    Object.entries(properties).map(([name, property]) => [name, property.type]),
+  );
+
+  const entries = Object.entries(PROBLEM_PAGE_PROPERTIES);
+  const wrongTypes = entries
+    .filter(([name, type]) => existing.has(name) && existing.get(name) !== type)
+    .map(([name, expected]) => ({ name, type: existing.get(name), expected }));
+  if (wrongTypes.length > 0) {
+    throw new DatabasePropertyException('Notion', wrongTypes);
+  }
+
+  const missing = entries.filter(([name]) => !existing.has(name));
+  if (missing.length > 0) {
+    await updateDataSource(dataSourceId, {
+      properties: Object.fromEntries(
+        missing.map(([name, type]) => [name, { type, [type]: {} }]),
+      ),
+    });
+  }
+  return missing.map(([name]) => name);
+};
 
 /**
  * Returns the data source to upload to.
@@ -174,17 +218,15 @@ const replaceSourceCode = async (page, payload, properties) => {
 };
 
 /**
- * Uploads a solved problem to the selected Notion database.
+ * Uploads a solved problem to the data source.
  * If the problem was already uploaded, the source code of that page is replaced instead.
+ * @param {string} dataSourceId - The data source to upload to.
  * @param {Object} payload - The source code and the problem ID from the page.
  * @param {Object} problemInfo - The problem title, level, tags and URL.
- * @throws {SetupRequiredException} If no database is selected.
  * @throws {DuplicateResourceException} If the same source code was already uploaded.
  * @returns {Promise<string>} The URL of the created or updated page.
  */
-export const upload = async (payload, problemInfo) => {
-  const dataSourceId = await getUploadDataSourceId();
-
+const uploadToDataSource = async (dataSourceId, payload, problemInfo) => {
   const pageData = createProblemPageData({
     dataSourceId,
     ...payload,
@@ -217,5 +259,47 @@ export const upload = async (payload, problemInfo) => {
       return uploadedPageUrl;
     }
     throw e;
+  }
+};
+
+/**
+ * Uploads a solved problem to the selected Notion database.
+ * If Notion rejects the request (400), such as for a database selected before the extension
+ * added the properties, the missing properties are added and the upload is tried once more.
+ * @param {Object} payload - The source code and the problem ID from the page.
+ * @param {Object} problemInfo - The problem title, level, tags and URL.
+ * @throws {SetupRequiredException} If no database is selected.
+ * @throws {DatabasePropertyException} If a property the uploads need has another type.
+ * @throws {DuplicateResourceException} If the same source code was already uploaded.
+ * @returns {Promise<string>} The URL of the created or updated page.
+ */
+export const upload = async (payload, problemInfo) => {
+  const dataSourceId = await getUploadDataSourceId();
+
+  try {
+    return await uploadToDataSource(dataSourceId, payload, problemInfo);
+  } catch (e) {
+    if (e.status !== 400) {
+      throw e;
+    }
+
+    let added;
+    try {
+      added = await prepareDataSource(dataSourceId);
+    } catch (prepareError) {
+      if (prepareError instanceof DatabasePropertyException) {
+        throw prepareError;
+      }
+      // Notion's message about the rejected upload says more than this one.
+      logger.warn(
+        'Failed to add the Notion database properties.',
+        prepareError,
+      );
+      throw e;
+    }
+    if (added.length === 0) {
+      throw e;
+    }
+    return uploadToDataSource(dataSourceId, payload, problemInfo);
   }
 };

@@ -17,6 +17,7 @@ const EXTENSION_PAGE_MESSAGES = [
   ['github', 'logout'],
   ['notion', 'openOauthPage'],
   ['notion', 'getDatabases'],
+  ['notion', 'prepareDatabase'],
   ['notion', 'takeLoginError'],
   ['notion', 'logout'],
 ];

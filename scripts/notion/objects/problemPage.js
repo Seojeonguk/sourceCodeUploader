@@ -25,6 +25,18 @@ const EXTENSION_CODE_LANGUAGES = Object.freeze({
 });
 
 /**
+ * The properties a problem page sets, other than the title, by name and type.
+ * The database must have them, so they are added when it does not.
+ */
+export const PROBLEM_PAGE_PROPERTIES = Object.freeze({
+  info: PROPERTY_TYPE.MULTI_SELECT,
+  tags: PROPERTY_TYPE.MULTI_SELECT,
+  URL: PROPERTY_TYPE.URL,
+  Date: PROPERTY_TYPE.DATE,
+  mime: PROPERTY_TYPE.SELECT,
+});
+
+/**
  * Returns the Notion code block language for a file extension.
  * @param {string} extension - The file extension, such as `py`.
  * @returns {string} The Notion language, or `plain text` if unknown.
