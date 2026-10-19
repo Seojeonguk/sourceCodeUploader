@@ -72,6 +72,7 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
 
 ```text
 ├─ manifest.json
+├─ _locales/                # messages in English (default) and Korean
 ├─ popup/                   # popup UI and the GitHub login page (html · css · js)
 ├─ proxy/notion-oauth/      # Cloudflare Worker that keeps the Notion client secret
 ├─ tools/                   # packages the zip for the Chrome Web Store
@@ -100,6 +101,8 @@ npm run package         # zip for the Chrome Web Store (dist/)
 After changing files, click **Reload** on the extension card in `chrome://extensions/`.
 
 The `key` in `manifest.json` fixes the extension ID to `mfhbpmbchemfhijjamldbkidlegfmaff` wherever the folder is loaded from, so the deployed [Notion OAuth proxy](proxy/notion-oauth/README.md) accepts everyone's login. Users do not deploy anything; the maintainer deploys the proxy once and keeps its URL in `TOKEN_PROXY_URL` of `scripts/notion/config/config.js`.
+
+The texts the user sees are in `_locales/en/messages.json` and `_locales/ko/messages.json`, shown in the language of Chrome. Use `t('key')` from `scripts/common/utils/i18n.js` in scripts and `data-i18n="key"` in the extension pages, and add each new message to both files; a test checks that they match.
 
 Publishing on the Chrome Web Store: [docs/chrome-web-store.md](docs/chrome-web-store.md).
 

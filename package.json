@@ -11,7 +11,7 @@
     "lint:fix": "eslint scripts popup tests proxy tools eslint.config.js eslint.airbnb-rules.js --fix",
     "format": "prettier --write scripts popup tests proxy tools eslint.config.js eslint.airbnb-rules.js",
     "format:check": "prettier --check scripts popup tests proxy tools eslint.config.js eslint.airbnb-rules.js",
-    "test": "node --test",
+    "test": "node --test --import ./tests/setup.js",
     "package": "node tools/package-extension.js"
   },
   "devDependencies": {

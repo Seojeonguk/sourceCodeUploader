@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { afterEach, describe, it } from 'node:test';
 
 import { JSDOM, VirtualConsole } from 'jsdom';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const readScript = (path) =>
   readFileSync(
@@ -132,6 +133,7 @@ const openPage = ({
   const sent = [];
 
   window.chrome = {
+    i18n: chromeI18n,
     runtime: {
       id: 'mfhbpmbchemfhijjamldbkidlegfmaff',
       lastError: null,

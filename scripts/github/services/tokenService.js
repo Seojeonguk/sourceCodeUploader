@@ -2,7 +2,7 @@ import {
   HttpException,
   SetupRequiredException,
 } from '../../common/exception/index.js';
-import { getChromeStorage } from '../../common/utils/index.js';
+import { getChromeStorage, t } from '../../common/utils/index.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { clearExpiredLogin, LOGIN_TYPE, saveTokens } from './authService.js';
 import { postToGithubOAuth } from './oauthRequest.js';
@@ -40,10 +40,7 @@ const refreshAccessToken = async () => {
     // A network error, a timeout or a server error says nothing about the refresh token,
     // so the login is kept and the user tries again.
     if (!(e instanceof HttpException) || e.status >= 500) {
-      throw new Error(
-        'Could not refresh the GitHub login. Check the network and try again.',
-        { cause: e },
-      );
+      throw new Error(t('githubRefreshFailed'), { cause: e });
     }
     throw e;
   }

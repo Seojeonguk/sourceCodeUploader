@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, describe, it } from 'node:test';
 
 import { sendMessage } from '../../scripts/common/utils/chrome/runtime.js';
+import { chromeI18n } from '../helpers/i18n.js';
 
 /**
  * Mocks `chrome.runtime.sendMessage`, which answers through a callback.
@@ -12,6 +13,7 @@ import { sendMessage } from '../../scripts/common/utils/chrome/runtime.js';
 const mockRuntime = (response, lastError = null) => {
   const messages = [];
   globalThis.chrome = {
+    i18n: chromeI18n,
     runtime: {
       lastError: null,
       sendMessage(message, callback) {

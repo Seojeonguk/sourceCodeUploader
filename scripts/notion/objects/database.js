@@ -1,4 +1,4 @@
-const UNTITLED = 'Untitled';
+import { t } from '../../common/utils/i18n.js';
 
 /**
  * Returns the title of a database from the Notion API.
@@ -10,4 +10,4 @@ export const getDatabaseTitle = (database) =>
   (database?.title ?? [])
     .map((text) => text.plain_text ?? '')
     .join('')
-    .trim() || UNTITLED;
+    .trim() || t('untitled');

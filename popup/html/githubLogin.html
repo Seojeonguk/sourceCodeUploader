@@ -2,32 +2,46 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-    <title>Log in to GitHub - Source Code Uploader</title>
+    <title data-i18n="githubLoginTitle">
+      Log in to GitHub - Source Code Uploader
+    </title>
     <link rel="stylesheet" type="text/css" href="../css/githubLogin.css" />
   </head>
 
   <body>
     <main class="device-login">
-      <h1>Log in to GitHub</h1>
+      <h1 data-i18n="githubLoginHeading">Log in to GitHub</h1>
 
       <section id="code-section" class="code-section" hidden>
-        <p>1. Copy this code.</p>
+        <p data-i18n="githubLoginStep1">1. Copy this code.</p>
         <div class="code-row">
           <p id="user-code" class="user-code"></p>
-          <button id="copy-code" type="button">Copy</button>
+          <button id="copy-code" type="button" data-i18n="githubLoginCopy">
+            Copy
+          </button>
         </div>
 
-        <p>2. Enter it on GitHub and authorize Source Code Uploader.</p>
+        <p data-i18n="githubLoginStep2">
+          2. Enter it on GitHub and authorize Source Code Uploader.
+        </p>
         <a
           id="verification-link"
           class="verification-link"
           target="_blank"
           rel="noopener noreferrer"
+          data-i18n="githubLoginOpen"
           >Open GitHub</a
         >
       </section>
 
-      <p id="status" class="status" role="status">Requesting a code...</p>
+      <p
+        id="status"
+        class="status"
+        role="status"
+        data-i18n="githubLoginRequesting"
+      >
+        Requesting a code...
+      </p>
     </main>
 
     <script type="module" src="../js/githubLogin.js"></script>

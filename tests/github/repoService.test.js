@@ -7,6 +7,7 @@ import {
 } from '../../scripts/github/services/repoService.js';
 import { encodeBase64Unicode } from '../../scripts/common/utils/encoding.js';
 import { jsonResponse } from '../helpers/chrome.js';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const payload = {
   type: 'Programmers',
@@ -28,6 +29,7 @@ const settings = {
 
 const mockStorage = (storage) => {
   globalThis.chrome = {
+    i18n: chromeI18n,
     storage: {
       local: { get: ([key], callback) => callback({ [key]: storage[key] }) },
     },

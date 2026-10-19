@@ -100,6 +100,12 @@ describe('listPackageFiles', () => {
       });
   });
 
+  it('includes the messages of the default locale and Korean', () => {
+    assert.equal(manifest.default_locale, 'en');
+    assert.ok(files.includes('_locales/en/messages.json'));
+    assert.ok(files.includes('_locales/ko/messages.json'));
+  });
+
   it('includes the icons that the content script shows on the page', () => {
     assert.ok(files.includes('icon/githubIcon.png'));
     assert.ok(files.includes('icon/notionIcon.png'));
@@ -110,7 +116,7 @@ describe('listPackageFiles', () => {
       files.filter(
         (file) =>
           file.endsWith('.md') ||
-          !/^(icon|popup|scripts)\//.test(file) ||
+          !/^(_locales|icon|popup|scripts)\//.test(file) ||
           file.includes('node_modules'),
       ),
       [],

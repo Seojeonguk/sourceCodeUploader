@@ -56,6 +56,7 @@ export default [
             // DOM elements
             'button',
             'container',
+            'element',
           ],
         },
       ],
