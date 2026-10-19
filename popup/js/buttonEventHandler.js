@@ -168,9 +168,31 @@ const handleNotionAuthenticationBtn = () => {
 };
 
 /**
+ * Adds the properties that uploads need to the selected database, and tells the user what
+ * was added, or why the database cannot be used.
+ * @param {string} dataSourceId - The data source of the selected database.
+ */
+const prepareDatabase = async (dataSourceId) => {
+  const response = await sendMessage('notion', 'prepareDatabase', {
+    dataSourceId,
+  });
+
+  if (!response?.ok) {
+    showToast(response?.message, 'error');
+    return;
+  }
+  if (Array.isArray(response.message) && response.message.length > 0) {
+    showToast(
+      `Added ${response.message.join(', ')} to the database for the uploads.`,
+    );
+  }
+};
+
+/**
  * Handles the click event when a database is selected from the list.
  * When a database is clicked, it retrieves the database name and ID from the clicked element.
- * It then updates the UI to display the selected database name and stores both the name and ID in Chrome storage.
+ * It then updates the UI to display the selected database name, stores both the name and ID in
+ * Chrome storage, and adds the properties that uploads need to the database.
  */
 const handleUploadedDatabaseSelection = () => {
   // The items are added later, so the click is handled on the document.
@@ -191,6 +213,7 @@ const handleUploadedDatabaseSelection = () => {
       notionUploadedDatabase: uploadedDatabase,
       notionUploadedDataSourceId: uploadedDataSourceId,
     });
+    prepareDatabase(uploadedDataSourceId);
   });
 };
 

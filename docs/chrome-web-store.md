@@ -40,7 +40,7 @@ Source Code Uploader adds GitHub and Notion buttons to Programmers problem pages
 
 How to start
 1. Click the extension icon and log in to GitHub (enter the code shown on GitHub) and Notion (choose the pages to share).
-2. Install the GitHub App on the repositories to upload to, and share a Notion database that has the properties in the guide: https://github.com/Seojeonguk/sourceCodeUploader/blob/master/scripts/notion/README.md#prepare-the-database
+2. Install the GitHub App on the repositories to upload to, and share a Notion database with the extension. Any database works: the extension adds the properties it needs.
 3. Select the repository and the database in the popup.
 4. Solve a problem on Programmers and click the upload button, or turn on auto upload.
 
@@ -111,7 +111,7 @@ The dashboard has a **Test instructions** tab for the reviewers:
 The extension needs a Programmers account (free) and a GitHub or Notion account of your own; no test account is shared.
 
 1. Click the extension icon → GitHub "Authorize": enter the code shown on github.com/login/device, then install the "Source Code Uploader" GitHub App on a test repository (Add repositories in the popup).
-2. Create a Notion database with these properties (names are case-sensitive): a title, "info" (multi-select), "tags" (multi-select), "URL" (URL), "Date" (date), "mime" (select). Then click Notion "Authorize" and share the page with the database.
+2. Create an empty Notion database, click Notion "Authorize" and share the page with the database. Selecting it in the popup adds the properties the uploads need ("info", "tags", "URL", "Date", "mime").
 3. Select the repository and the database in the popup.
 4. Open a Programmers problem, for example https://school.programmers.co.kr/learn/courses/30/lessons/12903, write a solution, and click the GitHub or Notion button under the editor. A message shows the link to the uploaded file or page.
 ```

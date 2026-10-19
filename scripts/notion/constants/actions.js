@@ -1,6 +1,7 @@
 export const ACTIONS = Object.freeze({
   OPEN_OAUTH_PAGE: 'openOauthPage',
   GET_DATABASES: 'getDatabases',
+  PREPARE_DATABASE: 'prepareDatabase',
   UPLOAD: 'upload',
   LOGOUT: 'logout',
   GET_AUTO_UPLOAD: 'getAutoUpload',

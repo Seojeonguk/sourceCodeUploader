@@ -1,3 +1,4 @@
+import { DatabasePropertyException } from './DatabasePropertyException.js';
 import { DuplicateResourceException } from './DuplicateResourceException.js';
 import { ForbiddenSenderException } from './ForbiddenSenderException.js';
 import { HttpException } from './HttpException.js';
@@ -11,6 +12,7 @@ import { TimeoutException } from './TimeoutException.js';
 import { UndefinedException } from './UndefinedException.js';
 
 export {
+  DatabasePropertyException,
   DuplicateResourceException,
   ForbiddenSenderException,
   HttpException,

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 
 import {
   getDataSources,
+  prepareDataSource,
   upload,
 } from '../../scripts/notion/services/databaseService.js';
 
@@ -401,5 +402,240 @@ describe('getDataSources', () => {
       property: 'object',
     });
     assert.equal(bodies[1].start_cursor, 'cursor');
+  });
+});
+
+// The properties that problem pages set, as Notion returns them in a data source.
+const READY_PROPERTIES = {
+  Name: { id: 'title', name: 'Name', type: 'title' },
+  info: { id: 'a', name: 'info', type: 'multi_select' },
+  tags: { id: 'b', name: 'tags', type: 'multi_select' },
+  URL: { id: 'c', name: 'URL', type: 'url' },
+  Date: { id: 'd', name: 'Date', type: 'date' },
+  mime: { id: 'e', name: 'mime', type: 'select' },
+};
+
+const errorResponse = (status, message) =>
+  new Response(
+    JSON.stringify({
+      object: 'error',
+      status,
+      code: 'validation_error',
+      message,
+    }),
+    { status, headers: { 'Content-Type': 'application/json' } },
+  );
+
+/**
+ * Mocks a data source and the requests of an upload.
+ * @param {Object} param
+ * @param {Object} param.properties - The properties of the data source.
+ * @param {boolean} [param.rejectUntilPrepared=false] - Whether the query is rejected with a
+ *   validation error until the properties are added.
+ * @returns {string[]} The requests, as `METHOD path`, with the PATCH bodies in `updates`.
+ */
+const mockDataSource = ({ properties, rejectUntilPrepared = false }) => {
+  const requests = [];
+  const updates = [];
+  let prepared = false;
+
+  globalThis.fetch = mock.fn(async (url, { method, body }) => {
+    const { pathname } = new URL(url);
+    requests.push(`${method} ${pathname}`);
+
+    if (pathname === '/v1/data_sources/data-source-id') {
+      if (method === 'PATCH') {
+        updates.push(JSON.parse(body));
+        prepared = true;
+        return jsonResponse({});
+      }
+      return jsonResponse({ id: 'data-source-id', properties });
+    }
+    if (pathname.endsWith('/query')) {
+      return rejectUntilPrepared && !prepared
+        ? errorResponse(400, 'Could not find property with name or id: URL')
+        : jsonResponse({ results: [] });
+    }
+    return jsonResponse({ url: 'https://www.notion.so/new-page' });
+  });
+
+  return Object.assign(requests, { updates });
+};
+
+describe('prepareDataSource', () => {
+  beforeEach(() => {
+    mockStorage({ notionAccessToken: 'token' });
+    mock.method(console, 'debug', () => {});
+  });
+
+  afterEach(() => {
+    mock.restoreAll();
+    delete globalThis.chrome;
+  });
+
+  it('adds the missing properties with their types, and keeps the others', async () => {
+    const requests = mockDataSource({
+      properties: {
+        Name: READY_PROPERTIES.Name,
+        tags: READY_PROPERTIES.tags,
+        Notes: { id: 'n', name: 'Notes', type: 'rich_text' },
+      },
+    });
+
+    const added = await prepareDataSource('data-source-id');
+
+    assert.deepEqual(added, ['info', 'URL', 'Date', 'mime']);
+    assert.deepEqual(requests.updates, [
+      {
+        properties: {
+          info: { type: 'multi_select', multi_select: {} },
+          URL: { type: 'url', url: {} },
+          Date: { type: 'date', date: {} },
+          mime: { type: 'select', select: {} },
+        },
+      },
+    ]);
+  });
+
+  it('changes nothing when the database has the properties', async () => {
+    const requests = mockDataSource({ properties: READY_PROPERTIES });
+
+    assert.deepEqual(await prepareDataSource('data-source-id'), []);
+    assert.deepEqual([...requests], ['GET /v1/data_sources/data-source-id']);
+  });
+
+  it('names the properties of the wrong type, and adds nothing', async () => {
+    const requests = mockDataSource({
+      properties: {
+        Name: READY_PROPERTIES.Name,
+        URL: { id: 'c', name: 'URL', type: 'rich_text' },
+        mime: { id: 'e', name: 'mime', type: 'multi_select' },
+      },
+    });
+
+    await assert.rejects(prepareDataSource('data-source-id'), {
+      name: 'DatabasePropertyException',
+      message:
+        'The Notion database has properties of the wrong type: "URL" is Text, not URL; "mime" is Multi-select, not Select. Change their type, or rename them so the extension can add its own.',
+    });
+    assert.deepEqual(requests.updates, []);
+  });
+
+  it('rejects a missing data source ID without calling Notion', async () => {
+    const requests = mockDataSource({ properties: READY_PROPERTIES });
+
+    await assert.rejects(prepareDataSource(undefined), {
+      name: 'InvalidRequestException',
+    });
+    assert.equal(requests.length, 0);
+  });
+});
+
+describe('upload to a database without the properties', () => {
+  beforeEach(() => {
+    mockStorage({
+      notionAccessToken: 'token',
+      notionUploadedDataSourceId: 'data-source-id',
+    });
+    mock.method(console, 'debug', () => {});
+  });
+
+  afterEach(() => {
+    mock.restoreAll();
+    delete globalThis.chrome;
+  });
+
+  it('does not read the data source when the upload works', async () => {
+    const requests = mockDataSource({ properties: READY_PROPERTIES });
+
+    await upload(payload, problemInfo);
+
+    assert.deepEqual(
+      [...requests],
+      ['POST /v1/data_sources/data-source-id/query', 'POST /v1/pages'],
+    );
+  });
+
+  it('adds the missing properties after Notion rejects the upload, and uploads once more', async () => {
+    const requests = mockDataSource({
+      properties: { Name: READY_PROPERTIES.Name },
+      rejectUntilPrepared: true,
+    });
+
+    assert.equal(
+      await upload(payload, problemInfo),
+      'https://www.notion.so/new-page',
+    );
+    assert.deepEqual(
+      [...requests],
+      [
+        'POST /v1/data_sources/data-source-id/query',
+        'GET /v1/data_sources/data-source-id',
+        'PATCH /v1/data_sources/data-source-id',
+        'POST /v1/data_sources/data-source-id/query',
+        'POST /v1/pages',
+      ],
+    );
+  });
+
+  it('shows the error from Notion when no property was missing', async () => {
+    const requests = mockDataSource({
+      properties: READY_PROPERTIES,
+      rejectUntilPrepared: true,
+    });
+
+    await assert.rejects(upload(payload, problemInfo), {
+      name: 'HttpException',
+      message: 'Could not find property with name or id: URL (HTTP 400)',
+    });
+    assert.deepEqual(requests.updates, []);
+    assert.equal(
+      requests.filter((request) => request.endsWith('/query')).length,
+      1,
+    );
+  });
+
+  it('names a property of the wrong type instead of uploading', async () => {
+    mockDataSource({
+      properties: {
+        Name: READY_PROPERTIES.Name,
+        URL: { id: 'c', name: 'URL', type: 'rich_text' },
+      },
+      rejectUntilPrepared: true,
+    });
+
+    await assert.rejects(upload(payload, problemInfo), {
+      name: 'DatabasePropertyException',
+    });
+  });
+
+  it('shows the error from Notion when adding the properties fails', async () => {
+    globalThis.fetch = mock.fn(async (url, { method }) => {
+      const { pathname } = new URL(url);
+      if (pathname.endsWith('/query')) {
+        return errorResponse(
+          400,
+          'Could not find property with name or id: URL',
+        );
+      }
+      if (method === 'GET') {
+        return jsonResponse({ properties: {} });
+      }
+      return errorResponse(403, 'Insufficient permissions for this endpoint.');
+    });
+    mock.method(console, 'warn', () => {});
+
+    await assert.rejects(upload(payload, problemInfo), {
+      message: 'Could not find property with name or id: URL (HTTP 400)',
+    });
+  });
+
+  it('does not prepare the database after another error', async () => {
+    globalThis.fetch = mock.fn(async () =>
+      errorResponse(403, 'Insufficient permissions for this endpoint.'),
+    );
+
+    await assert.rejects(upload(payload, problemInfo), { status: 403 });
+    assert.equal(globalThis.fetch.mock.callCount(), 1);
   });
 });

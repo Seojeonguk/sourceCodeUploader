@@ -10,7 +10,9 @@
 
 ## Prepare the database
 
-Create a Notion database with the properties below before you authorize. The names are case-sensitive and must match exactly; otherwise Notion rejects the upload.
+Any Notion database works, even an empty one. When you select it in the popup, the extension adds the properties below that it does not have, and the popup names the added ones. A database selected before this version gets them at its first upload: Notion rejects the upload, the extension adds the missing properties and uploads once more.
+
+The names are case-sensitive. If the database already has a property with one of these names but another type, such as `URL` as Text, nothing is added and the popup names the property: change its type, or rename it so the extension can add its own.
 
 | Property | Type         | Value                                                                       |
 | -------- | ------------ | --------------------------------------------------------------------------- |

@@ -8,6 +8,7 @@ import {
   getCodeLanguage,
   getPlainText,
   isSameSourceCode,
+  PROBLEM_PAGE_PROPERTIES,
 } from '../../scripts/notion/objects/problemPage.js';
 
 const names = (property) => property.multi_select.map(({ name }) => name);
@@ -86,6 +87,31 @@ describe('createProblemPageData', () => {
     });
 
     assert.equal(properties.URL.url, null);
+  });
+});
+
+describe('PROBLEM_PAGE_PROPERTIES', () => {
+  it('lists every property of a problem page but the title, with its type', () => {
+    const { properties } = createProblemPageData({
+      dataSourceId: 'data-source-id',
+      type: 'Programmers',
+      problemId: '1845',
+      title: '폰켓몬',
+      extension: 'py',
+      sourceCode: 'print(1)',
+    });
+    const { title, ...others } = properties;
+
+    assert.ok(title);
+    assert.deepEqual(
+      Object.fromEntries(
+        Object.entries(others).map(([name, property]) => [
+          name,
+          Object.keys(property)[0],
+        ]),
+      ),
+      { ...PROBLEM_PAGE_PROPERTIES },
+    );
   });
 });
 
