@@ -14,7 +14,7 @@ What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google
    3. Deploy the worker: `cd proxy/notion-oauth && npx wrangler deploy`.
    4. To try the zip before submitting, unzip it and load the folder in `chrome://extensions/`. Without the `key` it gets a random ID that the worker does not allow, so everything but the Notion login can be checked this way.
 6. **Fill in the tabs** below, then **Submit for review**.
-7. **After the approval** — update the installation section of `README.md` and `README.ko.md` with the store link, tag the version, publish the GitHub Release, and close the milestone.
+7. **After the approval** — update the installation section of `README.md` and `README.ko.md` with the store link, tag the version, publish the GitHub Release, and close the milestone. Publishing the release runs the **Release zip** workflow (`.github/workflows/release.yml`), which checks that the tag matches `manifest.json`, runs the tests and attaches `source-code-uploader-<version>.zip` to the release.
 
 ## Store listing
 
