@@ -1,0 +1,19 @@
+# Weekly update PRs for the development dependencies and the actions in the workflows,
+# one grouped PR per ecosystem. The extension itself has no dependencies.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-dependencies:
+        patterns: ['*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
