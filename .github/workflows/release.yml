@@ -1,0 +1,45 @@
+# Attaches the Chrome Web Store zip to each published GitHub Release.
+# The release notes stay as written: this only adds source-code-uploader-<version>.zip.
+name: Release zip
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  attach-zip:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # The release event checks out the tag of the release.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check that the tag matches the version
+        run: |
+          version="$(node -p "require('./manifest.json').version")"
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::The tag $TAG does not match the version $version in manifest.json."
+            exit 1
+          fi
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
+      - name: Test
+        run: npm test
+
+      - name: Package
+        run: npm run package
+
+      - name: Attach the zip to the release
+        run: gh release upload "$TAG" dist/*.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
