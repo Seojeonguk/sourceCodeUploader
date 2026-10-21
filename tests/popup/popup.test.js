@@ -38,11 +38,31 @@ const loadPopup = () => {
  * @param {Object} [options]
  * @param {Object} [options.storage] - The values in chrome.storage.local.
  * @param {Object} [options.responses] - The background responses, keyed by `platform/action`.
- * @returns {{ sent: Object[], createdTabs: Object[], storage: Object }}
+ * @returns {{ sent: Object[], createdTabs: Object[], storage: Object, saveInBackground: Function }}
+ *   `saveInBackground(values)` changes the storage like the background does, and tells the
+ *   `chrome.storage.onChanged` listeners. A value of `undefined` removes the key.
  */
 const mockChrome = ({ storage = {}, responses = {} } = {}) => {
   const sent = [];
   const createdTabs = [];
+  const changeListeners = [];
+
+  const saveInBackground = async (values) => {
+    const changes = {};
+    Object.entries(values).forEach(([key, newValue]) => {
+      changes[key] = { oldValue: storage[key], newValue };
+      if (newValue === undefined) {
+        // eslint-disable-next-line no-param-reassign -- the mocked storage
+        delete storage[key];
+      } else {
+        // eslint-disable-next-line no-param-reassign -- the mocked storage
+        storage[key] = newValue;
+      }
+    });
+    await Promise.all(
+      changeListeners.map((listener) => listener(changes, 'local')),
+    );
+  };
 
   globalThis.chrome = {
     i18n: chromeI18n,
@@ -61,11 +81,14 @@ const mockChrome = ({ storage = {}, responses = {} } = {}) => {
           Object.assign(storage, values);
         },
       },
+      onChanged: {
+        addListener: (listener) => changeListeners.push(listener),
+      },
     },
     tabs: { create: (properties) => createdTabs.push(properties) },
   };
 
-  return { sent, createdTabs, storage };
+  return { sent, createdTabs, storage, saveInBackground };
 };
 
 const $$ = (selector) => document.querySelector(selector);
@@ -121,6 +144,57 @@ describe('popup', () => {
       // A database is selected, but the login is missing, so the step is not done.
       assert.ok(!$$('.notion .step-target').classList.contains('is-done'));
       assert.ok(!$$('#notion-tab').classList.contains('is-ready'));
+    });
+
+    it('shows a login that finishes while the popup is open', async () => {
+      const { saveInBackground } = mockChrome({
+        storage: { githubUploadedRepository: 'solutions' },
+      });
+      await initializeOnLoad();
+      assert.ok(!$$('#github-panel').classList.contains('is-logged-in'));
+
+      await saveInBackground({ githubAccessToken: 'token' });
+      await saveInBackground({ githubID: 'seojeonguk' });
+
+      assert.ok($$('.github .step-login').classList.contains('is-done'));
+      assert.equal($$('.github .account').textContent, 'seojeonguk');
+      assert.equal($$('#github-authentication').textContent, 'Log out');
+      assert.ok($$('#github-tab').classList.contains('is-ready'));
+    });
+
+    it('shows a login that the background removed, such as an expired one', async () => {
+      const { saveInBackground } = mockChrome({
+        storage: {
+          notionAccessToken: 'token',
+          notionUploadedDatabase: 'Problems',
+        },
+      });
+      await initializeOnLoad();
+      assert.ok($$('#notion-tab').classList.contains('is-ready'));
+
+      await saveInBackground({ notionAccessToken: undefined });
+
+      assert.ok(!$$('#notion-panel').classList.contains('is-logged-in'));
+      assert.equal($$('.notion .account').textContent, '');
+      assert.equal($$('#notion-authentication').textContent, 'Log in');
+      assert.ok(!$$('#notion-authentication').classList.contains('delete'));
+      assert.ok(!$$('#notion-tab').classList.contains('is-ready'));
+    });
+
+    it('shows the options changed in another window', async () => {
+      const { saveInBackground } = mockChrome({
+        storage: { notionAccessToken: 'token' },
+      });
+      await initializeOnLoad();
+
+      await saveInBackground({
+        notionUploadedDatabase: 'Solutions',
+        notionAutoUpload: true,
+      });
+
+      assert.equal($$('#uploaded-database').textContent, 'Solutions');
+      assert.equal($$('#notion-auto-upload').checked, true);
+      assert.ok($$('#notion-tab').classList.contains('is-ready'));
     });
 
     it('opens on the first platform that is not set up yet', async () => {

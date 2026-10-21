@@ -8,6 +8,7 @@ import {
   PLATFORMS,
   selectFirstUnfinishedTab,
   showLoggedIn,
+  showLoggedOut,
   showSelected,
 } from './platformState.js';
 import { applyLightMode } from './theme.js';
@@ -55,6 +56,49 @@ const loadPlatform = async (platform) => {
 };
 
 /**
+ * Shows the changes that the background saves while the popup is open, such as a login that
+ * finishes after its window closed, or an expired login.
+ * @param {Object} changes - The changed storage keys, as `{ newValue, oldValue }`.
+ * @param {string} area - The storage area.
+ */
+const showStorageChanges = async (changes, area) => {
+  if (area !== 'local') {
+    return;
+  }
+
+  await Promise.all(
+    PLATFORMS.map(async (platform) => {
+      const tokenKey = `${platform}AccessToken`;
+      if (
+        tokenKey in changes ||
+        (platform === 'github' && 'githubID' in changes)
+      ) {
+        if (await getChromeStorage(tokenKey)) {
+          showLoggedIn(
+            platform,
+            platform === 'github' ? await getChromeStorage('githubID') : null,
+          );
+        } else {
+          showLoggedOut(platform);
+        }
+      }
+
+      const target = changes[TARGET_KEYS[platform]];
+      if (target?.newValue) {
+        showSelected(platform, target.newValue);
+      }
+
+      const autoUpload = changes[`${platform}AutoUpload`];
+      if (autoUpload) {
+        document.querySelector(`#${platform}-auto-upload`).checked = Boolean(
+          autoUpload.newValue,
+        );
+      }
+    }),
+  );
+};
+
+/**
  * Lists the judge sites, each with a link to its problems.
  */
 const showJudgeSites = () => {
@@ -92,6 +136,7 @@ const showJudgeSites = () => {
 export const initializeOnLoad = async () => {
   showJudgeSites();
   showLastLoginError();
+  chrome.storage.onChanged.addListener(showStorageChanges);
   applyLightMode(Boolean(await getChromeStorage('popupLightMode')));
   await Promise.all(PLATFORMS.map(loadPlatform));
   selectFirstUnfinishedTab();
