@@ -3,7 +3,21 @@ import {
   sendMessage,
   t,
 } from '../../scripts/common/utils/index.js';
+import { JUDGE_SITES } from '../../scripts/judgeSites.js';
+import {
+  PLATFORMS,
+  selectFirstUnfinishedTab,
+  showLoggedIn,
+  showSelected,
+} from './platformState.js';
+import { applyLightMode } from './theme.js';
 import { showToast } from './toast.js';
+
+// The saved repository / database of each platform.
+const TARGET_KEYS = Object.freeze({
+  github: 'githubUploadedRepository',
+  notion: 'notionUploadedDatabase',
+});
 
 /**
  * Shows why the last Notion login failed. The login window closes the popup,
@@ -16,58 +30,69 @@ const showLastLoginError = async () => {
   }
 };
 
-export const initializeOnLoad = () => {
-  checkPlatformInfos();
-  loadCachedDatabaseList();
-  loadCachedRepositoryList();
+/**
+ * Shows the login, the selected repository or database, and the auto upload option of a
+ * platform from Chrome storage.
+ * @param {'github'|'notion'} platform
+ */
+const loadPlatform = async (platform) => {
+  const [accessToken, target, autoUpload, account] = await Promise.all([
+    getChromeStorage(`${platform}AccessToken`),
+    getChromeStorage(TARGET_KEYS[platform]),
+    getChromeStorage(`${platform}AutoUpload`),
+    // Notion has no user name to show, so it shows "Connected".
+    platform === 'github' ? getChromeStorage('githubID') : null,
+  ]);
+
+  if (accessToken) {
+    showLoggedIn(platform, account);
+  }
+  if (target) {
+    showSelected(platform, target);
+  }
+  document.querySelector(`#${platform}-auto-upload`).checked =
+    Boolean(autoUpload);
+};
+
+/**
+ * Lists the judge sites, each with a link to its problems.
+ */
+const showJudgeSites = () => {
+  document.querySelector('#site-list').replaceChildren(
+    ...JUDGE_SITES.map(({ id, name, url }) => {
+      const item = document.createElement('li');
+      item.className = 'site';
+      item.dataset.site = id;
+
+      const siteName = document.createElement('span');
+      siteName.className = 'site-name';
+      siteName.textContent = name;
+
+      const status = document.createElement('span');
+      status.className = 'site-status';
+      status.textContent = t('popupSiteInUse');
+
+      const link = document.createElement('a');
+      link.className = 'site-link';
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = t('popupSiteOpen');
+
+      item.append(siteName, status, link);
+      return item;
+    }),
+  );
+};
+
+/**
+ * Loads the saved state into the popup, and opens the tab of what is left to set up.
+ * @returns {Promise<void>} Settles when the platforms are shown.
+ */
+export const initializeOnLoad = async () => {
+  showJudgeSites();
   showLastLoginError();
-};
-
-/**
- * Checks authentication status for various platforms (e.g., GitHub, Notion).
- * Iterates through the platforms array and retrieves access tokens from Chrome storage.
- * If an access token is found for a platform, updates the UI accordingly by adding a green status class
- * and changing the text and style of the authentication button to indicate removal.
- */
-
-const checkPlatformInfos = () => {
-  const platforms = ['github', 'notion'];
-
-  platforms.forEach(async (platform) => {
-    const accessToken = await getChromeStorage(`${platform}AccessToken`);
-    if (accessToken) {
-      document.querySelector(`.${platform} .status`).classList.add('green');
-      const button = document.querySelector(`.${platform} .authentication-btn`);
-      button.textContent = t('popupRemove');
-      button.classList.add('delete');
-    }
-
-    const autoUpload = await getChromeStorage(`${platform}AutoUpload`);
-    document.querySelector(`#${platform}-auto-upload`).checked =
-      Boolean(autoUpload);
-  });
-};
-
-/**
- * Load the database to upload to notion from chrome storage and display it on the popup page.
- */
-const loadCachedDatabaseList = async () => {
-  const uploadedDatabase = await getChromeStorage('notionUploadedDatabase');
-
-  if (uploadedDatabase) {
-    document.querySelector('#uploaded-database').textContent = uploadedDatabase;
-  }
-};
-
-/**
- * Load the repository to upload to github from Chrome storage and display it on the popup page.
- */
-
-const loadCachedRepositoryList = async () => {
-  const uploadedRepository = await getChromeStorage('githubUploadedRepository');
-
-  if (uploadedRepository) {
-    document.querySelector('#uploaded-repository').textContent =
-      uploadedRepository;
-  }
+  applyLightMode(Boolean(await getChromeStorage('popupLightMode')));
+  await Promise.all(PLATFORMS.map(loadPlatform));
+  selectFirstUnfinishedTab();
 };

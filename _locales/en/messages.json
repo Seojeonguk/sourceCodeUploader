@@ -14,31 +14,50 @@
   "popupLightMode": {
     "message": "Light mode"
   },
-  "popupAuthentication": {
-    "message": "Authentication"
-  },
   "popupAuthorize": {
-    "message": "Authorize"
+    "message": "Log in"
   },
   "popupRemove": {
-    "message": "Remove"
+    "message": "Log out"
   },
-  "popupAutoUpload": {
-    "message": "Auto upload to $PLATFORM$",
-    "placeholders": {
-      "platform": {
-        "content": "$1"
-      }
-    }
+  "popupStepLogin": {
+    "message": "Account"
+  },
+  "popupStepRepository": {
+    "message": "Select a repository"
+  },
+  "popupStepDatabase": {
+    "message": "Select a database"
+  },
+  "popupAutoUploadLabel": {
+    "message": "Upload automatically when accepted"
+  },
+  "popupConnected": {
+    "message": "Connected"
+  },
+  "popupReady": {
+    "message": "Ready! Click the upload button on a problem page."
+  },
+  "popupSites": {
+    "message": "Problem sites"
+  },
+  "popupSiteInUse": {
+    "message": "In use"
+  },
+  "popupSiteOpen": {
+    "message": "Solve problems"
+  },
+  "popupUploadTo": {
+    "message": "Upload to"
   },
   "popupSelectRepository": {
-    "message": "Select Repository"
+    "message": "Choose…"
   },
   "popupRepositories": {
     "message": "Repositories"
   },
   "popupSelectDatabase": {
-    "message": "Select Database"
+    "message": "Choose…"
   },
   "popupDatabases": {
     "message": "Databases"

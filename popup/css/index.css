@@ -4,16 +4,54 @@
   box-sizing: border-box;
 }
 
+/* Dark is the default; the moon button switches to light, which is remembered. */
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-hover: #273449;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #6366f1;
+  --accent-text: #ffffff;
+  --accent-soft: #a5b4fc;
+  --done: #22c55e;
+  --done-text: #052e16;
+  --danger: #f87171;
+  --focus: #a5b4fc;
+}
+
+body.light-mode {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-hover: #eef2ff;
+  --border: #e2e8f0;
+  --text: #1e1b4b;
+  --muted: #64748b;
+  --accent: #4f46e5;
+  --accent-text: #ffffff;
+  --accent-soft: #4f46e5;
+  --done: #16a34a;
+  --done-text: #ffffff;
+  --danger: #dc2626;
+  --focus: #4f46e5;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  width: 360px;
+  font-family: 'Segoe UI', 'Malgun Gothic', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  background-color: var(--bg);
 }
 
 button {
   background: none;
   color: inherit;
   border: none;
+  font: inherit;
   cursor: pointer;
-  outline: inherit;
 }
 
 a {
@@ -22,272 +60,367 @@ a {
 }
 
 ul,
+ol,
 li {
   list-style: none;
 }
 
 svg {
-  width: 24px;
-  height: 24px;
-}
-
-:root {
-  --theme-color: #f9fafb;
-  --theme-bg-color: rgba(16 18 27 / 40%);
-  --dark-light-color: #21242d;
-  --overlay-color: rgba(36 39 59, 0.3);
-}
-
-.light-mode {
-  --theme-color: #3c3a3a;
-  --theme-bg-color: rgba(244 244 244 / 50%);
-  --dark-light-color: #f7f7f7;
-  --overlay-color: rgba(255 255 255 / 30%);
-}
-
-.container {
-  background-color: var(--theme-bg-color);
-  backdrop-filter: blur(20px);
-  font-size: 15px;
-  font-weight: 500;
-  min-width: 500px;
-  height: 300px;
-  padding: 10px;
-}
-
-.dark-light {
-  background-color: var(--dark-light-color);
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  padding: 8px;
-  border-radius: 50%;
-  z-index: 3;
-  cursor: pointer;
-  box-shadow: -1px 3px 8px -1px rgba(0, 0, 0, 0.2);
-}
-
-.dark-light svg {
-  width: 24px;
-  fill: #ffce45;
-  stroke: #ffce45;
-  transition: 0.5s;
-}
-
-.content-wrapper {
-  color: var(--theme-color);
-  background-color: var(--theme-bg-color);
-  border-radius: 5px;
-  padding: 10px;
-}
-
-.content-wrapper.overlay {
-  pointer-events: none;
-  transition: 0.3s;
-  background-color: var(--overlay-color);
-}
-
-.content-section-title {
-  margin-bottom: 10px;
-}
-
-.status {
-  margin: 10px;
-  background-color: #e21212;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.status.green {
-  background-color: #3bf083;
-}
-
-.icon-list {
-  border: 1px solid var(--theme-bg-color);
-  border-radius: 10px;
-}
-
-.icon-list li {
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
-
-.icon-list li:hover {
-  background-color: var(--theme-bg-color);
-}
-
-.icon-list > li:hover:only-child {
-  border-radius: 9px;
-}
-
-.icon-list > li:hover:first-child:not(:last-child) {
-  border-radius: 9px 9px 0 0;
-}
-
-.icon-list > li:hover:last-child:not(:first-child) {
-  border-radius: 0 0 9px 9px;
-}
-
-.icon-list li + li {
-  border-top: 1px solid var(--theme-bg-color);
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.button-wrapper {
-  display: inline-flex;
-  align-items: center;
-}
-
-.button-wrapper button {
-  background-color: #4d73d3;
-  padding: 6px 24px;
-  cursor: pointer;
-  border-radius: 20px;
-}
-
-.button-wrapper button.delete {
-  background-color: #ce3939;
-}
-
-.select-list {
-  position: relative;
-  width: 150px;
-}
-
-.select-list > button {
-  width: 100%;
-  border-radius: 5px;
-  background: var(--theme-bg-color);
-  padding: 5px 10px;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
-
-.select-list ul {
-  position: absolute;
-  top: 20px;
-  left: 0;
-  max-height: 150px;
-  width: 100%;
-  background: black;
-  border-radius: 5px;
-  padding: 5px;
-  overflow: auto;
-  overflow-x: hidden;
-  opacity: 0;
-  transition: all 0.5s;
-  pointer-events: none;
-  /* A closed list stays out of the Tab order. */
-  visibility: hidden;
-  z-index: 2;
-}
-
-.select-list ul.is-active {
-  transform: translateY(10px);
-  opacity: 1;
-  pointer-events: all;
-  visibility: visible;
-}
-
-.select-list ul::-webkit-scrollbar {
-  display: none;
-}
-
-.select-list ul li {
-  padding: 5px;
-  width: 100%;
-  cursor: pointer;
-}
-
-.select-list ul li:hover {
-  background: gray;
-}
-
-.select-list ul li + li {
-  border-top: 1px solid var(--theme-bg-color);
-}
-
-.select-list ul li p,
-.select-list ul li button {
-  display: block;
-  width: 100%;
-  text-overflow: ellipsis;
-  text-wrap: nowrap;
-  overflow: hidden;
-  line-height: 25px;
-  font: inherit;
-  font-size: 13px;
-  text-align: left;
-}
-
-/* The link to install the GitHub App on more repositories. */
-.select-list ul li.install a {
-  display: block;
-  line-height: 25px;
-  font-size: 13px;
-  color: inherit;
-  opacity: 0.8;
-  text-decoration: none;
-}
-
-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-[type='checkbox'] {
-  appearance: none;
-  position: relative;
-  border: max(2px, 0.1em) solid gray;
-  border-radius: 1.25em;
-  width: 2.25em;
-  height: 1.25em;
-}
-
-[type='checkbox']::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  width: 1em;
-  height: 1em;
-  border-radius: 50%;
-  transform: scale(0.8);
-  background-color: gray;
-  transition: left 250ms linear;
-}
-
-[type='checkbox']:checked::before {
-  background-color: white;
-  left: 1em;
-}
-
-[type='checkbox']:checked {
-  background-color: tomato;
-  border-color: tomato;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: currentColor;
 }
 
 button:focus-visible,
 a:focus-visible,
 [type='checkbox']:focus-visible {
-  outline-offset: max(2px, 0.1em);
-  outline: max(2px, 0.1em) solid tomato;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
-[type='checkbox']:enabled:hover {
-  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+.popup {
+  padding: 14px;
 }
 
+/* Header */
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.popup-header .logo {
+  width: 22px;
+  height: 22px;
+}
+
+.popup-header h1 {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dark-light {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--muted);
+}
+
+.dark-light:hover {
+  background-color: var(--surface);
+}
+
+.dark-light .icon-sun {
+  display: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+body.light-mode .dark-light .icon-sun {
+  display: block;
+}
+
+body.light-mode .dark-light .icon-moon {
+  display: none;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px;
+  border-radius: 8px;
+  background-color: var(--surface);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.tab:hover {
+  background-color: var(--surface-hover);
+}
+
+.tab[aria-selected='true'] {
+  background-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.tab-check {
+  display: none;
+}
+
+.tab.is-ready .tab-check {
+  display: inline;
+}
+
+/* Steps */
+.steps {
+  margin-top: 6px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--surface);
+}
+
+.step:last-child {
+  border-bottom: none;
+}
+
+.step-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.step.is-done .step-mark {
+  border-color: var(--done);
+  background-color: var(--done);
+  color: var(--done-text);
+  font-size: 0;
+}
+
+.step.is-done .step-mark::before {
+  content: '✓';
+  font-size: 11px;
+}
+
+.step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  font-weight: 600;
+}
+
+.step-detail {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.step-detail:empty {
+  display: none;
+}
+
+/* A step that waits for the login looks inactive, but still answers with why. */
+.panel:not(.is-logged-in) .step-target,
+.panel:not(.is-logged-in) .step-auto {
+  opacity: 0.55;
+}
+
+.authentication-btn {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.authentication-btn.delete {
+  padding: 6px 4px;
+  background: none;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+.authentication-btn.delete:hover {
+  color: var(--danger);
+}
+
+.ready {
+  display: none;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background-color: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.panel.is-ready .ready {
+  display: block;
+}
+
+/* Repository / database picker; the list opens below it, inside the popup. */
+.select-list {
+  margin-top: 6px;
+}
+
+.select-list > button {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background-color: var(--surface);
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select-list > button::after {
+  content: '▾';
+  float: right;
+  margin-left: 8px;
+  color: var(--muted);
+}
+
+.select-list > button:hover {
+  background-color: var(--surface-hover);
+}
+
+/* Closed lists are hidden, so Tab skips their items. */
+.select-list ul {
+  display: none;
+  max-height: 160px;
+  margin-top: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--surface);
+}
+
+.select-list ul.is-active {
+  display: block;
+}
+
+.select-list ul li + li {
+  border-top: 1px solid var(--border);
+}
+
+.select-list ul li p,
+.select-list ul li button,
+.select-list ul li.install a {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.select-list ul li p {
+  color: var(--muted);
+}
+
+.select-list ul li button:hover,
+.select-list ul li.install a:hover {
+  background-color: var(--surface-hover);
+}
+
+/* The link to install the GitHub App on more repositories. */
+.select-list ul li.install a {
+  color: var(--accent-soft);
+  font-weight: 600;
+}
+
+/* Auto upload switch */
+[type='checkbox'] {
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: var(--border);
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: left 150ms;
+}
+
+[type='checkbox']:checked {
+  background-color: var(--accent);
+}
+
+[type='checkbox']:checked::before {
+  left: 16px;
+}
+
+.step-auto label {
+  cursor: pointer;
+}
+
+/* Problem sites */
+.sites {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.sites h2 {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.site-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.site-status {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background-color: var(--surface);
+  color: var(--done);
+  font-size: 11px;
+}
+
+.site-link {
+  color: var(--accent-soft);
+  font-size: 12px;
+}
+
+.site-link:hover {
+  text-decoration: underline;
+}
+
+/* Toast */
 .scu-toast {
   position: fixed;
   right: 12px;
@@ -296,14 +429,14 @@ a:focus-visible,
   z-index: 1000;
   padding: 10px 12px;
   border-radius: 8px;
-  color: white;
-  background-color: #333333;
+  color: #ffffff;
+  background-color: #334155;
   font-size: 13px;
   line-height: 1.4;
   word-break: break-all;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .scu-toast-error {
-  background-color: #d93025;
+  background-color: #dc2626;
 }

@@ -14,31 +14,50 @@
   "popupLightMode": {
     "message": "라이트 모드"
   },
-  "popupAuthentication": {
-    "message": "로그인"
-  },
   "popupAuthorize": {
     "message": "로그인"
   },
   "popupRemove": {
     "message": "로그아웃"
   },
-  "popupAutoUpload": {
-    "message": "$PLATFORM$ 자동 업로드",
-    "placeholders": {
-      "platform": {
-        "content": "$1"
-      }
-    }
+  "popupStepLogin": {
+    "message": "계정"
+  },
+  "popupStepRepository": {
+    "message": "저장소 선택"
+  },
+  "popupStepDatabase": {
+    "message": "데이터베이스 선택"
+  },
+  "popupAutoUploadLabel": {
+    "message": "정답이면 자동으로 올리기"
+  },
+  "popupConnected": {
+    "message": "연결됨"
+  },
+  "popupReady": {
+    "message": "준비 완료! 문제 페이지에서 업로드 버튼을 눌러요."
+  },
+  "popupSites": {
+    "message": "문제 사이트"
+  },
+  "popupSiteInUse": {
+    "message": "사용 중"
+  },
+  "popupSiteOpen": {
+    "message": "문제 풀러 가기"
+  },
+  "popupUploadTo": {
+    "message": "업로드할 곳"
   },
   "popupSelectRepository": {
-    "message": "저장소 선택"
+    "message": "골라 주세요"
   },
   "popupRepositories": {
     "message": "저장소"
   },
   "popupSelectDatabase": {
-    "message": "데이터베이스 선택"
+    "message": "골라 주세요"
   },
   "popupDatabases": {
     "message": "데이터베이스"

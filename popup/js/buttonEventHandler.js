@@ -8,6 +8,8 @@ import {
   logger,
   t,
 } from '../../scripts/common/utils/index.js';
+import { initializeTabs, showSelected } from './platformState.js';
+import { initializeLightModeToggle } from './theme.js';
 import { showToast } from './toast.js';
 
 /**
@@ -37,7 +39,8 @@ export function initializeButtonEvents() {
   handleUploadedRepositorySelection();
   showDatabases();
   showRepositories();
-  toggleDarkMode();
+  initializeLightModeToggle();
+  initializeTabs();
 }
 
 /**
@@ -91,9 +94,7 @@ const closeSelectListOnEscape = () => {
 const handleAutoUploadBtn = () => {
   document.querySelectorAll('.auto-upload-opt').forEach((input) => {
     input.addEventListener('click', (e) => {
-      const platform = e.currentTarget
-        .closest('li[platform]')
-        .getAttribute('platform');
+      const { platform } = e.currentTarget.dataset;
 
       saveSettings({ [`${platform}AutoUpload`]: e.currentTarget.checked });
     });
@@ -204,9 +205,8 @@ const handleUploadedDatabaseSelection = () => {
     const uploadedDatabase = item.textContent;
     const uploadedDataSourceId = item.getAttribute('data-source-id');
 
-    const picker = document.querySelector('#uploaded-database');
-    picker.textContent = uploadedDatabase;
-    picker.focus();
+    showSelected('notion', uploadedDatabase);
+    document.querySelector('#uploaded-database').focus();
 
     saveSettings({
       notionUploadedDatabase: uploadedDatabase,
@@ -230,9 +230,8 @@ const handleUploadedRepositorySelection = () => {
 
     const uploadedRepository = item.textContent;
 
-    const picker = document.querySelector('#uploaded-repository');
-    picker.textContent = uploadedRepository;
-    picker.focus();
+    showSelected('github', uploadedRepository);
+    document.querySelector('#uploaded-repository').focus();
 
     saveSettings({ githubUploadedRepository: uploadedRepository });
   });
@@ -341,17 +340,4 @@ const showRepositories = () => {
         createInstallItem(),
       ]);
     });
-};
-
-/**
- * Toggles dark mode when the dark-light element is clicked.
- * Adds or removes the "light-mode" class from the body element based on its current state.
- * Stops event propagation to prevent further event handling.
- */
-const toggleDarkMode = () => {
-  document.querySelector('.dark-light').addEventListener('click', (e) => {
-    const isLightMode = document.body.classList.toggle('light-mode');
-    e.currentTarget.setAttribute('aria-pressed', String(isLightMode));
-    e.stopPropagation();
-  });
 };
