@@ -24,12 +24,16 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 
 ## Installation
 
-The extension is not on the Chrome Web Store yet. It needs Chrome 116 or later. Load it manually:
+Install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/source-code-uploader/kgpilkohekdjpfpcckdlnlolddiheijn)**. It needs Chrome 116 or later, and the store keeps it up to date.
+
+### Load unpacked (for development)
 
 1. Download or clone this repository.
 2. Open `chrome://extensions/` (**Chrome › Settings › Extensions**).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and select the repository folder (the one containing `manifest.json`).
+
+The store version has its own extension ID, separate from the unpacked one, so each keeps its own logins and settings. Moving from the unpacked copy to the store version means logging in to GitHub and Notion and selecting the repository and database again; then remove the unpacked copy.
 
 ## Usage
 
