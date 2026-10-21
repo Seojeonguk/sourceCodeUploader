@@ -292,12 +292,34 @@ const openSelectList = (listSelector, items) => {
 };
 
 /**
+ * Shows a spinner on the picker while its list loads, such as the Notion search, which can
+ * take a few seconds. A click while it loads is ignored, so the list is requested once.
+ * @param {HTMLButtonElement} picker - The button that opens the list.
+ * @param {() => Promise<void>} load - Loads and opens the list.
+ */
+const loadWithSpinner = async (picker, load) => {
+  if (picker.getAttribute('aria-busy') === 'true') {
+    return;
+  }
+
+  const status = document.querySelector('#popup-status');
+  picker.setAttribute('aria-busy', 'true');
+  status.textContent = t('popupLoading');
+  try {
+    await load();
+  } finally {
+    picker.removeAttribute('aria-busy');
+    status.textContent = '';
+  }
+};
+
+/**
  * Handles click event to display the list of databases for Notion.
  */
 const showDatabases = () => {
-  document
-    .querySelector('#uploaded-database')
-    .addEventListener('click', async () => {
+  const picker = document.querySelector('#uploaded-database');
+  picker.addEventListener('click', () =>
+    loadWithSpinner(picker, async () => {
       const response = await sendMessage('notion', 'getDatabases');
 
       if (!Array.isArray(response?.message)) {
@@ -314,16 +336,17 @@ const showDatabases = () => {
           }),
         ),
       );
-    });
+    }),
+  );
 };
 
 /**
  * Handles click event to display the list of repositories for GitHub.
  */
 const showRepositories = () => {
-  document
-    .querySelector('#uploaded-repository')
-    .addEventListener('click', async () => {
+  const picker = document.querySelector('#uploaded-repository');
+  picker.addEventListener('click', () =>
+    loadWithSpinner(picker, async () => {
       const response = await sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
       if (!response?.ok || !Array.isArray(response?.message)) {
@@ -339,5 +362,6 @@ const showRepositories = () => {
         ),
         createInstallItem(),
       ]);
-    });
+    }),
+  );
 };

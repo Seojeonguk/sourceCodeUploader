@@ -59,6 +59,9 @@
   "popupSelectDatabase": {
     "message": "Choose…"
   },
+  "popupLoading": {
+    "message": "Loading…"
+  },
   "popupDatabases": {
     "message": "Databases"
   },

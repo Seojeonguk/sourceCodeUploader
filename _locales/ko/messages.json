@@ -59,6 +59,9 @@
   "popupSelectDatabase": {
     "message": "골라 주세요"
   },
+  "popupLoading": {
+    "message": "불러오는 중…"
+  },
   "popupDatabases": {
     "message": "데이터베이스"
   },

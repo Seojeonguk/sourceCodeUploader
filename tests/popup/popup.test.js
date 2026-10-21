@@ -476,6 +476,51 @@ describe('popup', () => {
       });
     });
 
+    it('shows a spinner while the list loads, and asks only once for repeated clicks', async () => {
+      const { sent } = mockChrome();
+      // The background answers later, like a slow Notion search.
+      const pending = [];
+      globalThis.chrome.runtime.sendMessage = (message, callback) => {
+        sent.push(message);
+        pending.push(callback);
+      };
+      initializeButtonEvents();
+      const picker = $$('#uploaded-database');
+
+      picker.click();
+      picker.click();
+      await flush();
+
+      assert.equal(picker.getAttribute('aria-busy'), 'true');
+      assert.equal($$('#popup-status').textContent, 'Loading…');
+      assert.deepEqual(actionsOf(sent), ['notion/getDatabases']);
+
+      pending[0]({
+        ok: true,
+        message: [{ id: 'ds-1', title: [{ plain_text: 'Problems' }] }],
+      });
+      await flush();
+
+      assert.equal(picker.hasAttribute('aria-busy'), false);
+      assert.equal($$('#popup-status').textContent, '');
+      assert.ok($$('#notion-database-list').classList.contains('is-active'));
+    });
+
+    it('stops the spinner when the list cannot be loaded', async () => {
+      mockChrome({
+        responses: {
+          'notion/getDatabases': { ok: false, message: 'Notion is down.' },
+        },
+      });
+      initializeButtonEvents();
+
+      $$('#uploaded-database').click();
+      await flush();
+
+      assert.equal($$('#uploaded-database').hasAttribute('aria-busy'), false);
+      assert.equal(toast().textContent, 'Notion is down.');
+    });
+
     it('shows why the list cannot be loaded', async () => {
       mockChrome({
         responses: {
