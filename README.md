@@ -24,7 +24,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 
 ## Installation
 
-Install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/kgpilkohekdjpfpcckdlnlolddiheijn)**. It needs Chrome 116 or later, and the store keeps it up to date.
+Install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/source-code-uploader/kgpilkohekdjpfpcckdlnlolddiheijn)**. It needs Chrome 116 or later, and the store keeps it up to date.
 
 ### Load unpacked (for development)
 

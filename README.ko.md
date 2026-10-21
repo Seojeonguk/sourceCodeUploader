@@ -24,7 +24,7 @@
 
 ## 설치
 
-**[Chrome 웹 스토어](https://chromewebstore.google.com/detail/kgpilkohekdjpfpcckdlnlolddiheijn)**에서 설치해요. Chrome 116 이상이 필요하고, 업데이트는 스토어가 알아서 해요.
+**[Chrome 웹 스토어](https://chromewebstore.google.com/detail/source-code-uploader/kgpilkohekdjpfpcckdlnlolddiheijn)**에서 설치해요. Chrome 116 이상이 필요하고, 업데이트는 스토어가 알아서 해요.
 
 ### 직접 불러오기 (개발용)
 
