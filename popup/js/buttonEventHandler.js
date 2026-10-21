@@ -8,6 +8,8 @@ import {
   logger,
   t,
 } from '../../scripts/common/utils/index.js';
+import { initializeTabs, showSelected } from './platformState.js';
+import { initializeLightModeToggle } from './theme.js';
 import { showToast } from './toast.js';
 
 /**
@@ -37,7 +39,8 @@ export function initializeButtonEvents() {
   handleUploadedRepositorySelection();
   showDatabases();
   showRepositories();
-  toggleDarkMode();
+  initializeLightModeToggle();
+  initializeTabs();
 }
 
 /**
@@ -91,9 +94,7 @@ const closeSelectListOnEscape = () => {
 const handleAutoUploadBtn = () => {
   document.querySelectorAll('.auto-upload-opt').forEach((input) => {
     input.addEventListener('click', (e) => {
-      const platform = e.currentTarget
-        .closest('li[platform]')
-        .getAttribute('platform');
+      const { platform } = e.currentTarget.dataset;
 
       saveSettings({ [`${platform}AutoUpload`]: e.currentTarget.checked });
     });
@@ -204,9 +205,8 @@ const handleUploadedDatabaseSelection = () => {
     const uploadedDatabase = item.textContent;
     const uploadedDataSourceId = item.getAttribute('data-source-id');
 
-    const picker = document.querySelector('#uploaded-database');
-    picker.textContent = uploadedDatabase;
-    picker.focus();
+    showSelected('notion', uploadedDatabase);
+    document.querySelector('#uploaded-database').focus();
 
     saveSettings({
       notionUploadedDatabase: uploadedDatabase,
@@ -230,9 +230,8 @@ const handleUploadedRepositorySelection = () => {
 
     const uploadedRepository = item.textContent;
 
-    const picker = document.querySelector('#uploaded-repository');
-    picker.textContent = uploadedRepository;
-    picker.focus();
+    showSelected('github', uploadedRepository);
+    document.querySelector('#uploaded-repository').focus();
 
     saveSettings({ githubUploadedRepository: uploadedRepository });
   });
@@ -293,12 +292,34 @@ const openSelectList = (listSelector, items) => {
 };
 
 /**
+ * Shows a spinner on the picker while its list loads, such as the Notion search, which can
+ * take a few seconds. A click while it loads is ignored, so the list is requested once.
+ * @param {HTMLButtonElement} picker - The button that opens the list.
+ * @param {() => Promise<void>} load - Loads and opens the list.
+ */
+const loadWithSpinner = async (picker, load) => {
+  if (picker.getAttribute('aria-busy') === 'true') {
+    return;
+  }
+
+  const status = document.querySelector('#popup-status');
+  picker.setAttribute('aria-busy', 'true');
+  status.textContent = t('popupLoading');
+  try {
+    await load();
+  } finally {
+    picker.removeAttribute('aria-busy');
+    status.textContent = '';
+  }
+};
+
+/**
  * Handles click event to display the list of databases for Notion.
  */
 const showDatabases = () => {
-  document
-    .querySelector('#uploaded-database')
-    .addEventListener('click', async () => {
+  const picker = document.querySelector('#uploaded-database');
+  picker.addEventListener('click', () =>
+    loadWithSpinner(picker, async () => {
       const response = await sendMessage('notion', 'getDatabases');
 
       if (!Array.isArray(response?.message)) {
@@ -315,16 +336,17 @@ const showDatabases = () => {
           }),
         ),
       );
-    });
+    }),
+  );
 };
 
 /**
  * Handles click event to display the list of repositories for GitHub.
  */
 const showRepositories = () => {
-  document
-    .querySelector('#uploaded-repository')
-    .addEventListener('click', async () => {
+  const picker = document.querySelector('#uploaded-repository');
+  picker.addEventListener('click', () =>
+    loadWithSpinner(picker, async () => {
       const response = await sendMessage('github', ACTIONS.GET_REPOSITORIES);
 
       if (!response?.ok || !Array.isArray(response?.message)) {
@@ -340,18 +362,6 @@ const showRepositories = () => {
         ),
         createInstallItem(),
       ]);
-    });
-};
-
-/**
- * Toggles dark mode when the dark-light element is clicked.
- * Adds or removes the "light-mode" class from the body element based on its current state.
- * Stops event propagation to prevent further event handling.
- */
-const toggleDarkMode = () => {
-  document.querySelector('.dark-light').addEventListener('click', (e) => {
-    const isLightMode = document.body.classList.toggle('light-mode');
-    e.currentTarget.setAttribute('aria-pressed', String(isLightMode));
-    e.stopPropagation();
-  });
+    }),
+  );
 };

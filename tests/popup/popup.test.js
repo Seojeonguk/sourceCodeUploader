@@ -95,29 +95,80 @@ describe('popup', () => {
       mockChrome({
         storage: {
           githubAccessToken: 'token',
+          githubID: 'seojeonguk',
           githubAutoUpload: true,
           githubUploadedRepository: 'solutions',
           notionUploadedDatabase: 'Problems',
         },
       });
 
-      initializeOnLoad();
-      await flush();
+      await initializeOnLoad();
 
-      assert.ok($$('.github .status').classList.contains('green'));
-      assert.equal($$('#github-authentication').textContent, 'Remove');
+      assert.ok($$('.github .step-login').classList.contains('is-done'));
+      assert.equal($$('.github .account').textContent, 'seojeonguk');
+      assert.equal($$('#github-authentication').textContent, 'Log out');
       assert.ok($$('#github-authentication').classList.contains('delete'));
       assert.equal($$('#github-auto-upload').checked, true);
       assert.equal($$('#uploaded-repository').textContent, 'solutions');
+      assert.ok($$('.github .step-target').classList.contains('is-done'));
+      assert.ok($$('#github-tab').classList.contains('is-ready'));
 
-      assert.ok(!$$('.notion .status').classList.contains('green'));
-      assert.equal(
-        $$('#notion-authentication').textContent.trim(),
-        'Authorize',
-      );
+      assert.ok(!$$('.notion .step-login').classList.contains('is-done'));
+      assert.equal($$('#notion-authentication').textContent.trim(), 'Log in');
       assert.ok(!$$('#notion-authentication').classList.contains('delete'));
       assert.equal($$('#notion-auto-upload').checked, false);
       assert.equal($$('#uploaded-database').textContent, 'Problems');
+      // A database is selected, but the login is missing, so the step is not done.
+      assert.ok(!$$('.notion .step-target').classList.contains('is-done'));
+      assert.ok(!$$('#notion-tab').classList.contains('is-ready'));
+    });
+
+    it('opens on the first platform that is not set up yet', async () => {
+      mockChrome({
+        storage: {
+          githubAccessToken: 'token',
+          githubUploadedRepository: 'solutions',
+        },
+      });
+
+      await initializeOnLoad();
+
+      assert.equal($$('#notion-tab').getAttribute('aria-selected'), 'true');
+      assert.equal($$('#github-tab').getAttribute('aria-selected'), 'false');
+      assert.equal($$('#notion-panel').hidden, false);
+      assert.equal($$('#github-panel').hidden, true);
+    });
+
+    it('shows Connected for Notion, which has no user name', async () => {
+      mockChrome({ storage: { notionAccessToken: 'token' } });
+
+      await initializeOnLoad();
+
+      assert.equal($$('.notion .account').textContent, 'Connected');
+      assert.ok($$('#notion-panel').classList.contains('is-logged-in'));
+    });
+
+    it('lists the judge sites with a link to their problems', async () => {
+      mockChrome();
+
+      await initializeOnLoad();
+
+      const sites = [...document.querySelectorAll('#site-list .site')];
+      assert.deepEqual(
+        sites.map((site) => site.querySelector('.site-name').textContent),
+        ['Programmers'],
+      );
+      assert.equal(
+        sites[0].querySelector('.site-status').textContent,
+        'In use',
+      );
+      const link = sites[0].querySelector('a');
+      assert.equal(
+        link.href,
+        'https://school.programmers.co.kr/learn/challenges',
+      );
+      assert.equal(link.target, '_blank');
+      assert.equal(link.textContent, 'Solve problems');
     });
 
     it('shows why the last Notion login failed', async () => {
@@ -425,6 +476,51 @@ describe('popup', () => {
       });
     });
 
+    it('shows a spinner while the list loads, and asks only once for repeated clicks', async () => {
+      const { sent } = mockChrome();
+      // The background answers later, like a slow Notion search.
+      const pending = [];
+      globalThis.chrome.runtime.sendMessage = (message, callback) => {
+        sent.push(message);
+        pending.push(callback);
+      };
+      initializeButtonEvents();
+      const picker = $$('#uploaded-database');
+
+      picker.click();
+      picker.click();
+      await flush();
+
+      assert.equal(picker.getAttribute('aria-busy'), 'true');
+      assert.equal($$('#popup-status').textContent, 'Loading…');
+      assert.deepEqual(actionsOf(sent), ['notion/getDatabases']);
+
+      pending[0]({
+        ok: true,
+        message: [{ id: 'ds-1', title: [{ plain_text: 'Problems' }] }],
+      });
+      await flush();
+
+      assert.equal(picker.hasAttribute('aria-busy'), false);
+      assert.equal($$('#popup-status').textContent, '');
+      assert.ok($$('#notion-database-list').classList.contains('is-active'));
+    });
+
+    it('stops the spinner when the list cannot be loaded', async () => {
+      mockChrome({
+        responses: {
+          'notion/getDatabases': { ok: false, message: 'Notion is down.' },
+        },
+      });
+      initializeButtonEvents();
+
+      $$('#uploaded-database').click();
+      await flush();
+
+      assert.equal($$('#uploaded-database').hasAttribute('aria-busy'), false);
+      assert.equal(toast().textContent, 'Notion is down.');
+    });
+
     it('shows why the list cannot be loaded', async () => {
       mockChrome({
         responses: {
@@ -446,7 +542,83 @@ describe('popup', () => {
     });
   });
 
+  describe('tabs', () => {
+    it('shows the panel of the clicked tab', () => {
+      mockChrome();
+      initializeButtonEvents();
+
+      $$('#notion-tab').click();
+
+      assert.equal($$('#notion-tab').getAttribute('aria-selected'), 'true');
+      assert.equal($$('#notion-panel').hidden, false);
+      assert.equal($$('#github-panel').hidden, true);
+      assert.equal($$('#notion-tab').tabIndex, 0);
+      assert.equal($$('#github-tab').tabIndex, -1);
+    });
+
+    it('moves between the tabs with the arrow keys', () => {
+      mockChrome();
+      initializeButtonEvents();
+      $$('#github-tab').focus();
+
+      const press = (key) =>
+        document.activeElement.dispatchEvent(
+          new window.KeyboardEvent('keydown', { key, bubbles: true }),
+        );
+
+      press('ArrowRight');
+      assert.equal(document.activeElement, $$('#notion-tab'));
+      assert.equal($$('#notion-panel').hidden, false);
+
+      press('ArrowRight');
+      assert.equal(document.activeElement, $$('#github-tab'));
+
+      press('End');
+      assert.equal(document.activeElement, $$('#notion-tab'));
+      press('Home');
+      assert.equal(document.activeElement, $$('#github-tab'));
+    });
+
+    it('marks the tab ready when a repository is selected after the login', async () => {
+      mockChrome({
+        storage: { githubAccessToken: 'token' },
+        responses: {
+          'github/getRepositories': {
+            ok: true,
+            message: [{ name: 'solutions' }],
+          },
+        },
+      });
+      initializeButtonEvents();
+      await initializeOnLoad();
+      assert.ok(!$$('#github-tab').classList.contains('is-ready'));
+
+      $$('#uploaded-repository').click();
+      await flush();
+      $$('#repository-list li button').click();
+      await flush();
+
+      assert.ok($$('#github-tab').classList.contains('is-ready'));
+      assert.ok($$('#github-panel').classList.contains('is-ready'));
+    });
+  });
+
   describe('dark mode', () => {
+    it('remembers the light mode', async () => {
+      const { storage } = mockChrome();
+      initializeButtonEvents();
+
+      $$('.dark-light').click();
+      await flush();
+      assert.equal(storage.popupLightMode, true);
+
+      loadPopup();
+      mockChrome({ storage: { popupLightMode: true } });
+      await initializeOnLoad();
+      assert.ok(document.body.classList.contains('light-mode'));
+      assert.equal($$('.dark-light').getAttribute('aria-pressed'), 'true');
+    });
+
     it('toggles the light mode without closing an open list', async () => {
       mockChrome();
       initializeButtonEvents();
@@ -568,10 +740,7 @@ describe('popup', () => {
       await flush();
 
       assert.equal(storage.githubUploadedRepository, undefined);
-      assert.equal(
-        $$('#uploaded-repository').textContent.trim(),
-        'Select Repository',
-      );
+      assert.equal($$('#uploaded-repository').textContent.trim(), 'Choose…');
     });
   });
 

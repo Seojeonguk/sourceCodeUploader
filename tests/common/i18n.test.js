@@ -147,15 +147,23 @@ describe('localizePage', () => {
     assert.equal(doc.documentElement.lang, 'ko');
     assert.equal(
       doc.querySelector('#uploaded-repository').textContent,
+      '골라 주세요',
+    );
+    assert.equal(
+      doc.querySelector('.github .step-target .step-title').textContent,
       '저장소 선택',
     );
     assert.equal(
-      doc.querySelector('#uploaded-database').textContent,
+      doc.querySelector('.notion .step-target .step-title').textContent,
       '데이터베이스 선택',
     );
     assert.equal(
-      doc.querySelector('#github-auto-upload').getAttribute('aria-label'),
-      'GitHub 자동 업로드',
+      doc.querySelector('label[for="github-auto-upload"]').textContent.trim(),
+      '정답이면 자동으로 올리기',
+    );
+    assert.equal(
+      doc.querySelector('#github-authentication').textContent,
+      '로그인',
     );
     assert.equal(
       doc.querySelector('#repository-list').getAttribute('aria-label'),
