@@ -1,3 +1,5 @@
+import { t } from '../utils/i18n.js';
+
 export class HttpException extends Error {
   /**
    * Thrown when an API responds with an error status.
@@ -35,11 +37,11 @@ export class HttpException extends Error {
 
   static describeStatus(status) {
     if (status === 429) {
-      return 'Too many requests. Try again in a moment.';
+      return t('httpTooManyRequests');
     }
     if (status >= 500) {
-      return 'The server could not handle the request. Try again later.';
+      return t('httpServerError');
     }
-    return 'The request failed.';
+    return t('httpFailed');
   }
 }

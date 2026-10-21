@@ -1,6 +1,7 @@
 import {
   getChromeStorage,
   sendMessage,
+  t,
 } from '../../scripts/common/utils/index.js';
 import { showToast } from './toast.js';
 
@@ -37,7 +38,7 @@ const checkPlatformInfos = () => {
     if (accessToken) {
       document.querySelector(`.${platform} .status`).classList.add('green');
       const button = document.querySelector(`.${platform} .authentication-btn`);
-      button.textContent = 'Remove';
+      button.textContent = t('popupRemove');
       button.classList.add('delete');
     }
 

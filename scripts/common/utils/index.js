@@ -1,5 +1,6 @@
 import { getResourceURL, sendMessage } from './chrome/runtime.js';
 import { encodeBase64Unicode } from './encoding.js';
+import { localizePage, t } from './i18n.js';
 import { createGithubAuthHeader, request } from './fetch.js';
 import { logger } from './logger.js';
 import { fetchAllPages } from './pagination.js';
@@ -26,5 +27,7 @@ export {
   sendMessage,
   encodeBase64Unicode,
   fetchAllPages,
+  localizePage,
   logger,
+  t,
 };

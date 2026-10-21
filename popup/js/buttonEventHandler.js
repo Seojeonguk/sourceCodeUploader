@@ -6,6 +6,7 @@ import {
   setChromeStorage,
   sendMessage,
   logger,
+  t,
 } from '../../scripts/common/utils/index.js';
 import { showToast } from './toast.js';
 
@@ -22,7 +23,7 @@ const saveSettings = async (values) => {
     );
   } catch (e) {
     logger.error('Failed to save the settings.', e);
-    showToast('Failed to save the setting. Try again.', 'error');
+    showToast(t('popupSaveFailed'), 'error');
   }
 };
 
@@ -182,9 +183,7 @@ const prepareDatabase = async (dataSourceId) => {
     return;
   }
   if (Array.isArray(response.message) && response.message.length > 0) {
-    showToast(
-      `Added ${response.message.join(', ')} to the database for the uploads.`,
-    );
+    showToast(t('popupDatabasePrepared', response.message.join(', ')));
   }
 };
 
@@ -270,7 +269,7 @@ const createInstallItem = () => {
   link.href = GITHUB_CONFIG.INSTALL_URL;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
-  link.textContent = '+ Add repositories';
+  link.textContent = t('popupAddRepositories');
 
   const item = document.createElement('li');
   item.className = 'install';

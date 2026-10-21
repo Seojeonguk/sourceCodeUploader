@@ -137,7 +137,7 @@ export const commit = async (payload) => {
   }
 
   if (isSameContent(existingFile, encodeNewSourceCode)) {
-    throw new DuplicateResourceException('Github', 'content');
+    throw new DuplicateResourceException('GitHub', 'content');
   }
 
   const body = JSON.stringify({

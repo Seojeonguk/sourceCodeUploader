@@ -1,3 +1,5 @@
+import { t } from '../i18n.js';
+
 /**
  * Sends a message to the background script.
  * If the background does not answer, such as when it failed to start, the response is
@@ -21,8 +23,7 @@ export const sendMessage = (platform, action, payload) =>
         if (error || response === undefined) {
           resolve({
             ok: false,
-            message:
-              error?.message ?? 'The extension did not respond. Try again.',
+            message: error?.message ?? t('noResponse'),
           });
           return;
         }

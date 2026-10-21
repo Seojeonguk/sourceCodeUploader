@@ -1,4 +1,8 @@
-import { sendMessage } from '../../scripts/common/utils/index.js';
+import {
+  localizePage,
+  sendMessage,
+  t,
+} from '../../scripts/common/utils/index.js';
 
 // The tab closes this long after the login, so the user can see that it worked.
 const CLOSE_DELAY = 1500;
@@ -11,7 +15,7 @@ const statusElement = document.querySelector('#status');
  * @param {'info'|'success'|'error'} [type='info']
  */
 const setStatus = (message, type = 'info') => {
-  statusElement.textContent = message || 'Something went wrong.';
+  statusElement.textContent = message || t('somethingWentWrong');
   statusElement.className = `status status-${type}`;
 };
 
@@ -34,9 +38,9 @@ const closeTab = async () => {
 const copyCode = async (userCode) => {
   try {
     await navigator.clipboard.writeText(userCode);
-    setStatus('Copied. Paste the code on GitHub.');
+    setStatus(t('githubLoginCopied'));
   } catch {
-    setStatus('Select the code and copy it.');
+    setStatus(t('githubLoginCopyManually'));
   }
 };
 
@@ -61,19 +65,16 @@ const waitForLogin = async (interval) => {
       return;
     case 'done':
       hideCode();
-      setStatus('Logged in to GitHub. This tab will close.', 'success');
+      setStatus(t('githubLoginDone'), 'success');
       setTimeout(closeTab, CLOSE_DELAY);
       return;
     case 'denied':
       hideCode();
-      setStatus('The access was denied on GitHub.', 'error');
+      setStatus(t('githubLoginDenied'), 'error');
       return;
     default:
       hideCode();
-      setStatus(
-        'The code has expired. Reload this page to get a new code.',
-        'error',
-      );
+      setStatus(t('githubLoginExpired'), 'error');
   }
 };
 
@@ -97,9 +98,10 @@ const start = async () => {
   link.addEventListener('click', () => copyCode(userCode));
 
   document.querySelector('#code-section').hidden = false;
-  setStatus('Waiting for the code to be entered on GitHub...');
+  setStatus(t('githubLoginWaiting'));
 
   waitForLogin(interval);
 };
 
+localizePage();
 start();

@@ -1,4 +1,5 @@
 import { NotFoundException } from '../../common/exception/index.js';
+import { t } from '../../common/utils/index.js';
 import { GITHUB_CONFIG } from '../config/config.js';
 import { getUserInfo, saveLogin } from './authService.js';
 import { postToGithubOAuth } from './oauthRequest.js';
@@ -109,7 +110,7 @@ export const pollDeviceLogin = async () => {
       throw new Error(
         response?.error_description ??
           response?.error ??
-          'Failed to log in to GitHub.',
+          t('githubLoginFailed'),
       );
   }
 };

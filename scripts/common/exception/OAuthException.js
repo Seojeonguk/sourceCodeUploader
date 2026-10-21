@@ -1,3 +1,5 @@
+import { t } from '../utils/i18n.js';
+
 export class OAuthException extends Error {
   /**
    * Thrown when an OAuth login cannot be completed.
@@ -19,13 +21,13 @@ export class OAuthException extends Error {
   static createMessage(platform, reason) {
     switch (reason) {
       case 'state':
-        return `The ${platform} login could not be checked. Try again.`;
+        return t('oauthState', platform);
       case 'window_closed':
-        return `The ${platform} login window was closed before the login finished.`;
+        return t('oauthWindowClosed', platform);
       case 'access_denied':
-        return `Access to ${platform} was not allowed.`;
+        return t('oauthAccessDenied', platform);
       default:
-        return `${platform} could not complete the login (${reason}).`;
+        return t('oauthOther', platform, reason);
     }
   }
 }

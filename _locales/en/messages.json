@@ -1,0 +1,334 @@
+{
+  "extDescription": {
+    "message": "Uploads your accepted Programmers solutions to GitHub and Notion with one click."
+  },
+  "htmlLang": {
+    "message": "en"
+  },
+  "somethingWentWrong": {
+    "message": "Something went wrong."
+  },
+  "noResponse": {
+    "message": "The extension did not respond. Try again."
+  },
+  "popupLightMode": {
+    "message": "Light mode"
+  },
+  "popupAuthentication": {
+    "message": "Authentication"
+  },
+  "popupAuthorize": {
+    "message": "Authorize"
+  },
+  "popupRemove": {
+    "message": "Remove"
+  },
+  "popupAutoUpload": {
+    "message": "Auto upload to $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupSelectRepository": {
+    "message": "Select Repository"
+  },
+  "popupRepositories": {
+    "message": "Repositories"
+  },
+  "popupSelectDatabase": {
+    "message": "Select Database"
+  },
+  "popupDatabases": {
+    "message": "Databases"
+  },
+  "popupRequireAuthentication": {
+    "message": "Require Authentication"
+  },
+  "popupAddRepositories": {
+    "message": "+ Add repositories"
+  },
+  "popupSaveFailed": {
+    "message": "Failed to save the setting. Try again."
+  },
+  "popupDatabasePrepared": {
+    "message": "Added $PROPERTIES$ to the database for the uploads.",
+    "placeholders": {
+      "properties": {
+        "content": "$1"
+      }
+    }
+  },
+  "untitled": {
+    "message": "Untitled"
+  },
+  "githubLoginTitle": {
+    "message": "Log in to GitHub - Source Code Uploader"
+  },
+  "githubLoginHeading": {
+    "message": "Log in to GitHub"
+  },
+  "githubLoginStep1": {
+    "message": "1. Copy this code."
+  },
+  "githubLoginCopy": {
+    "message": "Copy"
+  },
+  "githubLoginStep2": {
+    "message": "2. Enter it on GitHub and authorize Source Code Uploader."
+  },
+  "githubLoginOpen": {
+    "message": "Open GitHub"
+  },
+  "githubLoginRequesting": {
+    "message": "Requesting a code..."
+  },
+  "githubLoginCopied": {
+    "message": "Copied. Paste the code on GitHub."
+  },
+  "githubLoginCopyManually": {
+    "message": "Select the code and copy it."
+  },
+  "githubLoginWaiting": {
+    "message": "Waiting for the code to be entered on GitHub..."
+  },
+  "githubLoginDone": {
+    "message": "Logged in to GitHub. This tab will close."
+  },
+  "githubLoginDenied": {
+    "message": "The access was denied on GitHub."
+  },
+  "githubLoginExpired": {
+    "message": "The code has expired. Reload this page to get a new code."
+  },
+  "githubLoginFailed": {
+    "message": "Failed to log in to GitHub."
+  },
+  "githubRefreshFailed": {
+    "message": "Could not refresh the GitHub login. Check the network and try again."
+  },
+  "uploadTo": {
+    "message": "Upload to $PLATFORM$",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "uploadedTo": {
+    "message": "Uploaded to $PLATFORM$.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "open": {
+    "message": "Open"
+  },
+  "sourceCodeNotFound": {
+    "message": "Source code not found."
+  },
+  "setupLogin": {
+    "message": "Log in to $PLATFORM$ in the extension popup first.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupProxy": {
+    "message": "Set the URL of the $PLATFORM$ token proxy (TOKEN_PROXY_URL) in the extension config first.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupLoginExpired": {
+    "message": "Your $PLATFORM$ login has expired. Log in again in the extension popup.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupLoginUpgrade": {
+    "message": "The $PLATFORM$ login now uses only the repositories you choose. Log in again in the extension popup.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupAppInstall": {
+    "message": "Install the Source Code Uploader $PLATFORM$ App on the selected repository, or select another repository in the extension popup.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupDatabaseAgain": {
+    "message": "Select the $PLATFORM$ database again in the extension popup. The saved one could not be matched to a single data source.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupRepository": {
+    "message": "Select a $PLATFORM$ repository in the extension popup first.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupDatabase": {
+    "message": "Select a $PLATFORM$ database in the extension popup first.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthState": {
+    "message": "The $PLATFORM$ login could not be checked. Try again.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthWindowClosed": {
+    "message": "The $PLATFORM$ login window was closed before the login finished.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthAccessDenied": {
+    "message": "Access to $PLATFORM$ was not allowed.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthOther": {
+    "message": "$PLATFORM$ could not complete the login ($REASON$).",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "timeoutMayBeApplied": {
+    "message": "The request timed out, but it may have been applied. Check the result before trying again."
+  },
+  "timeout": {
+    "message": "The request timed out. Try again later."
+  },
+  "httpTooManyRequests": {
+    "message": "Too many requests. Try again in a moment."
+  },
+  "httpServerError": {
+    "message": "The server could not handle the request. Try again later."
+  },
+  "httpFailed": {
+    "message": "The request failed."
+  },
+  "duplicateContent": {
+    "message": "The same code is already uploaded to $PLATFORM$.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "databasePropertyWrongType": {
+    "message": "The $PLATFORM$ database has properties of the wrong type: $LIST$. Change their type, or rename them so the extension can add its own.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "list": {
+        "content": "$2"
+      }
+    }
+  },
+  "databasePropertyItem": {
+    "message": "\"$NAME$\" is $TYPE$, not $EXPECTED$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "type": {
+        "content": "$2"
+      },
+      "expected": {
+        "content": "$3"
+      }
+    }
+  },
+  "databasePropertySeparator": {
+    "message": "; "
+  },
+  "notionType_checkbox": {
+    "message": "Checkbox"
+  },
+  "notionType_created_time": {
+    "message": "Created time"
+  },
+  "notionType_date": {
+    "message": "Date"
+  },
+  "notionType_email": {
+    "message": "Email"
+  },
+  "notionType_files": {
+    "message": "Files & media"
+  },
+  "notionType_formula": {
+    "message": "Formula"
+  },
+  "notionType_multi_select": {
+    "message": "Multi-select"
+  },
+  "notionType_number": {
+    "message": "Number"
+  },
+  "notionType_people": {
+    "message": "Person"
+  },
+  "notionType_phone_number": {
+    "message": "Phone"
+  },
+  "notionType_relation": {
+    "message": "Relation"
+  },
+  "notionType_rich_text": {
+    "message": "Text"
+  },
+  "notionType_rollup": {
+    "message": "Rollup"
+  },
+  "notionType_select": {
+    "message": "Select"
+  },
+  "notionType_status": {
+    "message": "Status"
+  },
+  "notionType_title": {
+    "message": "Title"
+  },
+  "notionType_url": {
+    "message": "URL"
+  }
+}

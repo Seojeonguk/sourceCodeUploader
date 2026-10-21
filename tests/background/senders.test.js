@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import { isAllowedSender } from '../../scripts/senders.js';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const EXTENSION_ID = 'mfhbpmbchemfhijjamldbkidlegfmaff';
 const EXTENSION_ORIGIN = `chrome-extension://${EXTENSION_ID}`;
@@ -46,6 +47,7 @@ const judgePage = (url = PROBLEM_URL, overrides = {}) => ({
 describe('isAllowedSender', () => {
   beforeEach(() => {
     globalThis.chrome = {
+      i18n: chromeI18n,
       runtime: {
         id: EXTENSION_ID,
         getURL: (path) => `${EXTENSION_ORIGIN}/${path}`,

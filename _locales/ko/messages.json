@@ -1,0 +1,334 @@
+{
+  "extDescription": {
+    "message": "프로그래머스에서 통과한 코드를 버튼 한 번으로 GitHub와 Notion에 올려요."
+  },
+  "htmlLang": {
+    "message": "ko"
+  },
+  "somethingWentWrong": {
+    "message": "문제가 생겼어요."
+  },
+  "noResponse": {
+    "message": "확장 프로그램이 응답하지 않았어요. 다시 시도해 주세요."
+  },
+  "popupLightMode": {
+    "message": "라이트 모드"
+  },
+  "popupAuthentication": {
+    "message": "로그인"
+  },
+  "popupAuthorize": {
+    "message": "로그인"
+  },
+  "popupRemove": {
+    "message": "로그아웃"
+  },
+  "popupAutoUpload": {
+    "message": "$PLATFORM$ 자동 업로드",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupSelectRepository": {
+    "message": "저장소 선택"
+  },
+  "popupRepositories": {
+    "message": "저장소"
+  },
+  "popupSelectDatabase": {
+    "message": "데이터베이스 선택"
+  },
+  "popupDatabases": {
+    "message": "데이터베이스"
+  },
+  "popupRequireAuthentication": {
+    "message": "로그인이 필요해요"
+  },
+  "popupAddRepositories": {
+    "message": "+ 저장소 추가"
+  },
+  "popupSaveFailed": {
+    "message": "설정을 저장하지 못했어요. 다시 시도해 주세요."
+  },
+  "popupDatabasePrepared": {
+    "message": "업로드에 필요한 속성($PROPERTIES$)을 데이터베이스에 추가했어요.",
+    "placeholders": {
+      "properties": {
+        "content": "$1"
+      }
+    }
+  },
+  "untitled": {
+    "message": "제목 없음"
+  },
+  "githubLoginTitle": {
+    "message": "GitHub 로그인 - Source Code Uploader"
+  },
+  "githubLoginHeading": {
+    "message": "GitHub 로그인"
+  },
+  "githubLoginStep1": {
+    "message": "1. 이 코드를 복사해요."
+  },
+  "githubLoginCopy": {
+    "message": "복사"
+  },
+  "githubLoginStep2": {
+    "message": "2. GitHub에 코드를 입력하고 Source Code Uploader를 승인해요."
+  },
+  "githubLoginOpen": {
+    "message": "GitHub 열기"
+  },
+  "githubLoginRequesting": {
+    "message": "코드를 요청하는 중..."
+  },
+  "githubLoginCopied": {
+    "message": "복사했어요. GitHub에 코드를 붙여 넣어요."
+  },
+  "githubLoginCopyManually": {
+    "message": "코드를 선택해서 복사해요."
+  },
+  "githubLoginWaiting": {
+    "message": "GitHub에 코드가 입력되기를 기다리는 중..."
+  },
+  "githubLoginDone": {
+    "message": "GitHub에 로그인했어요. 이 탭은 곧 닫혀요."
+  },
+  "githubLoginDenied": {
+    "message": "GitHub에서 접근이 거부됐어요."
+  },
+  "githubLoginExpired": {
+    "message": "코드가 만료됐어요. 이 페이지를 새로고침해서 새 코드를 받아요."
+  },
+  "githubLoginFailed": {
+    "message": "GitHub에 로그인하지 못했어요."
+  },
+  "githubRefreshFailed": {
+    "message": "GitHub 로그인을 갱신하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요."
+  },
+  "uploadTo": {
+    "message": "$PLATFORM$에 업로드",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "uploadedTo": {
+    "message": "$PLATFORM$에 업로드했어요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "open": {
+    "message": "열기"
+  },
+  "sourceCodeNotFound": {
+    "message": "소스 코드를 찾지 못했어요."
+  },
+  "setupLogin": {
+    "message": "먼저 확장 프로그램 팝업에서 $PLATFORM$에 로그인해 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupProxy": {
+    "message": "먼저 확장 프로그램 설정에 $PLATFORM$ 토큰 프록시 URL(TOKEN_PROXY_URL)을 넣어 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupLoginExpired": {
+    "message": "$PLATFORM$ 로그인이 만료됐어요. 확장 프로그램 팝업에서 다시 로그인해 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupLoginUpgrade": {
+    "message": "이제 $PLATFORM$ 로그인은 고른 저장소에만 접근해요. 확장 프로그램 팝업에서 다시 로그인해 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupAppInstall": {
+    "message": "선택한 저장소에 Source Code Uploader $PLATFORM$ App을 설치하거나, 확장 프로그램 팝업에서 다른 저장소를 골라 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupDatabaseAgain": {
+    "message": "확장 프로그램 팝업에서 $PLATFORM$ 데이터베이스를 다시 골라 주세요. 저장된 데이터베이스에 맞는 데이터 소스를 하나로 정하지 못했어요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupRepository": {
+    "message": "먼저 확장 프로그램 팝업에서 $PLATFORM$ 저장소를 골라 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "setupDatabase": {
+    "message": "먼저 확장 프로그램 팝업에서 $PLATFORM$ 데이터베이스를 골라 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthState": {
+    "message": "$PLATFORM$ 로그인을 확인하지 못했어요. 다시 시도해 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthWindowClosed": {
+    "message": "로그인이 끝나기 전에 $PLATFORM$ 로그인 창이 닫혔어요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthAccessDenied": {
+    "message": "$PLATFORM$ 접근이 허용되지 않았어요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "oauthOther": {
+    "message": "$PLATFORM$ 로그인을 마치지 못했어요($REASON$).",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "reason": {
+        "content": "$2"
+      }
+    }
+  },
+  "timeoutMayBeApplied": {
+    "message": "요청 시간이 초과됐지만 반영됐을 수도 있어요. 다시 시도하기 전에 결과를 확인해 주세요."
+  },
+  "timeout": {
+    "message": "요청 시간이 초과됐어요. 잠시 후 다시 시도해 주세요."
+  },
+  "httpTooManyRequests": {
+    "message": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요."
+  },
+  "httpServerError": {
+    "message": "서버가 요청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요."
+  },
+  "httpFailed": {
+    "message": "요청이 실패했어요."
+  },
+  "duplicateContent": {
+    "message": "$PLATFORM$에 같은 코드가 이미 올라가 있어요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      }
+    }
+  },
+  "databasePropertyWrongType": {
+    "message": "$PLATFORM$ 데이터베이스에 유형이 다른 속성이 있어요: $LIST$. 유형을 바꾸거나, 확장 프로그램이 새로 추가할 수 있게 이름을 바꿔 주세요.",
+    "placeholders": {
+      "platform": {
+        "content": "$1"
+      },
+      "list": {
+        "content": "$2"
+      }
+    }
+  },
+  "databasePropertyItem": {
+    "message": "\"$NAME$\"은(는) $EXPECTED$이 아니라 $TYPE$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "type": {
+        "content": "$2"
+      },
+      "expected": {
+        "content": "$3"
+      }
+    }
+  },
+  "databasePropertySeparator": {
+    "message": ", "
+  },
+  "notionType_checkbox": {
+    "message": "체크박스"
+  },
+  "notionType_created_time": {
+    "message": "생성 일시"
+  },
+  "notionType_date": {
+    "message": "날짜"
+  },
+  "notionType_email": {
+    "message": "이메일"
+  },
+  "notionType_files": {
+    "message": "파일과 미디어"
+  },
+  "notionType_formula": {
+    "message": "수식"
+  },
+  "notionType_multi_select": {
+    "message": "다중 선택"
+  },
+  "notionType_number": {
+    "message": "숫자"
+  },
+  "notionType_people": {
+    "message": "사람"
+  },
+  "notionType_phone_number": {
+    "message": "전화번호"
+  },
+  "notionType_relation": {
+    "message": "관계형"
+  },
+  "notionType_rich_text": {
+    "message": "텍스트"
+  },
+  "notionType_rollup": {
+    "message": "롤업"
+  },
+  "notionType_select": {
+    "message": "선택"
+  },
+  "notionType_status": {
+    "message": "상태"
+  },
+  "notionType_title": {
+    "message": "제목"
+  },
+  "notionType_url": {
+    "message": "URL"
+  }
+}

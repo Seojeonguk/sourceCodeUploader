@@ -3,7 +3,7 @@
  * dist/source-code-uploader-<version>.zip. See docs/chrome-web-store.md.
  *
  * The zip holds manifest.json without its `key`, since the store gives the extension its
- * own ID, and the files the extension loads (icon, popup, scripts) without the READMEs.
+ * own ID, and the files the extension loads (_locales, icon, popup, scripts) without the READMEs.
  * Node.js has no zip writer, so a small one is below instead of a dependency.
  */
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -13,7 +13,7 @@ import { crc32, deflateRawSync } from 'node:zlib';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 // The folders the extension loads files from.
-const PACKAGED_DIRS = Object.freeze(['icon', 'popup', 'scripts']);
+const PACKAGED_DIRS = Object.freeze(['_locales', 'icon', 'popup', 'scripts']);
 
 /**
  * Lists the files of the extension to package, other than manifest.json.

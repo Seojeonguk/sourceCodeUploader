@@ -8,6 +8,7 @@ import { initializeButtonEvents } from '../../popup/js/buttonEventHandler.js';
 import { initializeOnLoad } from '../../popup/js/onLoadInitialization.js';
 import { showToast } from '../../popup/js/toast.js';
 import { GITHUB_CONFIG } from '../../scripts/github/config/config.js';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const POPUP_HTML = readFileSync(
   new URL('../../popup/html/index.html', import.meta.url),
@@ -44,6 +45,7 @@ const mockChrome = ({ storage = {}, responses = {} } = {}) => {
   const createdTabs = [];
 
   globalThis.chrome = {
+    i18n: chromeI18n,
     runtime: {
       lastError: null,
       sendMessage: (message, callback) => {
@@ -315,7 +317,7 @@ describe('popup', () => {
         'Log in to GitHub in the extension popup first.',
       );
       assert.equal(
-        $$('#repository-list li p').textContent,
+        $$('#repository-list li p').textContent.trim(),
         'Require Authentication',
       );
       assert.ok(!$$('#repository-list').classList.contains('is-active'));
@@ -586,6 +588,7 @@ describe('popup', () => {
     });
 
     it('shows a default message without one', () => {
+      mockChrome();
       showToast(undefined, 'error');
 
       assert.equal(toast().textContent, 'Something went wrong.');

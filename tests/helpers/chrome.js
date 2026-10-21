@@ -1,3 +1,5 @@
+import { chromeI18n } from './i18n.js';
+
 /**
  * Mocks `chrome.storage.local` with an in-memory object.
  * @param {Object} [initial={}] - The initial values.
@@ -7,6 +9,7 @@ export const mockChromeStorage = (initial = {}) => {
   const storage = { ...initial };
 
   globalThis.chrome = {
+    i18n: chromeI18n,
     storage: {
       local: {
         get: ([key], callback) => callback({ [key]: storage[key] }),

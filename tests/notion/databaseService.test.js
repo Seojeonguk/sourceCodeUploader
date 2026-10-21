@@ -6,6 +6,7 @@ import {
   prepareDataSource,
   upload,
 } from '../../scripts/notion/services/databaseService.js';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const PAGE_URL = 'https://www.notion.so/existing-page';
 
@@ -79,6 +80,7 @@ const mockNotion = ({
 
 const mockStorage = (storage) => {
   globalThis.chrome = {
+    i18n: chromeI18n,
     storage: {
       local: {
         get: ([key], callback) => callback({ [key]: storage[key] }),

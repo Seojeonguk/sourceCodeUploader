@@ -1,26 +1,30 @@
-// The names that Notion shows for the property types, by API type.
-const TYPE_NAMES = Object.freeze({
-  checkbox: 'Checkbox',
-  created_time: 'Created time',
-  date: 'Date',
-  email: 'Email',
-  files: 'Files & media',
-  formula: 'Formula',
-  multi_select: 'Multi-select',
-  number: 'Number',
-  people: 'Person',
-  phone_number: 'Phone',
-  relation: 'Relation',
-  rich_text: 'Text',
-  rollup: 'Rollup',
-  select: 'Select',
-  status: 'Status',
-  title: 'Title',
-  url: 'URL',
-});
+import { t } from '../utils/i18n.js';
+
+// The names that Notion shows for the property types are the `notionType_<type>` messages.
+const NAMED_TYPES = Object.freeze([
+  'checkbox',
+  'created_time',
+  'date',
+  'email',
+  'files',
+  'formula',
+  'multi_select',
+  'number',
+  'people',
+  'phone_number',
+  'relation',
+  'rich_text',
+  'rollup',
+  'select',
+  'status',
+  'title',
+  'url',
+]);
 
 const describeType = (type) =>
-  TYPE_NAMES[type] ?? String(type).replace(/_/g, ' ');
+  NAMED_TYPES.includes(type)
+    ? t(`notionType_${type}`)
+    : String(type).replace(/_/g, ' ');
 
 export class DatabasePropertyException extends Error {
   /**
@@ -31,14 +35,16 @@ export class DatabasePropertyException extends Error {
    */
   constructor(platform, properties) {
     const list = properties
-      .map(
-        ({ name, type, expected }) =>
-          `"${name}" is ${describeType(type)}, not ${describeType(expected)}`,
+      .map(({ name, type, expected }) =>
+        t(
+          'databasePropertyItem',
+          name,
+          describeType(type),
+          describeType(expected),
+        ),
       )
-      .join('; ');
-    super(
-      `The ${platform} database has properties of the wrong type: ${list}. Change their type, or rename them so the extension can add its own.`,
-    );
+      .join(t('databasePropertySeparator'));
+    super(t('databasePropertyWrongType', platform, list));
     this.name = 'DatabasePropertyException';
     this.statusCode = 400;
     this.properties = properties;

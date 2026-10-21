@@ -1,3 +1,5 @@
+import { t } from '../utils/i18n.js';
+
 export class SetupRequiredException extends Error {
   /**
    * Thrown when the user has not finished the setup in the popup.
@@ -17,17 +19,21 @@ export class SetupRequiredException extends Error {
   static createMessage(platform, setting) {
     switch (setting) {
       case 'login':
-        return `Log in to ${platform} in the extension popup first.`;
+        return t('setupLogin', platform);
       case 'proxy':
-        return `Set the URL of the ${platform} token proxy (TOKEN_PROXY_URL) in the extension config first.`;
+        return t('setupProxy', platform);
       case 'login-expired':
-        return `Your ${platform} login has expired. Log in again in the extension popup.`;
+        return t('setupLoginExpired', platform);
       case 'login-upgrade':
-        return `The ${platform} login now uses only the repositories you choose. Log in again in the extension popup.`;
+        return t('setupLoginUpgrade', platform);
       case 'app-install':
-        return `Install the Source Code Uploader ${platform} App on the selected repository, or select another repository in the extension popup.`;
+        return t('setupAppInstall', platform);
       case 'database-again':
-        return `Select the ${platform} database again in the extension popup. The saved one could not be matched to a single data source.`;
+        return t('setupDatabaseAgain', platform);
+      case 'repository':
+        return t('setupRepository', platform);
+      case 'database':
+        return t('setupDatabase', platform);
       default:
         return `Select a ${platform} ${setting} in the extension popup first.`;
     }

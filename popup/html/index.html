@@ -12,6 +12,7 @@
         type="button"
         class="dark-light"
         aria-label="Light mode"
+        data-i18n-aria-label="popupLightMode"
         aria-pressed="false"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -21,7 +22,9 @@
 
       <div class="content-wrapper">
         <section class="content-section">
-          <h2 class="content-section-title">Authentication</h2>
+          <h2 class="content-section-title" data-i18n="popupAuthentication">
+            Authentication
+          </h2>
 
           <ul class="icon-list">
             <li platform="github" class="row github">
@@ -37,7 +40,11 @@
               </div>
 
               <div class="button-wrapper">
-                <button id="github-authentication" class="authentication-btn">
+                <button
+                  id="github-authentication"
+                  class="authentication-btn"
+                  data-i18n="popupAuthorize"
+                >
                   Authorize
                 </button>
 
@@ -47,6 +54,9 @@
                     name="auto-upload-opt"
                     class="auto-upload-opt"
                     id="github-auto-upload"
+                    aria-label="Auto upload to GitHub"
+                    data-i18n-aria-label="popupAutoUpload"
+                    data-i18n-arg="GitHub"
                   />
                   <span class="silder round"></span>
                 </label>
@@ -60,12 +70,19 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                     aria-controls="repository-list"
+                    data-i18n="popupSelectRepository"
                   >
                     Select Repository
                   </button>
-                  <ul id="repository-list" aria-label="Repositories">
+                  <ul
+                    id="repository-list"
+                    aria-label="Repositories"
+                    data-i18n-aria-label="popupRepositories"
+                  >
                     <li>
-                      <p>Require Authentication</p>
+                      <p data-i18n="popupRequireAuthentication">
+                        Require Authentication
+                      </p>
                     </li>
                   </ul>
                 </div>
@@ -85,7 +102,11 @@
               </div>
 
               <div class="button-wrapper">
-                <button id="notion-authentication" class="authentication-btn">
+                <button
+                  id="notion-authentication"
+                  class="authentication-btn"
+                  data-i18n="popupAuthorize"
+                >
                   Authorize
                 </button>
 
@@ -95,6 +116,9 @@
                     name="auto-upload-opt"
                     class="auto-upload-opt"
                     id="notion-auto-upload"
+                    aria-label="Auto upload to Notion"
+                    data-i18n-aria-label="popupAutoUpload"
+                    data-i18n-arg="Notion"
                   />
                   <span class="silder round"></span>
                 </label>
@@ -108,12 +132,19 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                     aria-controls="notion-database-list"
+                    data-i18n="popupSelectDatabase"
                   >
                     Select Database
                   </button>
-                  <ul id="notion-database-list" aria-label="Databases">
+                  <ul
+                    id="notion-database-list"
+                    aria-label="Databases"
+                    data-i18n-aria-label="popupDatabases"
+                  >
                     <li>
-                      <p>Require Authentication</p>
+                      <p data-i18n="popupRequireAuthentication">
+                        Require Authentication
+                      </p>
                     </li>
                   </ul>
                 </div>

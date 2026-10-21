@@ -1,6 +1,11 @@
+import { t } from '../utils/i18n.js';
+
 export class DuplicateResourceException extends Error {
   constructor(platform, target) {
-    const message = `Duplicate ${target} detected on ${platform}.`;
+    const message =
+      target === 'content'
+        ? t('duplicateContent', platform)
+        : `Duplicate ${target} detected on ${platform}.`;
     super(message);
     this.name = 'DuplicateResourceException';
     this.statusCode = 409;

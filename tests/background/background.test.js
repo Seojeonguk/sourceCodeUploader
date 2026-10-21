@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, describe, it, mock } from 'node:test';
+import { chromeI18n } from '../helpers/i18n.js';
 
 const EXTENSION_ID = 'mfhbpmbchemfhijjamldbkidlegfmaff';
 const EXTENSION_ORIGIN = `chrome-extension://${EXTENSION_ID}`;
@@ -34,6 +35,7 @@ describe('background', () => {
   before(async () => {
     setAccessLevel = mock.fn(async () => {});
     globalThis.chrome = {
+      i18n: chromeI18n,
       runtime: {
         id: EXTENSION_ID,
         getURL: (path) => `${EXTENSION_ORIGIN}/${path}`,

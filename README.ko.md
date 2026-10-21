@@ -76,6 +76,7 @@ flowchart LR
 
 ```text
 ├─ manifest.json
+├─ _locales/                # 영어(기본) · 한국어 문구
 ├─ popup/                   # 팝업 UI와 GitHub 로그인 페이지 (html · css · js)
 ├─ proxy/notion-oauth/      # Notion client secret을 보관하는 Cloudflare Worker
 ├─ tools/                   # Chrome 웹 스토어용 zip 만들기
@@ -104,6 +105,8 @@ npm run package         # Chrome 웹 스토어용 zip (dist/)
 파일을 고친 뒤에는 `chrome://extensions/`의 확장 프로그램 카드에서 **새로고침**을 눌러요.
 
 `manifest.json`의 `key` 덕분에 어느 폴더에서 불러오든 확장 프로그램 ID가 `mfhbpmbchemfhijjamldbkidlegfmaff`로 같아서, 배포된 [Notion OAuth 프록시](proxy/notion-oauth/README.md)가 모든 사용자의 로그인을 받아요. 사용자는 아무것도 배포하지 않아도 돼요. 관리자가 프록시를 한 번 배포하고 그 URL을 `scripts/notion/config/config.js`의 `TOKEN_PROXY_URL`에 넣어 두면 돼요.
+
+사용자에게 보이는 문구는 `_locales/en/messages.json`과 `_locales/ko/messages.json`에 있고, Chrome 언어에 맞춰 보여요. 스크립트에서는 `scripts/common/utils/i18n.js`의 `t('key')`를, 확장 페이지에서는 `data-i18n="key"`를 쓰고, 새 문구는 두 파일에 모두 추가해요. 두 파일이 맞는지는 테스트가 확인해요.
 
 Chrome 웹 스토어 등록 방법: [docs/chrome-web-store.md](docs/chrome-web-store.md)(영어)
 

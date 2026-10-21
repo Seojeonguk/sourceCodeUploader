@@ -4,6 +4,10 @@
   const REQUEST_EVENT = 'SCU_PROGRAMMERS_SOURCE_REQUEST';
   const TOAST_DURATION = 5000;
 
+  // The same lookup as t() in scripts/common/utils/i18n.js, which a classic script cannot import.
+  const t = (key, ...substitutions) =>
+    chrome.i18n.getMessage(key, substitutions.map(String)) || key;
+
   const PLATFORMS = Object.freeze([
     {
       id: 'github',
@@ -96,8 +100,7 @@
           if (error || response === undefined) {
             resolve({
               ok: false,
-              message:
-                error?.message ?? 'The extension did not respond. Try again.',
+              message: error?.message ?? t('noResponse'),
             });
             return;
           }
@@ -110,7 +113,7 @@
     const button = document.createElement('button');
     button.className = 'scu-programmers-upload';
     button.type = 'button';
-    button.title = `Upload to ${name}`;
+    button.title = t('uploadTo', name);
     button.dataset.platform = id;
 
     const image = document.createElement('img');
@@ -248,7 +251,7 @@
     const sourceCode = await requestSourceCodeFromPage();
 
     if (!sourceCode.trim()) {
-      throw new Error('Source code not found.');
+      throw new Error(t('sourceCodeNotFound'));
     }
 
     const problemId = getProblemId();
@@ -293,14 +296,14 @@
     const toast = document.createElement('div');
     toast.className = `scu-programmers-toast scu-programmers-toast-${type}`;
     toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    toast.textContent = message || 'Something went wrong.';
+    toast.textContent = message || t('somethingWentWrong');
 
     if (link) {
       const anchor = document.createElement('a');
       anchor.href = link;
       anchor.target = '_blank';
       anchor.rel = 'noopener noreferrer';
-      anchor.textContent = 'Open';
+      anchor.textContent = t('open');
       toast.append(' ', anchor);
     }
 
@@ -317,7 +320,7 @@
     const link = /^https?:\/\//.test(response.message)
       ? response.message
       : null;
-    showToast(`Uploaded to ${platformName}.`, { type: 'success', link });
+    showToast(t('uploadedTo', platformName), { type: 'success', link });
   };
 
   const handleUploadClick = async (button, platform) => {
