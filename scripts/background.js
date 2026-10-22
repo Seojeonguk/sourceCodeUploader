@@ -6,6 +6,7 @@ import { logger } from './common/utils/index.js';
 import { dispatch as githubDispatcher } from './github/index.js';
 import { dispatch as notionDispatcher } from './notion/index.js';
 import { isAllowedSender } from './senders.js';
+import { initializeSitePermissions } from './sitePermissions.js';
 
 // Only the extension itself (the service worker and its pages) may read the access tokens.
 // Content scripts run on the judge pages next to the site's own scripts, so they ask the
@@ -15,6 +16,9 @@ chrome.storage.local
   .catch((e) =>
     logger.warn('Failed to hide the storage from content scripts.', e.message),
   );
+
+// The optional judge sites work only while the user grants their permissions.
+initializeSitePermissions();
 
 const platformDispatchers = {
   github: githubDispatcher,

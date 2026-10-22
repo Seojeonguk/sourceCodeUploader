@@ -68,6 +68,8 @@ flowchart LR
 |---|---|
 | `identity` | Open the Notion login window and receive its redirect |
 | `storage` | Keep access tokens, the selected repository / database and options |
+| `scripting` | Run the scripts of an optional judge site after you turn it on in the popup |
+| Optional hosts | Each optional judge site, asked for only when you turn it on (none yet) |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
 
 What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md).

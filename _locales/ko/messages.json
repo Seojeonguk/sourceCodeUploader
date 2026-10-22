@@ -47,6 +47,14 @@
   "popupSiteOpen": {
     "message": "문제 풀러 가기"
   },
+  "popupSiteEnable": {
+    "message": "$SITE$ 사용",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
   "popupUploadTo": {
     "message": "업로드할 곳"
   },

@@ -68,6 +68,8 @@ flowchart LR
 |---|---|
 | `identity` | Notion 로그인 창을 열고 리다이렉트 받기 |
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
+| `scripting` | 팝업에서 켠 선택 문제 사이트의 스크립트 실행 |
+| 선택 호스트 | 선택 문제 사이트마다, 팝업에서 켤 때만 요청 (아직 없음) |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
 확장 프로그램이 무엇을 읽고, 보내고, 보관하는지는 [개인정보처리방침](PRIVACY.md)(영어)에 있어요.

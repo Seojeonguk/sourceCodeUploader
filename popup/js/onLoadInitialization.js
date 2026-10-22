@@ -1,9 +1,7 @@
 import {
   getChromeStorage,
   sendMessage,
-  t,
 } from '../../scripts/common/utils/index.js';
-import { JUDGE_SITES } from '../../scripts/judgeSites.js';
 import {
   PLATFORMS,
   selectFirstUnfinishedTab,
@@ -11,6 +9,7 @@ import {
   showLoggedOut,
   showSelected,
 } from './platformState.js';
+import { showJudgeSites } from './judgeSiteList.js';
 import { applyLightMode } from './theme.js';
 import { showToast } from './toast.js';
 
@@ -94,37 +93,6 @@ const showStorageChanges = async (changes, area) => {
           autoUpload.newValue,
         );
       }
-    }),
-  );
-};
-
-/**
- * Lists the judge sites, each with a link to its problems.
- */
-const showJudgeSites = () => {
-  document.querySelector('#site-list').replaceChildren(
-    ...JUDGE_SITES.map(({ id, name, url }) => {
-      const item = document.createElement('li');
-      item.className = 'site';
-      item.dataset.site = id;
-
-      const siteName = document.createElement('span');
-      siteName.className = 'site-name';
-      siteName.textContent = name;
-
-      const status = document.createElement('span');
-      status.className = 'site-status';
-      status.textContent = t('popupSiteInUse');
-
-      const link = document.createElement('a');
-      link.className = 'site-link';
-      link.href = url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.textContent = t('popupSiteOpen');
-
-      item.append(siteName, status, link);
-      return item;
     }),
   );
 };

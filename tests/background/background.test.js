@@ -21,6 +21,7 @@ const popup = {
 const storage = {};
 let setAccessLevel;
 let handleMessage;
+const permissionListeners = { added: [], removed: [] };
 
 /**
  * Sends a message to the background listener, like chrome.runtime.sendMessage.
@@ -51,6 +52,20 @@ describe('background', () => {
           get: ([key], callback) => callback({ [key]: storage[key] }),
         },
       },
+      permissions: {
+        contains: async () => false,
+        onAdded: {
+          addListener: (listener) => permissionListeners.added.push(listener),
+        },
+        onRemoved: {
+          addListener: (listener) => permissionListeners.removed.push(listener),
+        },
+      },
+      scripting: {
+        getRegisteredContentScripts: async () => [],
+        registerContentScripts: async () => {},
+        unregisterContentScripts: async () => {},
+      },
     };
     // The service worker registers the listener when it is loaded.
     await import('../../scripts/background.js');
@@ -63,6 +78,11 @@ describe('background', () => {
   after(() => {
     mock.restoreAll();
     delete globalThis.chrome;
+  });
+
+  it('follows the permissions of the optional judge sites', () => {
+    assert.equal(permissionListeners.added.length, 1);
+    assert.equal(permissionListeners.removed.length, 1);
   });
 
   it('hides the storage from content scripts', () => {
