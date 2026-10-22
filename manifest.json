@@ -40,7 +40,7 @@
     "https://school.programmers.co.kr/*",
     "https://programmers.co.kr/*"
   ],
-  "permissions": ["identity", "storage"],
+  "permissions": ["identity", "scripting", "storage"],
   "short_name": "SCU",
   "web_accessible_resources": [
     {

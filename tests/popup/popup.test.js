@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 import { initializeButtonEvents } from '../../popup/js/buttonEventHandler.js';
+import { showJudgeSites } from '../../popup/js/judgeSiteList.js';
 import { initializeOnLoad } from '../../popup/js/onLoadInitialization.js';
 import { showToast } from '../../popup/js/toast.js';
 import { GITHUB_CONFIG } from '../../scripts/github/config/config.js';
@@ -612,6 +613,122 @@ describe('popup', () => {
       assert.equal(
         toast().textContent,
         'Log in to Notion in the extension popup first.',
+      );
+    });
+  });
+
+  describe('optional judge sites', () => {
+    const SITE = Object.freeze({
+      id: 'demo',
+      name: 'Demo Judge',
+      url: 'https://judge.example/problems',
+      optional: true,
+      origins: ['https://judge.example/*'],
+    });
+
+    /**
+     * Mocks chrome.permissions with the granted origins.
+     * @param {string[]} granted - The granted origins, changed by request and remove.
+     * @param {boolean} [allow=true] - Whether the user allows a request.
+     */
+    const mockPermissions = (granted, allow = true) => {
+      globalThis.chrome.permissions = {
+        contains: async ({ origins }) =>
+          origins.every((origin) => granted.includes(origin)),
+        request: mock.fn(async ({ origins }) => {
+          if (allow) {
+            granted.push(...origins);
+          }
+          return allow;
+        }),
+        remove: mock.fn(async ({ origins }) => {
+          origins.forEach((origin) =>
+            granted.splice(granted.indexOf(origin), 1),
+          );
+          return true;
+        }),
+      };
+    };
+
+    const siteSwitch = () => $$('#site-demo');
+    const toggle = async () => {
+      siteSwitch().click();
+      await flush();
+    };
+
+    it('shows a switch with the state of its permission', async () => {
+      mockChrome();
+      mockPermissions(['https://judge.example/*']);
+
+      showJudgeSites([SITE]);
+      await flush();
+
+      assert.equal(siteSwitch().type, 'checkbox');
+      assert.equal(siteSwitch().checked, true);
+      assert.equal(siteSwitch().getAttribute('aria-label'), 'Use Demo Judge');
+      assert.equal($$('[data-site="demo"] .site-status'), null);
+    });
+
+    it('asks for the permission of the site when it is turned on', async () => {
+      mockChrome();
+      const granted = [];
+      mockPermissions(granted);
+      showJudgeSites([SITE]);
+      await flush();
+      assert.equal(siteSwitch().checked, false);
+
+      await toggle();
+
+      assert.deepEqual(
+        chrome.permissions.request.mock.calls.map(
+          ({ arguments: [arg] }) => arg,
+        ),
+        [{ origins: ['https://judge.example/*'] }],
+      );
+      assert.equal(siteSwitch().checked, true);
+      assert.deepEqual(granted, ['https://judge.example/*']);
+    });
+
+    it('stays off when the user does not allow it', async () => {
+      mockChrome();
+      mockPermissions([], false);
+      showJudgeSites([SITE]);
+      await flush();
+
+      await toggle();
+
+      assert.equal(siteSwitch().checked, false);
+    });
+
+    it('removes the permission when it is turned off', async () => {
+      mockChrome();
+      const granted = ['https://judge.example/*'];
+      mockPermissions(granted);
+      showJudgeSites([SITE]);
+      await flush();
+
+      await toggle();
+
+      assert.equal(chrome.permissions.remove.mock.callCount(), 1);
+      assert.equal(siteSwitch().checked, false);
+      assert.deepEqual(granted, []);
+    });
+
+    it('shows why the permission cannot be changed, and keeps the switch as it was', async () => {
+      mockChrome();
+      mockPermissions([]);
+      chrome.permissions.request = async () => {
+        throw new Error('Only permissions in the manifest can be requested.');
+      };
+      showJudgeSites([SITE]);
+      await flush();
+
+      await toggle();
+
+      assert.equal(siteSwitch().checked, false);
+      assert.equal(
+        toast().textContent,
+        'Only permissions in the manifest can be requested.',
       );
     });
   });

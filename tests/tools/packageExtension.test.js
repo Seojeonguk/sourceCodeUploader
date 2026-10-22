@@ -11,6 +11,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { crc32, inflateRawSync } from 'node:zlib';
 
+import { JUDGE_SITES } from '../../scripts/judgeSites.js';
 import {
   createStoreManifest,
   createZip,
@@ -104,6 +105,12 @@ describe('listPackageFiles', () => {
     assert.equal(manifest.default_locale, 'en');
     assert.ok(files.includes('_locales/en/messages.json'));
     assert.ok(files.includes('_locales/ko/messages.json'));
+  });
+
+  it('includes the scripts of the optional judge sites', () => {
+    JUDGE_SITES.flatMap(({ contentScripts = [] }) => contentScripts)
+      .flatMap(({ js = [], css = [] }) => [...js, ...css])
+      .forEach((file) => assert.ok(files.includes(file), file));
   });
 
   it('includes the icons that the content script shows on the page', () => {

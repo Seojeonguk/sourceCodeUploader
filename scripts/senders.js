@@ -1,8 +1,10 @@
-// The judge pages where the content scripts run (see `content_scripts` in manifest.json).
-const JUDGE_ORIGINS = Object.freeze([
-  'https://school.programmers.co.kr',
-  'https://programmers.co.kr',
-]);
+import { JUDGE_SITES, originOf } from './judgeSites.js';
+
+// The judge pages where the content scripts run: `content_scripts` in manifest.json, and the
+// scripts of the optional sites, which run only after the user granted their permissions.
+const JUDGE_ORIGINS = Object.freeze(
+  JUDGE_SITES.flatMap(({ origins }) => origins.map(originOf)),
+);
 
 // The only messages that a judge page sends: uploading the solution and reading the auto
 // upload option. Logging in, listing repositories or databases and logging out are done

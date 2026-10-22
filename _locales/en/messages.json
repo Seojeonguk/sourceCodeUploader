@@ -47,6 +47,14 @@
   "popupSiteOpen": {
     "message": "Solve problems"
   },
+  "popupSiteEnable": {
+    "message": "Use $SITE$",
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
+  },
   "popupUploadTo": {
     "message": "Upload to"
   },
