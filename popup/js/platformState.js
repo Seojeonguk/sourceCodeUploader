@@ -40,6 +40,21 @@ export const showLoggedIn = (platform, account) => {
 };
 
 /**
+ * Shows that the user is not logged in to the platform, such as after the login expired.
+ * @param {'github'|'notion'} platform
+ */
+export const showLoggedOut = (platform) => {
+  const panel = panelOf(platform);
+  panel.classList.remove('is-logged-in');
+  panel.querySelector('.account').textContent = '';
+
+  const button = panel.querySelector('.authentication-btn');
+  button.textContent = t('popupAuthorize');
+  button.classList.remove('delete');
+  refresh(platform);
+};
+
+/**
  * Shows the selected repository or database of the platform.
  * @param {'github'|'notion'} platform
  * @param {string} name - The name of the repository or database.
