@@ -29,7 +29,7 @@ export const encodeGithubContentPath = (path) =>
 
 // The folders that solutions are uploaded to. The type comes from the content script,
 // so other values, such as `.github/workflows`, are refused.
-const UPLOAD_TYPES = Object.freeze(['Programmers']);
+const UPLOAD_TYPES = Object.freeze(['Programmers', 'Codeforces']);
 // The characters that the content script reads as a file extension, without `/` or `.`.
 const EXTENSION_PATTERN = /^[a-z0-9+#]+$/i;
 

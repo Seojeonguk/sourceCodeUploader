@@ -1,0 +1,213 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { describe, it } from 'node:test';
+import vm from 'node:vm';
+
+import { JSDOM } from 'jsdom';
+
+import {
+  createSubmissionHtml,
+  PROBLEM_HTML,
+  STATUS_ROW_HTML,
+} from '../fixtures/codeforces/pages.js';
+
+// helpers.js is a classic content script, so it is run in a sandbox instead of imported.
+// Objects created in the sandbox are copied before deepEqual, since their prototype differs.
+const loadHelpers = () => {
+  const source = readFileSync(
+    new URL('../../scripts/codeforces/helpers.js', import.meta.url),
+    'utf8',
+  );
+  const context = vm.createContext({ URL });
+  vm.runInContext(source, context);
+  return context.SCU_CODEFORCES;
+};
+
+const {
+  formatRating,
+  getExtensionFromLanguage,
+  getLoggedInHandle,
+  getProblemNameFromLink,
+  parseProblemPage,
+  parseProblemPath,
+  parseStatusRow,
+  parseSubmissionPage,
+} = loadHelpers();
+
+const copy = (value) => JSON.parse(JSON.stringify(value));
+const documentOf = (html) => new JSDOM(html).window.document;
+
+describe('getExtensionFromLanguage', () => {
+  it('maps the Codeforces language names to file extensions', () => {
+    [
+      ['C++23 (GCC 14-64, msys2)', 'cpp'],
+      ['GNU G++20 13.2 (64 bit, winlibs)', 'cpp'],
+      ['Clang++20 Diagnostics', 'cpp'],
+      ['GNU GCC C11 5.1.0', 'c'],
+      ['C11 (GCC 14-64, msys2)', 'c'],
+      ['C# 10, .NET SDK 6.0', 'cs'],
+      ['Python 3', 'py'],
+      ['PyPy 3-64', 'py'],
+      ['Java 21 64bit', 'java'],
+      ['JavaScript V8 4.8.0', 'js'],
+      ['Node.js 15.8.0 (64bit)', 'js'],
+      ['Kotlin 1.9', 'kt'],
+      ['Rust 2021', 'rs'],
+      ['Go 1.22.2', 'go'],
+      ['Ruby 3.2.2', 'rb'],
+      ['PHP 8.1.7', 'php'],
+      ['Scala 2.12.8', 'scala'],
+      ['Haskell GHC 9.2.5', 'hs'],
+      ['OCaml 4.02.1', 'ml'],
+      ['Perl 5.20.1', 'pl'],
+      ['Delphi 7', 'pas'],
+      ['D DMD32 v2.105.0', 'd'],
+    ].forEach(([language, extension]) =>
+      assert.equal(getExtensionFromLanguage(language), extension, language),
+    );
+  });
+
+  it('falls back to txt for an unknown language', () => {
+    assert.equal(getExtensionFromLanguage('Befunge'), 'txt');
+    assert.equal(getExtensionFromLanguage(undefined), 'txt');
+  });
+});
+
+describe('parseProblemPath', () => {
+  it('gives the problemset and the contest page of a problem the same URL', () => {
+    const expected = {
+      contestId: '1850',
+      index: 'F',
+      problemId: '1850F',
+      url: 'https://codeforces.com/contest/1850/problem/F',
+    };
+
+    assert.deepEqual(
+      copy(parseProblemPath('/contest/1850/problem/F')),
+      expected,
+    );
+    assert.deepEqual(
+      copy(parseProblemPath('/problemset/problem/1850/F')),
+      expected,
+    );
+  });
+
+  it('keeps the index of a split problem and the gym', () => {
+    assert.equal(
+      parseProblemPath('/contest/2261/problem/F1').problemId,
+      '2261F1',
+    );
+    assert.equal(
+      parseProblemPath('/gym/104114/problem/a').url,
+      'https://codeforces.com/gym/104114/problem/A',
+    );
+  });
+
+  it('returns null for another page', () => {
+    assert.equal(parseProblemPath('/contest/1850/standings'), null);
+  });
+});
+
+describe('getProblemNameFromLink', () => {
+  it('removes the problem ID or index before the name', () => {
+    assert.equal(
+      getProblemNameFromLink('1850F - We Were Both Children'),
+      'We Were Both Children',
+    );
+    assert.equal(
+      getProblemNameFromLink(
+        '\n  F1 - Plegma II: Ask Me Any Cell (Easy Version)\n',
+      ),
+      'Plegma II: Ask Me Any Cell (Easy Version)',
+    );
+  });
+});
+
+describe('parseProblemPage', () => {
+  it('reads the name, the rating and the tags of a real problem page', () => {
+    assert.deepEqual(copy(parseProblemPage(documentOf(PROBLEM_HTML))), {
+      name: 'We Were Both Children',
+      rating: 1300,
+      tags: ['brute force', 'implementation', 'math', 'number theory'],
+    });
+  });
+
+  it('has no rating for a problem without one, such as in the gym', () => {
+    const page = parseProblemPage(
+      documentOf(
+        '<div class="problem-statement"><div class="header"><div class="title">A. Gym</div></div></div>',
+      ),
+    );
+    assert.equal(page.rating, null);
+    assert.deepEqual(copy(page.tags), []);
+  });
+});
+
+describe('getLoggedInHandle', () => {
+  it('reads the handle in the header, or null when no one is logged in', () => {
+    assert.equal(
+      getLoggedInHandle(documentOf(createSubmissionHtml())),
+      'seojeonguk',
+    );
+    assert.equal(
+      getLoggedInHandle(documentOf(createSubmissionHtml({ handle: null }))),
+      null,
+    );
+  });
+});
+
+describe('parseSubmissionPage', () => {
+  it('reads an accepted submission and its code', () => {
+    assert.deepEqual(
+      copy(parseSubmissionPage(documentOf(createSubmissionHtml()))),
+      {
+        author: 'seojeonguk',
+        language: 'GNU C++17',
+        accepted: true,
+        problemPath: '/contest/1850/problem/F',
+        problemName: 'We Were Both Children',
+        sourceCode: 'int main() { return 0; }',
+      },
+    );
+  });
+
+  it('tells a rejected submission', () => {
+    assert.equal(
+      parseSubmissionPage(
+        documentOf(createSubmissionHtml({ verdict: 'WRONG_ANSWER' })),
+      ).accepted,
+      false,
+    );
+  });
+
+  it('returns null for a page without a submission, such as the Cloudflare check', () => {
+    assert.equal(
+      parseSubmissionPage(documentOf('<title>Just a moment...</title>')),
+      null,
+    );
+  });
+});
+
+describe('parseStatusRow', () => {
+  it('reads a real row of a status table', () => {
+    const doc = documentOf(`<table>${STATUS_ROW_HTML}</table>`);
+
+    assert.deepEqual(copy(parseStatusRow(doc.querySelector('tr'))), {
+      id: '395033187',
+      author: 'tourist',
+      verdict: 'OK',
+      waiting: false,
+      submissionPath: '/contest/2261/submission/395033187',
+      problemPath: '/contest/2261/problem/H',
+      problemName: 'Oh Tree Tree Tree, No Need to Leave',
+      language: 'C++23 (GCC 14-64, msys2)',
+    });
+  });
+});
+
+describe('formatRating', () => {
+  it('formats the rating as the level', () => {
+    assert.equal(formatRating(1300), 'Rating 1300');
+    assert.equal(formatRating(null), null);
+  });
+});

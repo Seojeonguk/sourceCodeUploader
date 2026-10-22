@@ -86,6 +86,12 @@ const mockChrome = ({ storage = {}, responses = {} } = {}) => {
         addListener: (listener) => changeListeners.push(listener),
       },
     },
+    // No optional judge site is turned on.
+    permissions: {
+      contains: async () => false,
+      request: async () => false,
+      remove: async () => true,
+    },
     tabs: { create: (properties) => createdTabs.push(properties) },
   };
 
@@ -231,8 +237,10 @@ describe('popup', () => {
       const sites = [...document.querySelectorAll('#site-list .site')];
       assert.deepEqual(
         sites.map((site) => site.querySelector('.site-name').textContent),
-        ['Programmers'],
+        ['Programmers', 'Codeforces'],
       );
+      // Codeforces is optional, so it has a switch instead of "In use".
+      assert.equal(sites[1].querySelector('.site-switch').checked, false);
       assert.equal(
         sites[0].querySelector('.site-status').textContent,
         'In use',

@@ -150,3 +150,17 @@ describe('createUploadPath with an unsafe problem ID', () => {
     );
   });
 });
+
+describe('createUploadPath for Codeforces', () => {
+  it('uploads to the Codeforces folder, named after the problem ID and name', () => {
+    assert.equal(
+      createUploadPath({
+        type: 'Codeforces',
+        title: '2261F1 - Plegma II: Ask Me Any Cell (Easy Version)',
+        problemId: '2261F1',
+        extension: 'cpp',
+      }),
+      'Codeforces/2261F1 - Plegma II_ Ask Me Any Cell (Easy Version).cpp',
+    );
+  });
+});

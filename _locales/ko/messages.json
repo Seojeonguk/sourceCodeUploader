@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "프로그래머스에서 통과한 코드를 버튼 한 번으로 GitHub와 Notion에 올려요."
+    "message": "프로그래머스 · Codeforces에서 통과한 코드를 버튼 한 번으로 GitHub와 Notion에 올려요."
   },
   "htmlLang": {
     "message": "ko"
@@ -159,6 +159,12 @@
   },
   "sourceCodeNotFound": {
     "message": "소스 코드를 찾지 못했어요."
+  },
+  "codeforcesProblemNotFound": {
+    "message": "이 제출의 문제를 찾지 못했어요."
+  },
+  "codeforcesSubmissionUnreadable": {
+    "message": "정답 코드를 읽지 못했어요. 제출 페이지를 열어서 업로드해 주세요."
   },
   "setupLogin": {
     "message": "먼저 확장 프로그램 팝업에서 $PLATFORM$에 로그인해 주세요.",
