@@ -128,6 +128,20 @@
   };
 
   /**
+   * Reads the code of a submission. The page runs prettify on it, which puts each line in an
+   * `<li>` of `ol.linenums`, so the lines are joined again; the page read with fetch is not
+   * prettified yet and keeps them in its text.
+   * @param {Element} source - `pre#program-source-text`.
+   * @returns {string}
+   */
+  const readSourceCode = (source) => {
+    const lines = source.querySelectorAll('ol.linenums > li');
+    return lines.length > 0
+      ? [...lines].map((line) => line.textContent).join('\n')
+      : source.textContent;
+  };
+
+  /**
    * Reads a submission page: the table about the submission and the source code.
    * @param {Document} doc - The page of one submission, such as `/contest/1850/submission/1`.
    * @returns {?{
@@ -163,7 +177,7 @@
         Boolean(row.querySelector('.verdict-accepted')),
       problemPath: new URL(problemLink.getAttribute('href'), ORIGIN).pathname,
       problemName: getProblemNameFromLink(problemLink.textContent),
-      sourceCode: source ? source.textContent : null,
+      sourceCode: source ? readSourceCode(source) : null,
     };
   };
 

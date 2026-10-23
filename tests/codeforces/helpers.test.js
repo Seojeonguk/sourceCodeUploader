@@ -180,6 +180,39 @@ describe('parseSubmissionPage', () => {
     );
   });
 
+  it('keeps the lines of the code as it was sent', () => {
+    const sourceCode = '#include <cstdio>\n\nint main() {\n    return 0;\n}\n';
+
+    assert.equal(
+      parseSubmissionPage(
+        documentOf(
+          createSubmissionHtml({
+            sourceCode: sourceCode.replace('<', '&lt;').replace('>', '&gt;'),
+          }),
+        ),
+      ).sourceCode,
+      sourceCode,
+    );
+  });
+
+  it('keeps the lines of the code after the page numbered them', () => {
+    // Codeforces runs prettify on the code, which puts each line in an `<li>`.
+    const sourceCode =
+      '<ol class="linenums">' +
+      '<li class="L0"><span class="com">#include &lt;cstdio&gt;</span></li>' +
+      '<li class="L1"><span class="pln"></span></li>' +
+      '<li class="L2"><span class="kwd">int</span><span class="pln"> main</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span></li>' +
+      '<li class="L3"><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span></li>' +
+      '<li class="L4"><span class="pun">}</span></li>' +
+      '</ol>';
+
+    assert.equal(
+      parseSubmissionPage(documentOf(createSubmissionHtml({ sourceCode })))
+        .sourceCode,
+      '#include <cstdio>\n\nint main() {\n    return 0;\n}',
+    );
+  });
+
   it('returns null for a page without a submission, such as the Cloudflare check', () => {
     assert.equal(
       parseSubmissionPage(documentOf('<title>Just a moment...</title>')),
