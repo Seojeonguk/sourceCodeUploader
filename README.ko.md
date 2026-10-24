@@ -18,10 +18,10 @@
 
 ## 지원 플랫폼
 
-| 사이트 | 페이지 | GitHub | Notion | 자동 업로드 | 상태 |
-|---|---|:-:|:-:|:-:|---|
-| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지 | ✅ | ✅ | ✅ (채점 결과 창) | 지원 중 |
-| [Codeforces](https://codeforces.com/) | 내 정답 제출 페이지 | ✅ | ✅ | ✅ (제출 현황 페이지) | 팝업에서 켜기 |
+| 사이트                                            | 페이지              | GitHub | Notion |      자동 업로드      | 상태          |
+| ------------------------------------------------- | ------------------- | :----: | :----: | :-------------------: | ------------- |
+| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지    |   ✅   |   ✅   |   ✅ (채점 결과 창)   | 지원 중       |
+| [Codeforces](https://codeforces.com/)             | 내 정답 제출 페이지 |   ✅   |   ✅   | ✅ (제출 현황 페이지) | 팝업에서 켜기 |
 
 ## 설치
 
@@ -68,13 +68,13 @@ flowchart LR
 
 ### 권한
 
-| 권한 | 이유 |
-|---|---|
-| `identity` | Notion 로그인 창을 열고 리다이렉트 받기 |
-| `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
-| `scripting` | 팝업에서 켠 선택 문제 사이트의 스크립트 실행 |
-| 선택 호스트: `codeforces.com` | Codeforces에서 실행, 팝업에서 켤 때만 요청 |
-| 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
+| 권한                                                        | 이유                                                  |
+| ----------------------------------------------------------- | ----------------------------------------------------- |
+| `identity`                                                  | Notion 로그인 창을 열고 리다이렉트 받기               |
+| `storage`                                                   | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
+| `scripting`                                                 | 팝업에서 켠 선택 문제 사이트의 스크립트 실행          |
+| 선택 호스트: `codeforces.com`                               | Codeforces에서 실행, 팝업에서 켤 때만 요청            |
+| 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행                        |
 
 확장 프로그램이 무엇을 읽고, 보내고, 보관하는지는 [개인정보처리방침](PRIVACY.md)(영어)에 있어요.
 
@@ -125,15 +125,15 @@ Chrome 웹 스토어 등록 방법: [docs/chrome-web-store.md](docs/chrome-web-s
 
 ## 변경 이력
 
-| 버전 | 기간 | 구조 |
-|---|---|---|
-| v1 | 2022.01 – 02 | 내려받은 파일을 감지해 `.env` 토큰으로 업로드하는 로컬 Python 스크립트 |
-| v2 | 2022.12 – 2023.01 | Extension + Django REST 서버(Docker · Nginx · Jenkins) — 스냅샷: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server) |
-| v3 | 2024.02 – | OAuth를 쓰는 서버 없는 Extension ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
-| v3.x | 2024.07 – 2026.04 | 채점 현황 업로드, Notion 길이 제한, UTF-8 인코딩, 리팩토링, 프로그래머스, 자동 업로드 |
-| v3.x | 2026.10 | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI |
-| v3.x | 2026.10 | 사이트 종료로 백준 지원 제거 — 스냅샷: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) |
-| v3.x | 2026.10 | Chrome 웹 스토어, 한국어, Notion 속성 자동 추가, 단계별 팝업, 첫 선택 문제 사이트 Codeforces |
+| 버전 | 기간              | 구조                                                                                                                                                                      |
+| ---- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1   | 2022.01 – 02      | 내려받은 파일을 감지해 `.env` 토큰으로 업로드하는 로컬 Python 스크립트                                                                                                    |
+| v2   | 2022.12 – 2023.01 | Extension + Django REST 서버(Docker · Nginx · Jenkins) — 스냅샷: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server)     |
+| v3   | 2024.02 –         | OAuth를 쓰는 서버 없는 Extension ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
+| v3.x | 2024.07 – 2026.04 | 채점 현황 업로드, Notion 길이 제한, UTF-8 인코딩, 리팩토링, 프로그래머스, 자동 업로드                                                                                     |
+| v3.x | 2026.10           | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI                                                                                              |
+| v3.x | 2026.10           | 사이트 종료로 백준 지원 제거 — 스냅샷: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj)                                     |
+| v3.x | 2026.10           | Chrome 웹 스토어, 한국어, Notion 속성 자동 추가, 단계별 팝업, 첫 선택 문제 사이트 Codeforces                                                                              |
 
 ## 문의
 
