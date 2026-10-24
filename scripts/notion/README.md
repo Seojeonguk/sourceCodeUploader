@@ -1,5 +1,7 @@
 # Usage
 
+The screenshots are from Chrome in Korean; in other languages the popup is in English.
+
 ## Table of Contents
 
 1. [Prepare the database](#prepare-the-database)
@@ -31,13 +33,16 @@ The names are case-sensitive. If the database already has a property with one of
 ## Log in
 
 - Open the popup and the **Notion** tab, then click `Log in` in the **Account** step to grant access to Notion.
-- On the notion page, click select page button.
 
-  ![Click select page](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/b563f114-9f41-40a5-a39b-2fdb597e69bb)
+  ![The Notion tab before the login](../../docs/guide/notion-popup-login.png)
 
-- Select the page on which the database you want to upload the source code from, and then click the Allow Access button.
+- A Notion window opens. Check the workspace at the top right, and click `Select pages`.
 
-  ![Access notion authorize](https://github.com/Seojeonguk/sourceCodeUploader/assets/44386047/7071faa9-e001-4c9d-acc8-a629a26fe347)
+  ![Connecting Source Code Uploader on Notion](../../docs/guide/notion-select-pages.png)
+
+- Select the page that contains the database to upload to, and click `Allow access`.
+
+  ![Selecting the pages to share](../../docs/guide/notion-allow-access.png)
 
 - Once authorized, the login window closes automatically.
 - The popup closes while the login window is open. If the login fails, such as when you cancel the access or close the window, the popup shows the reason the next time you open it. Click `Log in` again.
@@ -47,6 +52,8 @@ The names are case-sensitive. If the database already has a property with one of
 
 - In the **Select a database** step, click `Choose…`. A spinner shows while the databases of the pages you gave access to load, then the list opens below it.
 - Select the database to upload to. Its name is shown in the step, and the popup names the properties it added to the database.
+
+  ![The Notion tab after the login, with the database list](../../docs/guide/notion-database-list.png)
 
   - A database with more than one data source is listed once for each data source; select the one to upload to.
   - If you selected a database before this version, it is moved to its data source on the next upload. If the database has more than one data source, you are asked to select it again.

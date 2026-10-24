@@ -1,5 +1,7 @@
 # Usage
 
+The screenshots are from Chrome in Korean; in other languages the popup is in English.
+
 ## Table of Contents
 
 1. [Log in](#log-in)
@@ -11,10 +13,26 @@
 
 ## Log in
 
-- Open the popup and the **GitHub** tab, then click `Log in` in the **Account** step. A login page opens with a code.
-- Click `Open GitHub` (the code is copied as well), paste the code on GitHub and authorize Source Code Uploader.
+- Open the popup and the **GitHub** tab, then click `Log in` in the **Account** step. Steps 2 and 3 stay inactive until you log in.
+
+  ![The GitHub tab before the login](../../docs/guide/github-popup-login.png)
+
+- A login page opens with a code. Click `Open GitHub`; the code is copied as well.
+
+  ![The login page with the code](../../docs/guide/github-login-code.png)
+
+- On GitHub, paste the code and click `Continue`.
+
+  ![Entering the code on GitHub](../../docs/guide/github-device-code.png)
+
+- Check that the app is **Source Code Uploader by Seojeonguk** and click `Authorize`. GitHub shows "Congratulations, you're all set!", and you can close that tab.
+
+  ![Authorizing Source Code Uploader](../../docs/guide/github-device-authorize.png)
+
 - The login page shows that you are logged in and closes automatically.
 - The **Account** step shows ✓ and your GitHub user name, and the button changes to `Log out`. The popup updates even if it was open during the login.
+
+  ![The GitHub tab after the login](../../docs/guide/github-popup-logged-in.png)
 
 The extension logs in to the **Source Code Uploader GitHub App** with the [device flow](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app#using-the-device-flow-to-generate-a-user-access-token), which needs only the client ID, so no client secret is shipped in the extension. **Enable Device Flow** must be turned on in the settings of the GitHub App.
 
@@ -32,6 +50,9 @@ If you logged in with the old OAuth App (access to every repository), the extens
 
 - In the **Select a repository** step, click `Choose…`. The list of repositories opens below it.
 - Select the repository to upload to. Its name is shown in the step.
+
+  ![The repository list with + Add repositories](../../docs/guide/github-repository-list.png)
+
 - When the login and the repository are set, the **GitHub** tab shows ✓ and the popup says "Ready! Click the upload button on a problem page."
 
 ## Log out
