@@ -1,8 +1,8 @@
 # Privacy Policy
 
-Source Code Uploader is a Chrome extension that uploads your accepted Programmers solutions to the GitHub repository or Notion database you choose. This policy explains what it reads, where it sends it and what it keeps.
+Source Code Uploader is a Chrome extension that uploads your accepted Programmers and Codeforces solutions to the GitHub repository or Notion database you choose. This policy explains what it reads, where it sends it and what it keeps.
 
-Effective date: 2026-10-18
+Effective date: 2026-10-22
 
 ## What the extension reads
 
@@ -11,7 +11,15 @@ On a Programmers problem page (`programmers.co.kr`, `school.programmers.co.kr`),
 - the source code in the editor,
 - the problem number, title, level, category and language.
 
-To find a correct answer for auto upload, it also checks the grading result shown on the page. It reads nothing on other sites.
+To find a correct answer for auto upload, it also checks the grading result shown on the page.
+
+On Codeforces (`codeforces.com`), only after you turn it on in the popup and allow the access Chrome asks for, the extension:
+
+- shows the upload buttons on your own accepted submission and reads its code, language and problem;
+- reads the problem page for the name, rating and tags;
+- with auto upload on, watches your submissions on the status pages (`/contest/<id>/my`, `/submissions/<handle>`) and reads the page of one that becomes accepted, in your browser session.
+
+Turning Codeforces off, or removing its access in `chrome://extensions`, stops all of this. It reads nothing on other sites.
 
 ## Where it sends it
 
@@ -37,7 +45,7 @@ Everything is kept in your browser (`chrome.storage`), not on a server:
 - whether auto upload is on for GitHub and Notion,
 - while you log in, the GitHub device code and the reason the last Notion login failed (cleared when the browser closes).
 
-The tokens are hidden from the scripts that run on Programmers pages.
+The tokens are hidden from the scripts that run on the judge sites' pages.
 
 ## What it does not do
 

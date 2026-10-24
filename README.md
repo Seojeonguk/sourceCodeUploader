@@ -21,6 +21,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 | Source | Pages | GitHub | Notion | Auto upload | Status |
 |---|---|:-:|:-:|:-:|---|
 | [Programmers](https://school.programmers.co.kr/) | Lesson page | ✅ | ✅ | ✅ (result modal) | Supported |
+| [Codeforces](https://codeforces.com/) | Your accepted submission | ✅ | ✅ | ✅ (status page) | Turn it on in the popup |
 
 ## Installation
 
@@ -42,6 +43,7 @@ The store version has its own extension ID, separate from the unpacked one, so e
 3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. The extension adds the properties it needs to the database ([guide](scripts/notion/README.md#prepare-the-database)).
 4. (Optional) Turn on **Auto upload** for each platform.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
+6. (Codeforces) Turn on Codeforces under **Problem sites** in the popup, and allow the access Chrome asks for. The upload buttons are above the code of your accepted submission, and with auto upload on, a submission accepted while `/contest/<id>/my` or `/submissions/<handle>` is open is uploaded.
 
 ## How It Works
 
@@ -69,7 +71,7 @@ flowchart LR
 | `identity` | Open the Notion login window and receive its redirect |
 | `storage` | Keep access tokens, the selected repository / database and options |
 | `scripting` | Run the scripts of an optional judge site after you turn it on in the popup |
-| Optional hosts | Each optional judge site, asked for only when you turn it on (none yet) |
+| Optional host: `codeforces.com` | Run on Codeforces, asked for only when you turn it on in the popup |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
 
 What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md).

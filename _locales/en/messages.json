@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Uploads your accepted Programmers solutions to GitHub and Notion with one click."
+    "message": "Uploads your accepted Programmers and Codeforces solutions to GitHub and Notion with one click."
   },
   "htmlLang": {
     "message": "en"
@@ -159,6 +159,12 @@
   },
   "sourceCodeNotFound": {
     "message": "Source code not found."
+  },
+  "codeforcesProblemNotFound": {
+    "message": "The problem of this submission could not be found."
+  },
+  "codeforcesSubmissionUnreadable": {
+    "message": "The accepted code could not be read. Open the submission and upload it there."
   },
   "setupLogin": {
     "message": "Log in to $PLATFORM$ in the extension popup first.",

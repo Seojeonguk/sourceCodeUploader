@@ -21,6 +21,7 @@
 | 사이트 | 페이지 | GitHub | Notion | 자동 업로드 | 상태 |
 |---|---|:-:|:-:|:-:|---|
 | [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지 | ✅ | ✅ | ✅ (채점 결과 창) | 지원 중 |
+| [Codeforces](https://codeforces.com/) | 내 정답 제출 페이지 | ✅ | ✅ | ✅ (제출 현황 페이지) | 팝업에서 켜기 |
 
 ## 설치
 
@@ -42,6 +43,7 @@
 3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. 업로드에 필요한 속성은 확장 프로그램이 데이터베이스에 추가해요([가이드](scripts/notion/README.md#prepare-the-database)).
 4. (선택) 플랫폼별 **자동 업로드**를 켜요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
+6. (Codeforces) 팝업의 **문제 사이트**에서 Codeforces를 켜고, Chrome이 묻는 접근을 허용해요. 내 정답 제출 페이지의 코드 위에 업로드 버튼이 생기고, 자동 업로드를 켜 두면 `/contest/<id>/my`나 `/submissions/<handle>`을 열어 둔 동안 정답이 된 제출이 올라가요.
 
 ## 동작 방식
 
@@ -69,7 +71,7 @@ flowchart LR
 | `identity` | Notion 로그인 창을 열고 리다이렉트 받기 |
 | `storage` | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
 | `scripting` | 팝업에서 켠 선택 문제 사이트의 스크립트 실행 |
-| 선택 호스트 | 선택 문제 사이트마다, 팝업에서 켤 때만 요청 (아직 없음) |
+| 선택 호스트: `codeforces.com` | Codeforces에서 실행, 팝업에서 켤 때만 요청 |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행 |
 
 확장 프로그램이 무엇을 읽고, 보내고, 보관하는지는 [개인정보처리방침](PRIVACY.md)(영어)에 있어요.

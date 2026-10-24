@@ -30,9 +30,9 @@ What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google
 ### Description
 
 ```text
-Keep every Programmers problem you solve, without copying and pasting.
+Keep every Programmers and Codeforces problem you solve, without copying and pasting.
 
-Source Code Uploader adds GitHub and Notion buttons to Programmers problem pages. Click one, and your solution is saved with the problem information:
+Source Code Uploader adds GitHub and Notion buttons to Programmers problem pages and to your accepted Codeforces submissions (turn Codeforces on in the popup). Click one, and your solution is saved with the problem information:
 
 • GitHub: commits the code as a file named after the problem and language to the repository you choose. If the same code is already there, nothing is committed.
 • Notion: creates a page with the problem title, level, category and a code block in the database you choose. Uploading the same problem again updates its code.
@@ -97,17 +97,18 @@ The images in `docs/store/` were made from the demo recording (the frames croppe
 **Single purpose**
 
 ```text
-Uploads the user's accepted solutions on Programmers problem pages to the GitHub repository or Notion database the user selects.
+Uploads the user's accepted solutions on judge sites (Programmers, and Codeforces when the user turns it on) to the GitHub repository or Notion database the user selects.
 ```
 
 **Permission justifications**
 
-| Permission       | Justification                                                                                                                                                                                                                                                                                                             |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `identity`       | Opens the Notion OAuth login in a browser window with chrome.identity.launchWebAuthFlow and receives its redirect, so the authorization code never reaches another site.                                                                                                                                                  |
-| `storage`        | Keeps the GitHub and Notion logins, the selected repository and database, and the auto upload options in chrome.storage, hidden from content scripts.                                                                                                                                                                     |
-| `scripting`      | Registers the content script of an optional judge site with chrome.scripting.registerContentScripts after the user turns the site on in the popup and grants its host permission, and unregisters it when the permission is removed.                                                                                      |
-| Host permissions | `programmers.co.kr` and `school.programmers.co.kr`: shows the upload buttons on problem pages and reads the solution and the problem information when the user uploads. `github.com`: the GitHub App device code login and its token refresh. `api.notion.com`: creates the problem page in the selected Notion database. |
+| Permission               | Justification                                                                                                                                                                                                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `identity`               | Opens the Notion OAuth login in a browser window with chrome.identity.launchWebAuthFlow and receives its redirect, so the authorization code never reaches another site.                                                                                                                                                  |
+| `storage`                | Keeps the GitHub and Notion logins, the selected repository and database, and the auto upload options in chrome.storage, hidden from content scripts.                                                                                                                                                                     |
+| `scripting`              | Registers the content script of an optional judge site with chrome.scripting.registerContentScripts after the user turns the site on in the popup and grants its host permission, and unregisters it when the permission is removed.                                                                                      |
+| Host permissions         | `programmers.co.kr` and `school.programmers.co.kr`: shows the upload buttons on problem pages and reads the solution and the problem information when the user uploads. `github.com`: the GitHub App device code login and its token refresh. `api.notion.com`: creates the problem page in the selected Notion database. |
+| Optional host permission | `codeforces.com`: asked for only when the user turns Codeforces on in the popup. Shows the upload buttons on the user's own accepted submissions and reads their code, and reads the problem page for its name, rating and tags.                                                                                          |
 
 **Remote code**: No, I am not using remote code. Every script is in the package.
 

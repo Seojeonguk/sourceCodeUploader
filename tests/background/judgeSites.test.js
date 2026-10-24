@@ -62,9 +62,13 @@ describe('the judge sites and the manifest', () => {
   it('gives each optional site scripts that run only on its pages', () => {
     optional.forEach((site) => {
       assert.ok(site.contentScripts?.length > 0, site.id);
+      const origins = site.origins.map(originOf);
       site.contentScripts.forEach((script) =>
         script.matches.forEach((match) =>
-          assert.ok(site.origins.includes(match), `${site.id}: ${match}`),
+          assert.ok(
+            origins.includes(new URL(match.replace(/\*/g, 'x')).origin),
+            `${site.id}: ${match}`,
+          ),
         ),
       );
     });
