@@ -31,6 +31,7 @@ const EDITOR_HTML = `
 const createPageHtml = ({
   editor = EDITOR_HTML,
   extractorLoaded = true,
+  startingCode = '',
 } = {}) => `<!doctype html>
 <html>
   <head><title>폰켓몬 | 프로그래머스 스쿨</title></head>
@@ -45,6 +46,7 @@ const createPageHtml = ({
       <div class="algorithm-title"><span class="challenge-title">폰켓몬</span></div>
       <div id="tour7"><button>Python3</button></div>
       ${editor}
+      ${startingCode ? `<textarea hidden id="code" name="code">${startingCode}</textarea>` : ''}
     </div>
     <div id="modal-dialog" style="display: none">
       <div class="modal-header"><h4></h4></div>
@@ -380,6 +382,25 @@ describe('Programmers content script', () => {
 
     it('does not upload when the editor is empty', async () => {
       const { document, sent } = openPage({ sourceCode: '  \n' });
+
+      document.querySelector('[data-platform="github"]').click();
+      await waitFor(() => document.querySelector('.scu-content-toast'));
+
+      assert.deepEqual(sent, []);
+      assert.equal(
+        document.querySelector('.scu-content-toast').textContent,
+        'Source code not found.',
+      );
+    });
+
+    it('does not upload the starting code when the editor is cleared', async () => {
+      // Programmers keeps the starting code in a hidden textarea#code.
+      const { document, sent } = openPage({
+        html: createPageHtml({
+          startingCode: 'def solution(nums):\n    answer = 0\n',
+        }),
+        sourceCode: '',
+      });
 
       document.querySelector('[data-platform="github"]').click();
       await waitFor(() => document.querySelector('.scu-content-toast'));

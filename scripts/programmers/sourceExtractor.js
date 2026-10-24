@@ -54,10 +54,9 @@
       element.value.trim(),
     )?.value;
 
-  // Programmers uses CodeMirror (or `textarea#code`, and inputs for fill-in-the-blank problems).
-  // The other editors are kept as fallbacks in case the page changes.
+  // Without CodeMirror, Programmers uses `textarea#code` (and inputs for fill-in-the-blank
+  // problems). The other editors are kept as fallbacks in case the page changes.
   const SOURCE_READERS = Object.freeze([
-    readCodeMirror,
     readCodeTextarea,
     readFillBlankCode,
     readMonaco,
@@ -66,6 +65,13 @@
   ]);
 
   const getSourceCode = () => {
+    // The editor of Programmers is final even when empty: the hidden `textarea#code` still
+    // holds the starting code of the problem after the editor is cleared.
+    const codeMirror = readCodeMirror();
+    if (typeof codeMirror === 'string') {
+      return codeMirror;
+    }
+
     let sourceCode = '';
 
     SOURCE_READERS.some((read) => {

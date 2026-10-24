@@ -178,7 +178,9 @@
 
         window.clearTimeout(timeoutId);
         window.removeEventListener('message', handleResponse);
-        resolve(event.data.sourceCode || getTextareaSourceCode());
+        // An empty answer means the editor is empty, so the textareas (which can hold the
+        // starting code) are read only when the extractor does not answer.
+        resolve(event.data.sourceCode ?? '');
       }
 
       window.addEventListener('message', handleResponse);
