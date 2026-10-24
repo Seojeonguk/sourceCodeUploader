@@ -19,7 +19,7 @@ scripts/background.js  # 서비스 워커, 메시지 라우팅
 scripts/senders.js     # 메시지 보낸 쪽 검사 (확장 페이지 / 문제 페이지)
 scripts/judgeSites.js  # 문제 사이트 목록 (필수 / 선택)
 scripts/sitePermissions.js  # 선택 사이트 권한 ↔ content script 등록 동기화
-scripts/content/       # 선택 사이트 공용 content script UI (버튼 · 토스트 · 메시지)
+scripts/content/       # 문제 사이트 공용 content script UI (버튼 · 토스트 · 메시지)
 scripts/programmers/   # 프로그래머스 content script + 페이지 컨텍스트 추출기
 scripts/codeforces/    # Codeforces content script
 scripts/github/        # GitHub App device flow 로그인, 저장소 목록, 커밋

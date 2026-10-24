@@ -91,7 +91,7 @@ flowchart LR
    ├─ senders.js            # 메시지 보낸 쪽 검사 (확장 페이지 / 문제 페이지)
    ├─ judgeSites.js         # 문제 사이트 목록 (필수 / 선택)
    ├─ sitePermissions.js    # 켠 선택 사이트의 content script 등록
-   ├─ content/              # 선택 사이트 content script 공용 UI (버튼 · 메시지)
+   ├─ content/              # 문제 사이트 content script 공용 UI (버튼 · 메시지)
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
    ├─ codeforces/           # Codeforces content script
    ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋

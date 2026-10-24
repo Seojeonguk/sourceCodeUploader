@@ -2,26 +2,6 @@
   const PROGRAMMERS_TYPE = 'Programmers';
   const RESPONSE_EVENT = 'SCU_PROGRAMMERS_SOURCE_RESPONSE';
   const REQUEST_EVENT = 'SCU_PROGRAMMERS_SOURCE_REQUEST';
-  const TOAST_DURATION = 5000;
-
-  // The same lookup as t() in scripts/common/utils/i18n.js, which a classic script cannot import.
-  const t = (key, ...substitutions) =>
-    chrome.i18n.getMessage(key, substitutions.map(String)) || key;
-
-  const PLATFORMS = Object.freeze([
-    {
-      id: 'github',
-      name: 'GitHub',
-      action: 'commit',
-      icon: 'icon/githubIcon.png',
-    },
-    {
-      id: 'notion',
-      name: 'Notion',
-      action: 'upload',
-      icon: 'icon/notionIcon.png',
-    },
-  ]);
 
   const SELECTORS = Object.freeze({
     LESSON: '.lesson-content[data-lesson-id], [data-lesson-id]',
@@ -57,6 +37,8 @@
     normalizeText,
     toProblemUrl,
   } = globalThis.SCU_PROGRAMMERS;
+  const { t, createUploadButtons, getAutoUploadPlatforms, showToast, upload } =
+    globalThis.SCU_CONTENT;
 
   let sourceExtractorReady;
 
@@ -83,45 +65,6 @@
     });
 
     return sourceExtractorReady;
-  };
-
-  // Like sendMessage in scripts/common/utils/chrome/runtime.js, which a content script cannot import.
-  const sendUploadMessage = ({ id, action }, payload) =>
-    new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          platform: id,
-          action,
-          payload,
-        },
-        (response) => {
-          // Reading lastError also keeps Chrome from logging it as unchecked.
-          const error = chrome.runtime.lastError;
-          if (error || response === undefined) {
-            resolve({
-              ok: false,
-              message: error?.message ?? t('noResponse'),
-            });
-            return;
-          }
-          resolve(response);
-        },
-      );
-    });
-
-  const createUploadButton = ({ id, name, icon }) => {
-    const button = document.createElement('button');
-    button.className = 'scu-programmers-upload';
-    button.type = 'button';
-    button.title = t('uploadTo', name);
-    button.dataset.platform = id;
-
-    const image = document.createElement('img');
-    image.src = chrome.runtime.getURL(icon);
-    image.alt = name;
-
-    button.appendChild(image);
-    return button;
   };
 
   const findEditorContainer = () => {
@@ -235,7 +178,9 @@
 
         window.clearTimeout(timeoutId);
         window.removeEventListener('message', handleResponse);
-        resolve(event.data.sourceCode || getTextareaSourceCode());
+        // An empty answer means the editor is empty, so the textareas (which can hold the
+        // starting code) are read only when the extractor does not answer.
+        resolve(event.data.sourceCode ?? '');
       }
 
       window.addEventListener('message', handleResponse);
@@ -273,72 +218,6 @@
     };
   };
 
-  /**
-   * Shows a message on the page instead of alert().
-   * @param {string} message - The message to show.
-   * @param {Object} [options]
-   * @param {'info'|'success'|'error'} [options.type='info'] - The type of the message.
-   * @param {?string} [options.link] - A URL to open from the message.
-   */
-  const getToastContainer = () => {
-    let container = document.querySelector('.scu-programmers-toasts');
-
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'scu-programmers-toasts';
-      document.body.appendChild(container);
-    }
-
-    return container;
-  };
-
-  const showToast = (message, { type = 'info', link = null } = {}) => {
-    const toast = document.createElement('div');
-    toast.className = `scu-programmers-toast scu-programmers-toast-${type}`;
-    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    toast.textContent = message || t('somethingWentWrong');
-
-    if (link) {
-      const anchor = document.createElement('a');
-      anchor.href = link;
-      anchor.target = '_blank';
-      anchor.rel = 'noopener noreferrer';
-      anchor.textContent = t('open');
-      toast.append(' ', anchor);
-    }
-
-    getToastContainer().appendChild(toast);
-    window.setTimeout(() => toast.remove(), TOAST_DURATION);
-  };
-
-  const showUploadResult = (platformName, response) => {
-    if (!response?.ok) {
-      showToast(response?.message, { type: 'error' });
-      return;
-    }
-
-    const link = /^https?:\/\//.test(response.message)
-      ? response.message
-      : null;
-    showToast(t('uploadedTo', platformName), { type: 'success', link });
-  };
-
-  const handleUploadClick = async (button, platform) => {
-    button.disabled = true;
-
-    try {
-      const payload = await buildPayload();
-      const response = await sendUploadMessage(platform, payload);
-      showUploadResult(platform.name, response);
-    } catch (error) {
-      // eslint-disable-next-line no-console -- a classic content script cannot import the logger
-      console.error('[SCU]', error);
-      showToast(error.message, { type: 'error' });
-    } finally {
-      button.disabled = false;
-    }
-  };
-
   const getResultTitle = () =>
     SELECTORS.RESULT_TITLE.map((selector) =>
       document.querySelector(selector),
@@ -353,33 +232,38 @@
           element.getClientRects().length),
     );
 
-  // The storage is hidden from content scripts, so the background reads the options.
-  const getAutoUploadPlatforms = async () => {
-    const responses = await Promise.all(
-      PLATFORMS.map((platform) =>
-        sendUploadMessage({ ...platform, action: 'getAutoUpload' }),
-      ),
-    );
-
-    return PLATFORMS.filter((platform, index) => {
-      const response = responses[index];
-      return response.ok && response.message === true;
-    });
-  };
-
   const uploadAutomatically = async () => {
     const platforms = await getAutoUploadPlatforms();
+    if (platforms.length === 0) {
+      return;
+    }
+
+    let payload;
+    try {
+      payload = await buildPayload();
+    } catch (error) {
+      // eslint-disable-next-line no-console -- a classic content script cannot import the logger
+      console.error('[SCU]', error);
+      showToast(error.message, { type: 'error' });
+      return;
+    }
 
     // Upload one by one so each result message is shown.
     // eslint-disable-next-line no-restricted-syntax -- sequential uploads
     for (const platform of platforms) {
       const button = document.querySelector(
-        `.scu-programmers-upload[data-platform="${platform.id}"]`,
+        `.scu-programmers-wrapper [data-platform="${platform.id}"]`,
       );
 
+      // A disabled button is already uploading after a click.
       if (button && !button.disabled) {
-        // eslint-disable-next-line no-await-in-loop -- sequential uploads
-        await handleUploadClick(button, platform);
+        button.disabled = true;
+        try {
+          // eslint-disable-next-line no-await-in-loop -- sequential uploads
+          await upload(platform, payload);
+        } finally {
+          button.disabled = false;
+        }
       }
     }
   };
@@ -446,17 +330,9 @@
 
     ensureContainerPositioning(container);
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'scu-programmers-wrapper';
-
-    PLATFORMS.forEach((platform) => {
-      const button = createUploadButton(platform);
-      button.addEventListener('click', () =>
-        handleUploadClick(button, platform),
-      );
-      wrapper.appendChild(button);
-    });
-
+    // The shared buttons, placed over the editor.
+    const wrapper = createUploadButtons(buildPayload);
+    wrapper.classList.add('scu-programmers-wrapper');
     container.appendChild(wrapper);
 
     return true;

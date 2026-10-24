@@ -1,6 +1,6 @@
 /**
  * The upload buttons, the messages on the page and the messages to the background, shared by
- * the content scripts of the optional judge sites (Codeforces, and JUNGOL later).
+ * the content scripts of the judge sites (Programmers, Codeforces, and JUNGOL later).
  *
  * Content scripts are classic scripts, so this file is loaded first and shares its functions
  * through `globalThis.SCU_CONTENT`.

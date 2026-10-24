@@ -98,11 +98,23 @@ describe('sourceExtractor', () => {
     assert.equal(sourceCode, 'focused');
   });
 
-  it('skips empty editors and falls back to a filled textarea', () => {
+  it('sends an empty CodeMirror, not the starting code in textarea#code', () => {
+    // textarea#code keeps the code the problem starts with, even after the editor is cleared.
+    const startingCode = 'def solution(nums):\n    answer = 0\n';
     const sourceCode = extract({
       elements: {
-        '.CodeMirror': { CodeMirror: { getValue: () => '  ' } },
+        '.CodeMirror': { CodeMirror: { getValue: () => '' } },
+        'textarea#code': { value: startingCode },
       },
+      textareas: [{ value: startingCode }],
+    });
+
+    assert.equal(sourceCode, '');
+  });
+
+  it('skips an empty textarea#code and falls back to a filled textarea', () => {
+    const sourceCode = extract({
+      elements: { 'textarea#code': { value: '  ' } },
       textareas: [{ value: '' }, { value: 'from another textarea' }],
     });
 
