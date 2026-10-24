@@ -82,7 +82,10 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 
 ## 주의사항
 
-- **새 사이트를 `host_permissions` · `content_scripts`에 넣지 말 것.** `tests/background/judgeSites.test.js`가 막음. 추가 절차: `JUDGE_SITES` 항목(`optional`, `origins` `https://<host>/*`, `contentScripts`) + `optional_host_permissions` + `UPLOAD_TYPES` + 아이콘의 `web_accessible_resources` + `_locales` 설명 · README · PRIVACY · 스토어 문서.
+- **새 사이트를 `host_permissions` · `content_scripts`에 넣지 말 것.** `tests/background/judgeSites.test.js`가 막음. 사이트를 추가할 때 고칠 곳(Codeforces #267 때 문서를 빠뜨려 #271에서 고침, 한 PR에서 모두 고침):
+  - **코드**: `scripts/judgeSites.js`의 `JUDGE_SITES` 항목(`optional: true`, `origins` `https://<host>/*`, `contentScripts`) · `manifest.json`의 `optional_host_permissions` · 아이콘(`icon/*.png`)의 `web_accessible_resources` `matches` · `scripts/github/utils/path.js`의 `UPLOAD_TYPES` · `scripts/<site>/` content script(`globalThis.SCU_CONTENT` 사용) · `_locales/{en,ko}`의 `extDescription`과 사이트 문구.
+  - **테스트**: `tests/<site>/`(content script · helpers), 실제 페이지를 자른 `tests/fixtures/<site>/`.
+  - **문서**: `README.md` · `README.ko.md`(Supported Platforms 표, Usage, How It Works의 다이어그램 · 설명 · Permissions 표, Project Structure, History) · `scripts/github/README.md`(사용법, 커밋 경로, 자동 업로드) · `scripts/notion/README.md`(`info` · `tags` 속성 예시, 사용법, 자동 업로드) · `PRIVACY.md`(첫 문단, 사이트에서 하는 일) · `docs/chrome-web-store.md`(Summary · Description, Korean listing, Images, single purpose, 선택 호스트 권한 사유, data usage, Test instructions) · 이 파일(지원 사이트, 구조).
 - 권한을 추가하면 스토어 사용자에게 경고가 뜨는지 먼저 확인함(`scripting`, 선택 권한은 경고 없음).
 - 스토어 빌드와 압축 해제 빌드는 확장 ID가 다름. Notion 로그인은 Worker 허용 목록과 Notion integration의 Redirect URI에 **둘 다** 등록돼 있어야 함.
 - 커밋 · 태그 GPG 서명이 가끔 멈추므로 `timeout 60 git commit -s ...`처럼 시간 제한을 둠. 서명을 건너뛰지 않음.
