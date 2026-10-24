@@ -101,7 +101,7 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
 
 ## Development
 
-Requires Node.js 22.22.2+ or 24.15.0+ (`engines` in `package.json`; CI uses Node 22).
+Requires Node.js 22.22.2+ or 24.15.0+ (`engines` in `package.json`; CI runs on Node 22 and 24).
 
 ```bash
 npm install

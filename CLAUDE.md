@@ -39,7 +39,7 @@ docs/chrome-web-store.md    # 스토어 등록 문구 · 절차
 
 ## 빌드 및 실행 명령어
 
-Node.js 22.22.2+ 또는 24.15.0+ (CI는 Node 22).
+Node.js 22.22.2+ 또는 24.15.0+ (CI는 Node 22 · 24, zip artifact는 Node 22에서 올림).
 
 ```bash
 npm install
@@ -51,7 +51,7 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 
 - 확장 확인: `chrome://extensions/` → 압축해제된 확장 프로그램 로드 → 저장소 폴더, 고친 뒤 **새로고침**.
 - Worker 배포(관리자): `cd proxy/notion-oauth && npx wrangler deploy`. `wrangler.toml`이나 `src/index.js`가 바뀌면 필요.
-- CI(`.github/workflows/ci.yml`): lint · format · test · package, zip은 artifact로 업로드. `release.yml`은 GitHub Release 발행 시 zip을 첨부함.
+- CI(`.github/workflows/ci.yml`): Node 22 · 24에서 lint · format · test · package, zip은 Node 22 잡에서 artifact로 업로드. `release.yml`은 GitHub Release 발행 시 zip을 첨부함.
 
 ## 코드 스타일 및 컨벤션
 
