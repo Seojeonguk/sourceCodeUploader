@@ -58,9 +58,9 @@ Requires Chrome 116 or later.
 The extension has `_locales/ko` (from v3.3.0), so the dashboard can add a Korean listing: **Store listing** → the language menu → **Korean**. The summary comes from `extDescription` in `_locales/ko/messages.json`. The screenshots can stay the same.
 
 ```text
-프로그래머스에서 푼 문제를 복사·붙여넣기 없이 모아 두세요.
+프로그래머스와 Codeforces에서 푼 문제를 복사·붙여넣기 없이 모아 두세요.
 
-Source Code Uploader는 프로그래머스 문제 페이지에 GitHub · Notion 버튼을 붙여요. 버튼을 누르면 정답 코드가 문제 정보와 함께 저장돼요.
+Source Code Uploader는 프로그래머스 문제 페이지와 Codeforces의 내 정답 제출에 GitHub · Notion 버튼을 붙여요(Codeforces는 팝업에서 켜요). 버튼을 누르면 정답 코드가 문제 정보와 함께 저장돼요.
 
 • GitHub: 고른 저장소에 문제와 언어 이름으로 된 파일로 커밋해요. 같은 코드가 이미 있으면 커밋하지 않아요.
 • Notion: 고른 데이터베이스에 문제 제목 · 난이도 · 분류와 코드 블록을 담은 페이지를 만들어요. 같은 문제를 다시 올리면 코드만 바꿔요.
@@ -70,7 +70,7 @@ Source Code Uploader는 프로그래머스 문제 페이지에 GitHub · Notion 
 1. 확장 프로그램 아이콘을 눌러 GitHub(GitHub에 표시된 코드 입력)와 Notion(공유할 페이지 선택)에 로그인해요.
 2. 업로드할 저장소에 GitHub App을 설치하고, Notion 데이터베이스를 확장 프로그램과 공유해요. 필요한 속성은 확장 프로그램이 추가해요.
 3. 팝업에서 저장소와 데이터베이스를 골라요.
-4. 프로그래머스에서 문제를 풀고 업로드 버튼을 누르거나, 자동 업로드를 켜요.
+4. 프로그래머스나 Codeforces에서 문제를 풀고 업로드 버튼을 누르거나, 자동 업로드를 켜요.
 
 개인정보
 • 코드는 직접 고른 GitHub 저장소와 Notion 데이터베이스로만 가요. 분석 도구나 추적은 없어요.
@@ -140,8 +140,9 @@ The dashboard has a **Test instructions** tab for the reviewers:
 ```text
 The extension needs a Programmers account (free) and a GitHub or Notion account of your own; no test account is shared.
 
-1. Click the extension icon → GitHub "Authorize": enter the code shown on github.com/login/device, then install the "Source Code Uploader" GitHub App on a test repository (Add repositories in the popup).
-2. Create an empty Notion database, click Notion "Authorize" and share the page with the database. Selecting it in the popup adds the properties the uploads need ("info", "tags", "URL", "Date", "mime").
+1. Click the extension icon → GitHub tab → "Log in": enter the code shown on github.com/login/device, then install the "Source Code Uploader" GitHub App on a test repository (Add repositories in the popup).
+2. Create an empty Notion database, click "Log in" on the Notion tab and share the page with the database. Selecting it in the popup adds the properties the uploads need ("info", "tags", "URL", "Date", "mime").
 3. Select the repository and the database in the popup.
 4. Open a Programmers problem, for example https://school.programmers.co.kr/learn/courses/30/lessons/12903, write a solution, and click the GitHub or Notion button under the editor. A message shows the link to the uploaded file or page.
+5. (Optional, needs a Codeforces account) Under "Problem sites" in the popup, turn on "Use Codeforces" and allow the access Chrome asks for. Submit an accepted solution on Codeforces, open your submission (for example https://codeforces.com/contest/<id>/submission/<id>), and click the GitHub or Notion button above the code.
 ```
