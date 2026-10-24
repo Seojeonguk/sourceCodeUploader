@@ -91,7 +91,7 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
    ├─ senders.js            # checks who sent a message (extension page / judge page)
    ├─ judgeSites.js         # judge sites (required / optional)
    ├─ sitePermissions.js    # registers the content scripts of the optional sites that are turned on
-   ├─ content/              # shared UI of the optional sites' content scripts (buttons · messages)
+   ├─ content/              # shared UI of the judge sites' content scripts (buttons · messages)
    ├─ programmers/          # Programmers content script + page-context extractor
    ├─ codeforces/           # Codeforces content script
    ├─ github/               # device flow login, repository list, commit

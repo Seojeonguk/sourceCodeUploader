@@ -5,14 +5,14 @@ import { afterEach, describe, it } from 'node:test';
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { chromeI18n } from '../helpers/i18n.js';
 
-const readScript = (path) =>
-  readFileSync(
-    new URL(`../../scripts/programmers/${path}`, import.meta.url),
-    'utf8',
-  );
+const readRepoFile = (path) =>
+  readFileSync(new URL(`../../${path}`, import.meta.url), 'utf8');
 
-const HELPERS_SOURCE = readScript('helpers.js');
-const INDEX_SOURCE = readScript('index.js');
+// The scripts that manifest.json loads on Programmers, in order: the shared UI comes first.
+const [PROGRAMMERS_SCRIPTS] = JSON.parse(
+  readRepoFile('manifest.json'),
+).content_scripts;
+const SOURCES = PROGRAMMERS_SCRIPTS.js.map(readRepoFile);
 
 const EXTENSION_ORIGIN = 'chrome-extension://mfhbpmbchemfhijjamldbkidlegfmaff';
 const LESSON_PATH = '/learn/courses/30/lessons/1845';
@@ -110,7 +110,7 @@ const createClock = () => {
 };
 
 /**
- * Opens the page and runs helpers.js and index.js in it, like Chrome runs the content scripts.
+ * Opens the page and runs the content scripts in it, in the order of manifest.json.
  * @param {Object} [options]
  * @param {string} [options.url] - The page URL.
  * @param {string} [options.html] - The page HTML.
@@ -179,8 +179,7 @@ const openPage = ({
   window.setTimeout = clock.setTimeout;
   window.clearTimeout = clock.clearTimeout;
 
-  window.eval(HELPERS_SOURCE);
-  window.eval(INDEX_SOURCE);
+  SOURCES.forEach((source) => window.eval(source));
 
   return { window, document: window.document, sent, clock };
 };
@@ -210,7 +209,7 @@ const uploadsOf = (sent) =>
   actionsOf(sent).filter((action) => !action.endsWith('/getAutoUpload'));
 
 const toastCount = (document) =>
-  document.querySelectorAll('.scu-programmers-toast').length;
+  document.querySelectorAll('.scu-content-toast').length;
 
 /**
  * Shows the result modal with the title, like Programmers does after grading.
@@ -249,7 +248,7 @@ describe('Programmers content script', () => {
       const { document } = openPage();
 
       const buttons = [
-        ...document.querySelectorAll('.code-editor .scu-programmers-upload'),
+        ...document.querySelectorAll('.code-editor .scu-content-upload'),
       ];
       assert.deepEqual(
         buttons.map((button) => [button.dataset.platform, button.title]),
@@ -266,24 +265,38 @@ describe('Programmers content script', () => {
 
     it('adds the buttons when the editor appears later, only once', async () => {
       const { document } = openPage({ html: createPageHtml({ editor: '' }) });
-      assert.equal(
-        document.querySelectorAll('.scu-programmers-upload').length,
-        0,
-      );
+      assert.equal(document.querySelectorAll('.scu-content-upload').length, 0);
 
       document
         .querySelector('.lesson-content')
         .insertAdjacentHTML('beforeend', EDITOR_HTML);
       await waitFor(
-        () => document.querySelectorAll('.scu-programmers-upload').length > 0,
+        () => document.querySelectorAll('.scu-content-upload').length > 0,
       );
       document.body.append(document.createElement('div'));
       await wait(20);
 
-      assert.equal(
-        document.querySelectorAll('.scu-programmers-upload').length,
-        2,
-      );
+      assert.equal(document.querySelectorAll('.scu-content-upload').length, 2);
+    });
+
+    it('loads the shared UI before the Programmers scripts', () => {
+      assert.deepEqual(PROGRAMMERS_SCRIPTS.js, [
+        'scripts/content/ui.js',
+        'scripts/programmers/helpers.js',
+        'scripts/programmers/index.js',
+      ]);
+      assert.deepEqual(PROGRAMMERS_SCRIPTS.css, [
+        'scripts/content/ui.css',
+        'scripts/programmers/programmers.css',
+      ]);
+    });
+
+    it('places the buttons over the editor', () => {
+      const { document } = openPage();
+
+      const wrapper = document.querySelector('.scu-content-wrapper');
+      assert.ok(wrapper.classList.contains('scu-programmers-wrapper'));
+      assert.equal(wrapper.parentElement.className, 'code-editor');
     });
 
     it('injects the source extractor into the page once', () => {
@@ -315,7 +328,7 @@ describe('Programmers content script', () => {
 
       button.click();
       assert.equal(button.disabled, true);
-      await waitFor(() => document.querySelector('.scu-programmers-toast'));
+      await waitFor(() => document.querySelector('.scu-content-toast'));
 
       assert.equal(sent.length, 1);
       const { platform, action, payload } = sent[0];
@@ -334,8 +347,8 @@ describe('Programmers content script', () => {
         },
       });
 
-      const toast = document.querySelector('.scu-programmers-toast');
-      assert.ok(toast.classList.contains('scu-programmers-toast-success'));
+      const toast = document.querySelector('.scu-content-toast');
+      assert.ok(toast.classList.contains('scu-content-toast-success'));
       assert.match(toast.textContent, /^Uploaded to GitHub\./);
       assert.equal(toast.querySelector('a').href, encodeURI(fileUrl));
       assert.equal(toast.querySelector('a').rel, 'noopener noreferrer');
@@ -353,10 +366,10 @@ describe('Programmers content script', () => {
       });
 
       document.querySelector('[data-platform="notion"]').click();
-      await waitFor(() => document.querySelector('.scu-programmers-toast'));
+      await waitFor(() => document.querySelector('.scu-content-toast'));
 
-      const toast = document.querySelector('.scu-programmers-toast');
-      assert.ok(toast.classList.contains('scu-programmers-toast-error'));
+      const toast = document.querySelector('.scu-content-toast');
+      assert.ok(toast.classList.contains('scu-content-toast-error'));
       assert.equal(toast.getAttribute('role'), 'alert');
       assert.equal(
         toast.textContent,
@@ -369,11 +382,11 @@ describe('Programmers content script', () => {
       const { document, sent } = openPage({ sourceCode: '  \n' });
 
       document.querySelector('[data-platform="github"]').click();
-      await waitFor(() => document.querySelector('.scu-programmers-toast'));
+      await waitFor(() => document.querySelector('.scu-content-toast'));
 
       assert.deepEqual(sent, []);
       assert.equal(
-        document.querySelector('.scu-programmers-toast').textContent,
+        document.querySelector('.scu-content-toast').textContent,
         'Source code not found.',
       );
     });
@@ -465,6 +478,72 @@ describe('Programmers content script', () => {
       await clock.tick(RESULT_CHECK_DELAY);
       await waitFor(() => toastCount(document) === 4);
       assert.equal(uploadsOf(sent).length, 4);
+    });
+
+    it('reads the code once for both platforms', async () => {
+      const { window, document, sent, clock } = openPage({
+        responses: bothOn,
+      });
+      let requests = 0;
+      window.addEventListener('message', (event) => {
+        if (event.data?.type === 'SCU_PROGRAMMERS_SOURCE_REQUEST') {
+          requests += 1;
+        }
+      });
+
+      showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitFor(() => toastCount(document) === 2);
+
+      assert.equal(requests, 1);
+      assert.deepEqual(uploadsOf(sent), ['github/commit', 'notion/upload']);
+    });
+
+    it('shows once that the code is missing, and uploads nothing', async () => {
+      const { document, sent, clock } = openPage({
+        responses: bothOn,
+        sourceCode: '  \n',
+      });
+
+      showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitFor(() => toastCount(document) === 1);
+      await waitForQuiet();
+
+      assert.equal(toastCount(document), 1);
+      assert.equal(
+        document.querySelector('.scu-content-toast').textContent,
+        'Source code not found.',
+      );
+      assert.deepEqual(uploadsOf(sent), []);
+    });
+
+    it('skips a platform that a click is already uploading to', async () => {
+      const { window, document, sent, clock } = openPage({
+        responses: bothOn,
+      });
+      // The background answers the commit of the click only when the test releases it.
+      const { sendMessage } = window.chrome.runtime;
+      let release;
+      window.chrome.runtime.sendMessage = (message, callback) => {
+        if (message.action === 'commit' && !release) {
+          sent.push(message);
+          release = () => callback({ ok: true, message: null });
+          return;
+        }
+        sendMessage(message, callback);
+      };
+
+      document.querySelector('[data-platform="github"]').click();
+      await waitFor(() => release);
+      showResult(document, '정답입니다.');
+      await clock.tick(RESULT_CHECK_DELAY);
+      await waitFor(() => toastCount(document) === 1);
+      await waitForQuiet();
+
+      assert.deepEqual(uploadsOf(sent), ['github/commit', 'notion/upload']);
+      release();
+      await waitFor(() => toastCount(document) === 2);
     });
 
     it('does not upload a wrong answer', async () => {

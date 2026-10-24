@@ -26,8 +26,9 @@
         "https://school.programmers.co.kr/learn/courses/*/lessons/*",
         "https://programmers.co.kr/learn/courses/*/lessons/*"
       ],
-      "css": ["scripts/programmers/programmers.css"],
+      "css": ["scripts/content/ui.css", "scripts/programmers/programmers.css"],
       "js": [
+        "scripts/content/ui.js",
         "scripts/programmers/helpers.js",
         "scripts/programmers/index.js"
       ],
