@@ -44,7 +44,7 @@ Node.js 22.22.2+ 또는 24.15.0+ (CI는 Node 22).
 ```bash
 npm install
 npm run lint          # ESLint 10 (recommended + airbnb-base 규칙 + prettier), --max-warnings 0
-npm run format:check  # Prettier
+npm run format:check  # Prettier (코드 · Markdown 문서 · .github), 고치려면 npm run format
 npm test              # node --test --import ./tests/setup.js (영어 chrome.i18n mock 포함)
 npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확장이 쓰는 파일만)
 ```
@@ -56,18 +56,21 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 ## 코드 스타일 및 컨벤션
 
 ### 코드
+
 - 확장 코드는 네이티브 ES 모듈이고 의존성이 없음. import에 `.js` 확장자를 꼭 씀. content script는 **classic script**라 import를 못 쓰므로 `globalThis.SCU_*`로 공유함.
 - 주석 · JSDoc은 영어로, 주변 코드의 밀도에 맞춰 씀.
 - 사용자에게 보이는 문구는 **반드시 `_locales/en`과 `ko` 둘 다**에 넣음. 스크립트는 `t('key', ...)`, HTML은 `data-i18n` · `data-i18n-aria-label`. `tests/common/i18n.test.js`가 키 일치, 미사용 키, 빠진 키를 검사함. 한국어는 해요체로 씀.
 - 문제 지문은 업로드하지 않음(정올 약관 §10 · §17). 코드와 메타데이터(제목 · 난이도 · 태그 · URL)만 올림.
 
 ### 테스트
+
 - `node:test` + jsdom. content script는 `node:vm`이나 jsdom `runScripts: 'outside-only'`로 실행함.
 - 새 동작에는 테스트를 먼저 쓰고, **옛 코드 / 일부러 망가뜨린 코드에서 실패하는지 확인**함(mutation check). 이 결과를 PR 본문에 적음.
 - 외부 사이트 구조는 가능하면 **실제 페이지를 잘라 fixture로** 씀(`tests/fixtures/codeforces/`). 못 가져온 구조는 재구성했다고 명시함.
 - DOM 변화에 반응하는 content script 테스트에는 suite timeout을 걸어서, 무한 반복이 멈추지 않고 실패하게 함.
 
 ### Git · PR (squash merge, 브랜치 자동 삭제 켜짐)
+
 - `master`에서 브랜치를 따서 PR을 염. 커밋은 `git commit -s`(DCO 검사), GPG 서명(`commit.gpgsign=true`).
 - **커밋 메시지**: 짧은 명령형 영어 제목 + 본문 **한 줄** `This will <커밋이 미치는 결과>.` 줄바꿈과 "since …"는 쓰지 않음. 자세한 이유 · 테스트는 PR 본문에 씀.
 - **Claude attribution 금지**: `Co-Authored-By: Claude`나 "Generated with Claude Code"를 커밋 · PR에 넣지 않음.
@@ -75,6 +78,7 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 - **PR · 이슈 생성 시**: 레이블(`feat`, `bug`, `enhancement`, `documentation`, `refactoring`, `release`, …), `--assignee @me`, 맞는 마일스톤을 항상 지정함.
 
 ### 버전 · 릴리스
+
 - **메이저**: 기존 사용자가 무언가 해야 할 때(다시 로그인 · 설치 · 선택). **마이너**: 새 기능이나 보이는 변경. **패치**: 수정만.
 - 버전은 `manifest.json` · `package.json` · `package-lock.json`(`npm version X --no-git-tag-version`)에 있음.
 - 마일스톤의 이슈가 끝나면 "Release X.Y.Z" PR(버전 올리기 + 본문에 릴리스 노트 초안)을 만듦. 머지 후 머지 커밋에 서명 태그 `git tag -s vX.Y.Z`를 붙이고, 사용자에게 확인받고 GitHub Release를 발행함(zip은 워크플로가 첨부함). 그다음 마일스톤을 닫음.

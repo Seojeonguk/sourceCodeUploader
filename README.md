@@ -11,17 +11,17 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 ## Features
 
 - **One-click upload** — Adds GitHub / Notion upload buttons to your accepted submissions.
-- **Auto upload** — Optionally uploads automatically as soon as a submission turns *Accepted*.
+- **Auto upload** — Optionally uploads automatically as soon as a submission turns _Accepted_.
 - **GitHub** — Commits the source to `{platform}/{problem}.{ext}` in the repository you choose. Skips the commit if the file content is unchanged.
 - **Notion** — Creates a page in the database you choose, with the problem title, level and tags as properties and the source as a code block.
 - **Login** — Sign in with GitHub (device code) and Notion (OAuth) from the popup; pick a repository or database from a list. No client secret is shipped in the extension, and the GitHub token reaches only the repositories you install the GitHub App on.
 
 ## Supported Platforms
 
-| Source | Pages | GitHub | Notion | Auto upload | Status |
-|---|---|:-:|:-:|:-:|---|
-| [Programmers](https://school.programmers.co.kr/) | Lesson page | ✅ | ✅ | ✅ (result modal) | Supported |
-| [Codeforces](https://codeforces.com/) | Your accepted submission | ✅ | ✅ | ✅ (status page) | Turn it on in the popup |
+| Source                                           | Pages                    | GitHub | Notion |    Auto upload    | Status                  |
+| ------------------------------------------------ | ------------------------ | :----: | :----: | :---------------: | ----------------------- |
+| [Programmers](https://school.programmers.co.kr/) | Lesson page              |   ✅   |   ✅   | ✅ (result modal) | Supported               |
+| [Codeforces](https://codeforces.com/)            | Your accepted submission |   ✅   |   ✅   | ✅ (status page)  | Turn it on in the popup |
 
 ## Installation
 
@@ -68,13 +68,13 @@ flowchart LR
 
 ### Permissions
 
-| Permission | Why |
-|---|---|
-| `identity` | Open the Notion login window and receive its redirect |
-| `storage` | Keep access tokens, the selected repository / database and options |
-| `scripting` | Run the scripts of an optional judge site after you turn it on in the popup |
-| Optional host: `codeforces.com` | Run on Codeforces, asked for only when you turn it on in the popup |
-| Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages |
+| Permission                                                | Why                                                                         |
+| --------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `identity`                                                | Open the Notion login window and receive its redirect                       |
+| `storage`                                                 | Keep access tokens, the selected repository / database and options          |
+| `scripting`                                               | Run the scripts of an optional judge site after you turn it on in the popup |
+| Optional host: `codeforces.com`                           | Run on Codeforces, asked for only when you turn it on in the popup          |
+| Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages                                    |
 
 What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md).
 
@@ -125,15 +125,15 @@ Conventions: branch from `master` and open a PR; commit messages start with an E
 
 ## History
 
-| Version | Period | Architecture |
-|---|---|---|
-| v1 | 2022.01 – 02 | Local Python script watching downloaded files, uploading via `.env` tokens |
-| v2 | 2022.12 – 2023.01 | Extension + Django REST server (Docker · Nginx · Jenkins) — snapshot: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server) |
-| v3 | 2024.02 – | Serverless extension with OAuth ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105)) |
-| v3.x | 2024.07 – 2026.04 | Status-page upload, Notion length limits, UTF-8 encoding, refactoring, Programmers, auto upload |
-| v3.x | 2026.10 | Programmers Notion upload and auto upload, in-page messages, lint · test CI |
-| v3.x | 2026.10 | Baekjoon support removed after the site shut down — snapshot: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) |
-| v3.x | 2026.10 | Chrome Web Store, Korean, Notion properties added automatically, popup as setup steps, Codeforces as the first optional judge site |
+| Version | Period            | Architecture                                                                                                                                                               |
+| ------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1      | 2022.01 – 02      | Local Python script watching downloaded files, uploading via `.env` tokens                                                                                                 |
+| v2      | 2022.12 – 2023.01 | Extension + Django REST server (Docker · Nginx · Jenkins) — snapshot: [`before_remove_server`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_server) |
+| v3      | 2024.02 –         | Serverless extension with OAuth ([#102](https://github.com/Seojeonguk/sourceCodeUploader/issues/102), [#105](https://github.com/Seojeonguk/sourceCodeUploader/pull/105))   |
+| v3.x    | 2024.07 – 2026.04 | Status-page upload, Notion length limits, UTF-8 encoding, refactoring, Programmers, auto upload                                                                            |
+| v3.x    | 2026.10           | Programmers Notion upload and auto upload, in-page messages, lint · test CI                                                                                                |
+| v3.x    | 2026.10           | Baekjoon support removed after the site shut down — snapshot: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj)               |
+| v3.x    | 2026.10           | Chrome Web Store, Korean, Notion properties added automatically, popup as setup steps, Codeforces as the first optional judge site                                         |
 
 ## Support
 
