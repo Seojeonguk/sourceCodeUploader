@@ -39,9 +39,9 @@ The store version has its own extension ID, separate from the unpacked one, so e
 ## Usage
 
 1. Click the extension icon to open the popup.
-2. **GitHub** — Click `Authorize`. A login page shows a code: enter it on GitHub and approve access. Install the GitHub App on the repositories to upload to (`+ Add repositories` in the repository list), then select one. ([guide](scripts/github/README.md))
-3. **Notion** — Click `Authorize`, allow access to the page that contains your database, then select the database. The extension adds the properties it needs to the database ([guide](scripts/notion/README.md#prepare-the-database)).
-4. (Optional) Turn on **Auto upload** for each platform.
+2. **GitHub** — On the **GitHub** tab, click `Log in`. A login page shows a code: enter it on GitHub and approve access. Install the GitHub App on the repositories to upload to (`+ Add repositories` in the repository list), then choose one in **Select a repository**. ([guide](scripts/github/README.md))
+3. **Notion** — On the **Notion** tab, click `Log in`, allow access to the page that contains your database, then choose the database in **Select a database**. The extension adds the properties it needs to the database ([guide](scripts/notion/README.md#prepare-the-database)).
+4. (Optional) Turn on **Upload automatically when accepted** on each tab. A tab shows ✓ when it is ready.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
 6. (Codeforces) Turn on Codeforces under **Problem sites** in the popup, and allow the access Chrome asks for. The upload buttons are above the code of your accepted submission, and with auto upload on, a submission accepted while `/contest/<id>/my` or `/submissions/<handle>` is open is uploaded.
 
@@ -49,7 +49,7 @@ The store version has its own extension ID, separate from the unpacked one, so e
 
 ```mermaid
 flowchart LR
-    CS["Content script<br/>(Programmers)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
+    CS["Content scripts<br/>(Programmers · Codeforces)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
     POP["Popup"] -->|OAuth · settings| BG
     BG --> ST[("chrome.storage<br/>access tokens · settings")]
     BG -->|host_permissions| GH["GitHub API"]
@@ -61,6 +61,8 @@ flowchart LR
 - **Content scripts** parse the judge page (problem, language, submission) and render the upload buttons.
 - **The background service worker** does every network call. Thanks to `host_permissions`, it can call the GitHub and Notion APIs without CORS issues — which is why no server is needed.
 - **Programmers** keeps the code inside the page's editor object, which the isolated content script cannot read. `scripts/programmers/sourceExtractor.js` is injected into the page context and returns the code via `window.postMessage`.
+- **Optional judge sites** — A new site is not added to `host_permissions`, because a new required permission would disable the store extension for existing users until they accept it. Sites are listed in `scripts/judgeSites.js`; an optional one, such as Codeforces, is in `optional_host_permissions`. Turning it on in the popup asks Chrome for its host, and `scripts/sitePermissions.js` then registers its content script with `chrome.scripting.registerContentScripts` (and unregisters it when the permission is removed).
+- **Codeforces** shows the code of a submission in the page, so its content script reads it directly. The problem name, rating and tags come from the problem page, and auto upload reads the submission page of a row that turns accepted on the status page; both are same-origin requests in the user's session.
 - **Secrets** — GitHub logs in to a GitHub App with the device flow, which needs only the client ID; its token expires after 8 hours, is refreshed without the client secret, and reaches only the repositories the App is installed on. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The Notion login opens in a window from `chrome.identity.launchWebAuthFlow`, which catches the redirect to `https://<extension-id>.chromiumapp.org/`, so the code never reaches another site, and the redirect is accepted only with the `state` sent for that login.
 - **Messages and storage** — The background accepts only the upload messages (`commit`, `upload`, and reading the auto upload option) from the judge pages, and every other message only from the extension's own pages (`scripts/senders.js`). `chrome.storage.local`, which keeps the access tokens, is hidden from content scripts, and the uploaded path takes only a known platform folder and file extension.
 
@@ -86,7 +88,12 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
 ├─ tools/                   # packages the zip for the Chrome Web Store
 └─ scripts/
    ├─ background.js         # service worker, message routing
+   ├─ senders.js            # checks who sent a message (extension page / judge page)
+   ├─ judgeSites.js         # judge sites (required / optional)
+   ├─ sitePermissions.js    # registers the content scripts of the optional sites that are turned on
+   ├─ content/              # shared UI of the optional sites' content scripts (buttons · messages)
    ├─ programmers/          # Programmers content script + page-context extractor
+   ├─ codeforces/           # Codeforces content script
    ├─ github/               # device flow login, repository list, commit
    ├─ notion/               # OAuth (through the proxy), database list, page / block builders
    └─ common/               # exceptions, chrome / fetch / encoding utils
@@ -126,6 +133,7 @@ Conventions: branch from `master` and open a PR; commit messages start with an E
 | v3.x | 2024.07 – 2026.04 | Status-page upload, Notion length limits, UTF-8 encoding, refactoring, Programmers, auto upload |
 | v3.x | 2026.10 | Programmers Notion upload and auto upload, in-page messages, lint · test CI |
 | v3.x | 2026.10 | Baekjoon support removed after the site shut down — snapshot: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) |
+| v3.x | 2026.10 | Chrome Web Store, Korean, Notion properties added automatically, popup as setup steps, Codeforces as the first optional judge site |
 
 ## Support
 

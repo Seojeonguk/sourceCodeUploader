@@ -18,14 +18,14 @@ What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google
 
 ## Store listing
 
-| Field        | Value                                                                                                                           |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| Name         | Source Code Uploader (from `manifest.json`)                                                                                     |
-| Summary      | Uploads your accepted Programmers solutions to GitHub and Notion with one click. (from `manifest.json`, at most 132 characters) |
-| Category     | Developer Tools                                                                                                                 |
-| Language     | English                                                                                                                         |
-| Homepage URL | `https://github.com/Seojeonguk/sourceCodeUploader`                                                                              |
-| Support URL  | `https://github.com/Seojeonguk/sourceCodeUploader/issues`                                                                       |
+| Field        | Value                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name         | Source Code Uploader (from `manifest.json`)                                                                                                    |
+| Summary      | Uploads your accepted Programmers and Codeforces solutions to GitHub and Notion with one click. (from `manifest.json`, at most 132 characters) |
+| Category     | Developer Tools                                                                                                                                |
+| Language     | English                                                                                                                                        |
+| Homepage URL | `https://github.com/Seojeonguk/sourceCodeUploader`                                                                                             |
+| Support URL  | `https://github.com/Seojeonguk/sourceCodeUploader/issues`                                                                                      |
 
 ### Description
 
@@ -42,7 +42,7 @@ How to start
 1. Click the extension icon and log in to GitHub (enter the code shown on GitHub) and Notion (choose the pages to share).
 2. Install the GitHub App on the repositories to upload to, and share a Notion database with the extension. Any database works: the extension adds the properties it needs.
 3. Select the repository and the database in the popup.
-4. Solve a problem on Programmers and click the upload button, or turn on auto upload.
+4. Solve a problem on Programmers or Codeforces and click the upload button, or turn on auto upload.
 
 Privacy
 • Your code goes only to the GitHub repository and Notion database you select. There is no analytics or tracking.
@@ -115,7 +115,7 @@ Uploads the user's accepted solutions on judge sites (Programmers, and Codeforce
 **Data usage** — check only these:
 
 - [x] **Authentication information**: the GitHub and Notion access tokens.
-- [x] **Website content**: the solution and the problem information on the Programmers page.
+- [x] **Website content**: the solution and the problem information on the Programmers page, and on Codeforces (when the user turns it on) the user's accepted submission and the problem page.
 
 Leave the other types unchecked: personally identifiable information, health, financial and payment, personal communications, location, web history, user activity. (The GitHub user name is used only to call the GitHub API for the selected repository.)
 

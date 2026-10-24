@@ -39,9 +39,9 @@
 ## 사용 방법
 
 1. 확장 프로그램 아이콘을 눌러 팝업을 열어요.
-2. **GitHub** — `Authorize`를 누르면 로그인 페이지에 코드가 나와요. GitHub에서 코드를 입력하고 접근을 허용해요. 업로드할 저장소에 GitHub App을 설치한 뒤(저장소 목록의 `+ Add repositories`) 저장소를 골라요. ([가이드](scripts/github/README.md))
-3. **Notion** — `Authorize`를 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, 데이터베이스를 골라요. 업로드에 필요한 속성은 확장 프로그램이 데이터베이스에 추가해요([가이드](scripts/notion/README.md#prepare-the-database)).
-4. (선택) 플랫폼별 **자동 업로드**를 켜요.
+2. **GitHub** — **GitHub** 탭에서 `로그인`을 누르면 로그인 페이지에 코드가 나와요. GitHub에서 코드를 입력하고 접근을 허용해요. 업로드할 저장소에 GitHub App을 설치한 뒤(저장소 목록의 `+ 저장소 추가`) **저장소 선택**에서 저장소를 골라요. ([가이드](scripts/github/README.md))
+3. **Notion** — **Notion** 탭에서 `로그인`을 누르고 데이터베이스가 있는 페이지에 접근을 허용한 뒤, **데이터베이스 선택**에서 데이터베이스를 골라요. 업로드에 필요한 속성은 확장 프로그램이 데이터베이스에 추가해요([가이드](scripts/notion/README.md#prepare-the-database)).
+4. (선택) 탭마다 **정답이면 자동으로 올리기**를 켜요. 준비가 끝난 탭에는 ✓가 표시돼요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
 6. (Codeforces) 팝업의 **문제 사이트**에서 Codeforces를 켜고, Chrome이 묻는 접근을 허용해요. 내 정답 제출 페이지의 코드 위에 업로드 버튼이 생기고, 자동 업로드를 켜 두면 `/contest/<id>/my`나 `/submissions/<handle>`을 열어 둔 동안 정답이 된 제출이 올라가요.
 
@@ -49,7 +49,7 @@
 
 ```mermaid
 flowchart LR
-    CS["Content script<br/>(프로그래머스)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
+    CS["Content script<br/>(프로그래머스 · Codeforces)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
     POP["Popup"] -->|OAuth · 설정| BG
     BG --> ST[("chrome.storage<br/>access token · 설정")]
     BG -->|host_permissions| GH["GitHub API"]
@@ -61,6 +61,8 @@ flowchart LR
 - **Content script**가 문제 페이지에서 문제 · 언어 · 제출 정보를 파싱하고 업로드 버튼을 그려요.
 - **Background service worker**가 모든 네트워크 요청을 맡아요. `host_permissions` 덕분에 GitHub · Notion API를 CORS 문제 없이 호출할 수 있어서 서버가 필요 없어요.
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
+- **선택 문제 사이트** — 새 사이트는 `host_permissions`에 넣지 않아요. 필수 권한이 새로 생기면 스토어 업데이트 때 기존 사용자가 수락할 때까지 확장 프로그램이 꺼지기 때문이에요. 사이트 목록은 `scripts/judgeSites.js`에 있고, Codeforces 같은 선택 사이트는 `optional_host_permissions`에 들어가요. 팝업에서 켜면 Chrome이 그 호스트 접근을 묻고, 허용하면 `scripts/sitePermissions.js`가 `chrome.scripting.registerContentScripts`로 content script를 등록해요(권한을 없애면 등록도 해제해요).
+- **Codeforces**는 제출 코드가 페이지에 그대로 있어서 content script가 바로 읽어요. 문제 이름 · 레이팅 · 태그는 문제 페이지에서, 자동 업로드는 채점 현황에서 정답이 된 제출의 페이지에서 읽어요. 둘 다 사용자 세션으로 보내는 같은 출처 요청이에요.
 - **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 GitHub App에 로그인해요. 토큰은 8시간 뒤 만료되고 client secret 없이 갱신되며, App을 설치한 저장소에만 접근해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. Notion 로그인은 `chrome.identity.launchWebAuthFlow`로 연 창에서 진행해요. Chrome이 `https://<확장 ID>.chromiumapp.org/`로의 리다이렉트를 가로채서 code가 다른 사이트로 가지 않고, 그 로그인에서 보낸 `state`가 맞을 때만 받아요.
 - **메시지와 저장소** — background는 문제 페이지에서 오는 메시지 중 업로드 관련 메시지(`commit`, `upload`, 자동 업로드 옵션 읽기)만 받고, 나머지는 확장 프로그램 자체 페이지에서 온 것만 받아요(`scripts/senders.js`). access token을 보관하는 `chrome.storage.local`은 content script에서 읽을 수 없게 했고, 업로드 경로에는 정해진 플랫폼 폴더와 파일 확장자만 쓸 수 있어요.
 
@@ -86,7 +88,12 @@ flowchart LR
 ├─ tools/                   # Chrome 웹 스토어용 zip 만들기
 └─ scripts/
    ├─ background.js         # service worker, 메시지 라우팅
+   ├─ senders.js            # 메시지 보낸 쪽 검사 (확장 페이지 / 문제 페이지)
+   ├─ judgeSites.js         # 문제 사이트 목록 (필수 / 선택)
+   ├─ sitePermissions.js    # 켠 선택 사이트의 content script 등록
+   ├─ content/              # 선택 사이트 content script 공용 UI (버튼 · 메시지)
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
+   ├─ codeforces/           # Codeforces content script
    ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋
    ├─ notion/               # OAuth (프록시 경유), 데이터베이스 목록, 페이지 · 블록 생성
    └─ common/               # 예외, chrome · fetch · 인코딩 유틸
@@ -126,6 +133,7 @@ Chrome 웹 스토어 등록 방법: [docs/chrome-web-store.md](docs/chrome-web-s
 | v3.x | 2024.07 – 2026.04 | 채점 현황 업로드, Notion 길이 제한, UTF-8 인코딩, 리팩토링, 프로그래머스, 자동 업로드 |
 | v3.x | 2026.10 | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI |
 | v3.x | 2026.10 | 사이트 종료로 백준 지원 제거 — 스냅샷: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj) |
+| v3.x | 2026.10 | Chrome 웹 스토어, 한국어, Notion 속성 자동 추가, 단계별 팝업, 첫 선택 문제 사이트 Codeforces |
 
 ## 문의
 
