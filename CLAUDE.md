@@ -6,7 +6,7 @@
 
 - **Source Code Uploader**: 알고리즘 문제 사이트에서 통과한 코드를 버튼 한 번으로 **GitHub · Notion**에 올리는 Chrome 확장 프로그램 (Manifest V3, 서버 없음).
 - 배포: [Chrome 웹 스토어](https://chromewebstore.google.com/detail/source-code-uploader/kgpilkohekdjpfpcckdlnlolddiheijn) (스토어 ID `kgpilkohekdjpfpcckdlnlolddiheijn`), 압축 해제 설치는 `manifest.json`의 `key`로 ID `mfhbpmbchemfhijjamldbkidlegfmaff` 고정.
-- 지원 사이트: **프로그래머스**(필수 사이트), **Codeforces**(선택 사이트, #267). 정올은 #261(v3.5.0)에서 추가 예정. 백준은 서비스 종료로 제거됨(`before_remove_boj` 태그).
+- 지원 사이트: **프로그래머스**(필수 사이트), **Codeforces**(선택 사이트, #267), **정올**(선택 사이트, #261, 자동 업로드는 #279). 백준은 서비스 종료로 제거됨(`before_remove_boj` 태그).
 - 최소 Chrome 116 (`launchWebAuthFlow`가 서비스 워커 5분 제한에서 빠지는 버전).
 
 ### 구조
@@ -22,6 +22,7 @@ scripts/sitePermissions.js  # 선택 사이트 권한 ↔ content script 등록 
 scripts/content/       # 문제 사이트 공용 content script UI (버튼 · 토스트 · 메시지)
 scripts/programmers/   # 프로그래머스 content script + 페이지 컨텍스트 추출기
 scripts/codeforces/    # Codeforces content script
+scripts/jungol/        # 정올 content script + 페이지 쪽(MAIN world) 채점 감시
 scripts/github/        # GitHub App device flow 로그인, 저장소 목록, 커밋
 scripts/notion/        # Notion OAuth(프록시 경유), data source 검색 · 페이지 생성
 scripts/common/        # 예외, fetch(재시도 · 타임아웃), i18n, chrome 유틸
@@ -94,6 +95,7 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 - 스토어 빌드와 압축 해제 빌드는 확장 ID가 다름. Notion 로그인은 Worker 허용 목록과 Notion integration의 Redirect URI에 **둘 다** 등록돼 있어야 함.
 - 커밋 · 태그 GPG 서명이 가끔 멈추므로 `timeout 60 git commit -s ...`처럼 시간 제한을 둠. 서명을 건너뛰지 않음.
 - Windows Git Bash에서 heredoc 안에 백틱이 든 Python을 쓰면 깨질 때가 있음. 스크립트는 scratchpad에 파일로 써서 실행함. 이 환경에서는 일부 도구(ffmpeg, `curl -o`)가 파일을 직접 못 쓰니 stdout으로 받아 저장함.
+- 정올 API(`api.jungol.co.kr`)는 봇 차단 헤더(`X-Fp`, `X-Api`)가 있어야 해서 확장이 부르지 않음. 코드 · 판정은 페이지의 채점 요청(`saet.jungol.co.kr/judge`)을 `judgeWatcher.js`가 `document_start`에 MAIN world에서 지켜봐서 얻음(사이트가 `fetch`를 미리 잡아 둠). 조사 결과는 #277 · #261 댓글.
 - Codeforces 제출 페이지는 브라우저 밖 요청을 Cloudflare가 막음(문제 · 현황 페이지와 `/api`는 열림). content script는 같은 출처 요청(사용자 세션)으로 읽음.
 - 최신 Chrome(브랜드 빌드)은 `--load-extension`을 막아서 헤드리스로 확장을 띄워 확인할 수 없음. 실제 동작은 PR 체크리스트로 사용자가 확인함.
 - 저장소 루트에 녹화 · 임시 파일(mp4 등)을 커밋하지 않음. `dist/`는 ignore됨.

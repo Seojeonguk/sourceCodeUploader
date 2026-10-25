@@ -18,10 +18,11 @@
 
 ## 지원 플랫폼
 
-| 사이트                                            | 페이지              | GitHub | Notion |      자동 업로드      | 상태          |
-| ------------------------------------------------- | ------------------- | :----: | :----: | :-------------------: | ------------- |
-| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지    |   ✅   |   ✅   |   ✅ (채점 결과 창)   | 지원 중       |
-| [Codeforces](https://codeforces.com/)             | 내 정답 제출 페이지 |   ✅   |   ✅   | ✅ (제출 현황 페이지) | 팝업에서 켜기 |
+| 사이트                                            | 페이지                      | GitHub | Notion |      자동 업로드      | 상태          |
+| ------------------------------------------------- | --------------------------- | :----: | :----: | :-------------------: | ------------- |
+| [프로그래머스](https://school.programmers.co.kr/) | 문제 풀이 페이지            |   ✅   |   ✅   |   ✅ (채점 결과 창)   | 지원 중       |
+| [Codeforces](https://codeforces.com/)             | 내 정답 제출 페이지         |   ✅   |   ✅   | ✅ (제출 현황 페이지) | 팝업에서 켜기 |
+| [정올](https://jungol.co.kr/)                     | 문제 페이지, 정답 채점 직후 |   ✅   |   ✅   |       아직 없음       | 팝업에서 켜기 |
 
 ## 설치
 
@@ -44,12 +45,13 @@
 4. (선택) 탭마다 **정답이면 자동으로 올리기**를 켜요. 준비가 끝난 탭에는 ✓가 표시돼요.
 5. 문제를 풀어요. 프로그래머스 문제 풀이 페이지에서 GitHub 또는 Notion 업로드 버튼을 누르거나, 자동 업로드를 켜 두면 정답일 때 바로 올라가요.
 6. (Codeforces) 팝업의 **문제 사이트**에서 Codeforces를 켜고, Chrome이 묻는 접근을 허용해요. 내 정답 제출 페이지의 코드 위에 업로드 버튼이 생기고, 자동 업로드를 켜 두면 `/contest/<id>/my`나 `/submissions/<handle>`을 열어 둔 동안 정답이 된 제출이 올라가요.
+7. (정올) 팝업의 **문제 사이트**에서 정올을 켜고, Chrome이 묻는 접근을 허용해요. 문제 페이지에서 제출이 정답이 되면 왼쪽 아래 패널에 그 제출의 업로드 버튼이 나와요.
 
 ## 동작 방식
 
 ```mermaid
 flowchart LR
-    CS["Content script<br/>(프로그래머스 · Codeforces)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
+    CS["Content script<br/>(프로그래머스 · Codeforces · 정올)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
     POP["Popup"] -->|OAuth · 설정| BG
     BG --> ST[("chrome.storage<br/>access token · 설정")]
     BG -->|host_permissions| GH["GitHub API"]
@@ -63,6 +65,7 @@ flowchart LR
 - **프로그래머스**는 코드가 페이지의 에디터 객체 안에만 있는데, 분리된 환경에서 도는 content script는 이걸 읽을 수 없어요. 그래서 `scripts/programmers/sourceExtractor.js`를 페이지 컨텍스트에 주입하고 `window.postMessage`로 코드를 받아 와요.
 - **선택 문제 사이트** — 새 사이트는 `host_permissions`에 넣지 않아요. 필수 권한이 새로 생기면 스토어 업데이트 때 기존 사용자가 수락할 때까지 확장 프로그램이 꺼지기 때문이에요. 사이트 목록은 `scripts/judgeSites.js`에 있고, Codeforces 같은 선택 사이트는 `optional_host_permissions`에 들어가요. 팝업에서 켜면 Chrome이 그 호스트 접근을 묻고, 허용하면 `scripts/sitePermissions.js`가 `chrome.scripting.registerContentScripts`로 content script를 등록해요(권한을 없애면 등록도 해제해요).
 - **Codeforces**는 제출 코드가 페이지에 그대로 있어서 content script가 바로 읽어요. 문제 이름 · 레이팅 · 태그는 문제 페이지에서, 자동 업로드는 채점 현황에서 정답이 된 제출의 페이지에서 읽어요. 둘 다 사용자 세션으로 보내는 같은 출처 요청이에요.
+- **정올**은 문제 페이지가 코드를 채점 서버로 보내고, 결과를 이벤트 스트림 응답으로 받아요. 사이트가 처음 불러올 때 `fetch`를 따로 잡아 두기 때문에, `scripts/jungol/judgeWatcher.js`는 사이트 스크립트보다 먼저 페이지 쪽에서 실행돼요(`world: 'MAIN'`, `document_start`). 이 요청 하나만 지켜보고 응답은 복사본으로 읽으며, 정답이면 보낸 코드를 `window.postMessage`로 content script에 넘겨요. 확장 프로그램은 봇 차단 헤더가 필요한 사이트 API를 부르지 않아요. 제목 · 티어 · 태그는 문제 페이지 데이터(`/problem/<id>/__data.json`)에서 사용자 세션의 같은 출처 요청으로 읽어요.
 - **Secret** — GitHub는 client ID만 있으면 되는 기기 코드 방식(device flow)으로 GitHub App에 로그인해요. 토큰은 8시간 뒤 만료되고 client secret 없이 갱신되며, App을 설치한 저장소에만 접근해요. Notion은 code를 토큰으로 바꿀 때 client secret이 필요해서, `proxy/notion-oauth/`의 작은 Worker가 secret을 보관해요. Notion 로그인은 `chrome.identity.launchWebAuthFlow`로 연 창에서 진행해요. Chrome이 `https://<확장 ID>.chromiumapp.org/`로의 리다이렉트를 가로채서 code가 다른 사이트로 가지 않고, 그 로그인에서 보낸 `state`가 맞을 때만 받아요.
 - **메시지와 저장소** — background는 문제 페이지에서 오는 메시지 중 업로드 관련 메시지(`commit`, `upload`, 자동 업로드 옵션 읽기)만 받고, 나머지는 확장 프로그램 자체 페이지에서 온 것만 받아요(`scripts/senders.js`). access token을 보관하는 `chrome.storage.local`은 content script에서 읽을 수 없게 했고, 업로드 경로에는 정해진 플랫폼 폴더와 파일 확장자만 쓸 수 있어요.
 
@@ -74,6 +77,7 @@ flowchart LR
 | `storage`                                                   | access token, 선택한 저장소 · 데이터베이스, 옵션 저장 |
 | `scripting`                                                 | 팝업에서 켠 선택 문제 사이트의 스크립트 실행          |
 | 선택 호스트: `codeforces.com`                               | Codeforces에서 실행, 팝업에서 켤 때만 요청            |
+| 선택 호스트: `jungol.co.kr`                                 | 정올에서 실행, 팝업에서 켤 때만 요청                  |
 | 호스트: `api.notion.com`, `github.com`, `programmers.co.kr` | API 호출, 문제 페이지에서 실행                        |
 
 확장 프로그램이 무엇을 읽고, 보내고, 보관하는지는 [개인정보처리방침](PRIVACY.md)(영어)에 있어요.
@@ -94,6 +98,7 @@ flowchart LR
    ├─ content/              # 문제 사이트 content script 공용 UI (버튼 · 메시지)
    ├─ programmers/          # 프로그래머스 content script + 페이지 컨텍스트 추출기
    ├─ codeforces/           # Codeforces content script
+   ├─ jungol/               # 정올 content script + 페이지 쪽 채점 감시
    ├─ github/               # 기기 코드 로그인, 저장소 목록, 커밋
    ├─ notion/               # OAuth (프록시 경유), 데이터베이스 목록, 페이지 · 블록 생성
    └─ common/               # 예외, chrome · fetch · 인코딩 유틸

@@ -75,7 +75,15 @@ If you logged in with the old OAuth App (access to every repository), the extens
 - Click the GitHub icon button above the code.
 - The source code is committed to `Codeforces/{problem ID} - {problem name}.{extension}`, such as `Codeforces/1850F - We Were Both Children.cpp`.
 
-### Both sites
+### JUNGOL
+
+- Turn on `Use JUNGOL` under **Problem sites** in the popup, and allow the access Chrome asks for.
+- Open a problem on [JUNGOL](https://jungol.co.kr/problem), such as `https://jungol.co.kr/problem/1000`, and submit your solution.
+- When the judge accepts it, a panel with the upload buttons appears at the bottom left of the page. Click the GitHub icon button there.
+- The source code is committed to `JUNGOL/{problem ID} - {problem title}.{extension}`, such as `JUNGOL/1000 - 두 정수 더하기 (A+B).cpp`.
+- The buttons are for the submission that was just judged on that page: open a submission later and they are not shown.
+
+### All sites
 
 - If the commit is successful, a message with an `Open` link to the uploaded file is shown at the bottom right of the page.
 - If the same source code has already been uploaded, it is not committed again and a message says so. (The source code must match exactly.)
@@ -86,3 +94,4 @@ If you logged in with the old OAuth App (access to every repository), the extens
 - Turn on `Upload automatically when accepted` in the **GitHub** tab of the popup.
 - Programmers: when the result of `제출 후 채점하기` is `정답`, the source code is committed without clicking the button.
 - Codeforces: while your status page (`/contest/<id>/my` or `/submissions/<handle>`) is open, a submission that becomes accepted is committed once. Submissions that were already accepted when the page opened are left alone.
+- JUNGOL: not yet; use the buttons in the panel ([#279](https://github.com/Seojeonguk/sourceCodeUploader/issues/279)).

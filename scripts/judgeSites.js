@@ -57,6 +57,36 @@ export const JUDGE_SITES = Object.freeze([
       }),
     ]),
   }),
+  Object.freeze({
+    id: 'jungol',
+    name: 'JUNGOL',
+    url: 'https://jungol.co.kr/problem',
+    optional: true,
+    origins: Object.freeze(['https://jungol.co.kr/*']),
+    // The site changes its pages without loading them, so the scripts run on all of them.
+    contentScripts: Object.freeze([
+      Object.freeze({
+        // In the page's world before the site's scripts, which keep their own reference to
+        // `fetch`: it watches the judge request of the problem pages.
+        id: 'jungol-judge',
+        matches: ['https://jungol.co.kr/*'],
+        js: ['scripts/jungol/helpers.js', 'scripts/jungol/judgeWatcher.js'],
+        runAt: 'document_start',
+        world: 'MAIN',
+      }),
+      Object.freeze({
+        id: 'jungol',
+        matches: ['https://jungol.co.kr/*'],
+        js: [
+          'scripts/content/ui.js',
+          'scripts/jungol/helpers.js',
+          'scripts/jungol/index.js',
+        ],
+        css: ['scripts/content/ui.css', 'scripts/jungol/jungol.css'],
+        runAt: 'document_idle',
+      }),
+    ]),
+  }),
 ]);
 
 /**

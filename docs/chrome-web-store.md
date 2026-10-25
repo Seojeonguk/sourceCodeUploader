@@ -18,21 +18,21 @@ What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google
 
 ## Store listing
 
-| Field        | Value                                                                                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Name         | Source Code Uploader (from `manifest.json`)                                                                                                    |
-| Summary      | Uploads your accepted Programmers and Codeforces solutions to GitHub and Notion with one click. (from `manifest.json`, at most 132 characters) |
-| Category     | Developer Tools                                                                                                                                |
-| Language     | English                                                                                                                                        |
-| Homepage URL | `https://github.com/Seojeonguk/sourceCodeUploader`                                                                                             |
-| Support URL  | `https://github.com/Seojeonguk/sourceCodeUploader/issues`                                                                                      |
+| Field        | Value                                                                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Name         | Source Code Uploader (from `manifest.json`)                                                                                                            |
+| Summary      | Uploads your accepted Programmers, Codeforces and JUNGOL solutions to GitHub and Notion with one click. (from `manifest.json`, at most 132 characters) |
+| Category     | Developer Tools                                                                                                                                        |
+| Language     | English                                                                                                                                                |
+| Homepage URL | `https://github.com/Seojeonguk/sourceCodeUploader`                                                                                                     |
+| Support URL  | `https://github.com/Seojeonguk/sourceCodeUploader/issues`                                                                                              |
 
 ### Description
 
 ```text
-Keep every Programmers and Codeforces problem you solve, without copying and pasting.
+Keep every Programmers, Codeforces and JUNGOL problem you solve, without copying and pasting.
 
-Source Code Uploader adds GitHub and Notion buttons to Programmers problem pages and to your accepted Codeforces submissions (turn Codeforces on in the popup). Click one, and your solution is saved with the problem information:
+Source Code Uploader adds GitHub and Notion buttons to Programmers problem pages, to your accepted Codeforces submissions, and to JUNGOL problem pages after an accepted judge (turn Codeforces and JUNGOL on in the popup). Click one, and your solution is saved with the problem information:
 
 • GitHub: commits the code as a file named after the problem and language to the repository you choose. If the same code is already there, nothing is committed.
 • Notion: creates a page with the problem title, level, category and a code block in the database you choose. Uploading the same problem again updates its code.
@@ -42,7 +42,7 @@ How to start
 1. Click the extension icon and log in to GitHub (enter the code shown on GitHub) and Notion (choose the pages to share).
 2. Install the GitHub App on the repositories to upload to, and share a Notion database with the extension. Any database works: the extension adds the properties it needs.
 3. Select the repository and the database in the popup.
-4. Solve a problem on Programmers or Codeforces and click the upload button, or turn on auto upload.
+4. Solve a problem on Programmers, Codeforces or JUNGOL and click the upload button, or turn on auto upload.
 
 Privacy
 • Your code goes only to the GitHub repository and Notion database you select. There is no analytics or tracking.
@@ -58,9 +58,9 @@ Requires Chrome 116 or later.
 The extension has `_locales/ko` (from v3.3.0), so the dashboard can add a Korean listing: **Store listing** → the language menu → **Korean**. The summary comes from `extDescription` in `_locales/ko/messages.json`. The screenshots can stay the same.
 
 ```text
-프로그래머스와 Codeforces에서 푼 문제를 복사·붙여넣기 없이 모아 두세요.
+프로그래머스 · Codeforces · 정올에서 푼 문제를 복사·붙여넣기 없이 모아 두세요.
 
-Source Code Uploader는 프로그래머스 문제 페이지와 Codeforces의 내 정답 제출에 GitHub · Notion 버튼을 붙여요(Codeforces는 팝업에서 켜요). 버튼을 누르면 정답 코드가 문제 정보와 함께 저장돼요.
+Source Code Uploader는 프로그래머스 문제 페이지, Codeforces의 내 정답 제출, 정답 채점 직후의 정올 문제 페이지에 GitHub · Notion 버튼을 붙여요(Codeforces와 정올은 팝업에서 켜요). 버튼을 누르면 정답 코드가 문제 정보와 함께 저장돼요.
 
 • GitHub: 고른 저장소에 문제와 언어 이름으로 된 파일로 커밋해요. 같은 코드가 이미 있으면 커밋하지 않아요.
 • Notion: 고른 데이터베이스에 문제 제목 · 난이도 · 분류와 코드 블록을 담은 페이지를 만들어요. 같은 문제를 다시 올리면 코드만 바꿔요.
@@ -70,7 +70,7 @@ Source Code Uploader는 프로그래머스 문제 페이지와 Codeforces의 내
 1. 확장 프로그램 아이콘을 눌러 GitHub(GitHub에 표시된 코드 입력)와 Notion(공유할 페이지 선택)에 로그인해요.
 2. 업로드할 저장소에 GitHub App을 설치하고, Notion 데이터베이스를 확장 프로그램과 공유해요. 필요한 속성은 확장 프로그램이 추가해요.
 3. 팝업에서 저장소와 데이터베이스를 골라요.
-4. 프로그래머스나 Codeforces에서 문제를 풀고 업로드 버튼을 누르거나, 자동 업로드를 켜요.
+4. 프로그래머스 · Codeforces · 정올에서 문제를 풀고 업로드 버튼을 누르거나, 자동 업로드를 켜요.
 
 개인정보
 • 코드는 직접 고른 GitHub 저장소와 Notion 데이터베이스로만 가요. 분석 도구나 추적은 없어요.
@@ -97,25 +97,25 @@ The images in `docs/store/` were made from the demo recording (the frames croppe
 **Single purpose**
 
 ```text
-Uploads the user's accepted solutions on judge sites (Programmers, and Codeforces when the user turns it on) to the GitHub repository or Notion database the user selects.
+Uploads the user's accepted solutions on judge sites (Programmers, and Codeforces and JUNGOL when the user turns them on) to the GitHub repository or Notion database the user selects.
 ```
 
 **Permission justifications**
 
-| Permission               | Justification                                                                                                                                                                                                                                                                                                             |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `identity`               | Opens the Notion OAuth login in a browser window with chrome.identity.launchWebAuthFlow and receives its redirect, so the authorization code never reaches another site.                                                                                                                                                  |
-| `storage`                | Keeps the GitHub and Notion logins, the selected repository and database, and the auto upload options in chrome.storage, hidden from content scripts.                                                                                                                                                                     |
-| `scripting`              | Registers the content script of an optional judge site with chrome.scripting.registerContentScripts after the user turns the site on in the popup and grants its host permission, and unregisters it when the permission is removed.                                                                                      |
-| Host permissions         | `programmers.co.kr` and `school.programmers.co.kr`: shows the upload buttons on problem pages and reads the solution and the problem information when the user uploads. `github.com`: the GitHub App device code login and its token refresh. `api.notion.com`: creates the problem page in the selected Notion database. |
-| Optional host permission | `codeforces.com`: asked for only when the user turns Codeforces on in the popup. Shows the upload buttons on the user's own accepted submissions and reads their code, and reads the problem page for its name, rating and tags.                                                                                          |
+| Permission               | Justification                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `identity`               | Opens the Notion OAuth login in a browser window with chrome.identity.launchWebAuthFlow and receives its redirect, so the authorization code never reaches another site.                                                                                                                                                                                                                                                                                                                 |
+| `storage`                | Keeps the GitHub and Notion logins, the selected repository and database, and the auto upload options in chrome.storage, hidden from content scripts.                                                                                                                                                                                                                                                                                                                                    |
+| `scripting`              | Registers the content script of an optional judge site with chrome.scripting.registerContentScripts after the user turns the site on in the popup and grants its host permission, and unregisters it when the permission is removed.                                                                                                                                                                                                                                                     |
+| Host permissions         | `programmers.co.kr` and `school.programmers.co.kr`: shows the upload buttons on problem pages and reads the solution and the problem information when the user uploads. `github.com`: the GitHub App device code login and its token refresh. `api.notion.com`: creates the problem page in the selected Notion database.                                                                                                                                                                |
+| Optional host permission | `codeforces.com`: asked for only when the user turns Codeforces on in the popup. Shows the upload buttons on the user's own accepted submissions and reads their code, and reads the problem page for its name, rating and tags. `jungol.co.kr`: asked for only when the user turns JUNGOL on in the popup. Watches the judge request of a problem page to read the code the user submitted when it is accepted, shows the upload buttons, and reads the problem's title, tier and tags. |
 
 **Remote code**: No, I am not using remote code. Every script is in the package.
 
 **Data usage** — check only these:
 
 - [x] **Authentication information**: the GitHub and Notion access tokens.
-- [x] **Website content**: the solution and the problem information on the Programmers page, and on Codeforces (when the user turns it on) the user's accepted submission and the problem page.
+- [x] **Website content**: the solution and the problem information on the Programmers page, on Codeforces (when the user turns it on) the user's accepted submission and the problem page, and on JUNGOL (when the user turns it on) the code the user submits and the problem's title, tier and tags.
 
 Leave the other types unchecked: personally identifiable information, health, financial and payment, personal communications, location, web history, user activity. (The GitHub user name is used only to call the GitHub API for the selected repository.)
 
@@ -145,4 +145,5 @@ The extension needs a Programmers account (free) and a GitHub or Notion account 
 3. Select the repository and the database in the popup.
 4. Open a Programmers problem, for example https://school.programmers.co.kr/learn/courses/30/lessons/12903, write a solution, and click the GitHub or Notion button under the editor. A message shows the link to the uploaded file or page.
 5. (Optional, needs a Codeforces account) Under "Problem sites" in the popup, turn on "Use Codeforces" and allow the access Chrome asks for. Submit an accepted solution on Codeforces, open your submission (for example https://codeforces.com/contest/<id>/submission/<id>), and click the GitHub or Notion button above the code.
+6. (Optional, needs a JUNGOL account) Under "Problem sites" in the popup, turn on "Use JUNGOL" and allow the access Chrome asks for. Open https://jungol.co.kr/problem/1000, submit an accepted solution, and click the GitHub or Notion button in the panel at the bottom left of the page.
 ```

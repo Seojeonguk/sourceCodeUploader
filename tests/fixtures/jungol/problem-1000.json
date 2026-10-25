@@ -1,0 +1,74 @@
+{
+  "type": "data",
+  "nodes": [
+    {
+      "type": "skip"
+    },
+    {
+      "type": "skip"
+    },
+    {
+      "type": "data",
+      "data": [
+        {
+          "pid": 1,
+          "seo": 2,
+          "$/problem/1000": 4
+        },
+        "1000",
+        {
+          "title": 3
+        },
+        "두 정수 더하기 (A+B) · Bronze V",
+        {
+          "data": 5,
+          "url": 23
+        },
+        {
+          "tier": 6,
+          "id": 9,
+          "category": 10,
+          "title": 11,
+          "title_en": 12,
+          "fTier": 13,
+          "nocopy": 14,
+          "tag": 15,
+          "t:arithmetic": 16,
+          "t:구현": 17,
+          "t:math": 18,
+          "t:implement": 19,
+          "t:ad_hoc": 20,
+          "t:precomputation": 21,
+          "pinnedTags": 22
+        },
+        {
+          "score": 7,
+          "tier": 8
+        },
+        1,
+        1,
+        1000,
+        "",
+        "두 정수 더하기 (A+B)",
+        "A+B",
+        1,
+        false,
+        [],
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        [],
+        "/problem/1000"
+      ],
+      "uses": {
+        "dependencies": ["jungolapi:/problem/1000"],
+        "params": ["pid"]
+      }
+    },
+    null,
+    null
+  ]
+}
