@@ -79,4 +79,4 @@ The names are case-sensitive. If the database already has a property with one of
 - Turn on `Upload automatically when accepted` in the **Notion** tab of the popup.
 - Programmers: when the result of `제출 후 채점하기` is `정답`, the source code is uploaded without clicking the button.
 - Codeforces: while your status page (`/contest/<id>/my` or `/submissions/<handle>`) is open, a submission that becomes accepted is uploaded once.
-- JUNGOL: not yet; use the buttons in the panel ([#279](https://github.com/Seojeonguk/sourceCodeUploader/issues/279)).
+- JUNGOL: a submission that the judge accepts on a problem page is uploaded once. Submissions judged before the page was opened, or on another tab, are left alone.

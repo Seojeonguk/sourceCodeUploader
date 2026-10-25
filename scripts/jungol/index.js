@@ -4,7 +4,8 @@
  * judgeWatcher.js, in the page's world, tells this script about a submission that the judge
  * accepted on a problem page, with its code. This script then shows the upload buttons in a
  * panel at the bottom left: the site's pages change without loading, and their classes are
- * generated, so the panel is not put inside them.
+ * generated, so the panel is not put inside them. With auto upload on, the submission is also
+ * uploaded once without a click.
  */
 (() => {
   const TYPE = 'JUNGOL';
@@ -15,7 +16,11 @@
     getExtensionFromLanguage,
     readProblemData,
   } = globalThis.SCU_JUNGOL;
-  const { t, createUploadButtons } = globalThis.SCU_CONTENT;
+  const { t, createUploadButtons, getAutoUploadPlatforms, showToast, upload } =
+    globalThis.SCU_CONTENT;
+
+  // The submissions uploaded automatically, so one that is told about again is not.
+  const autoUploaded = new Set();
 
   /**
    * Reads the title, tier and tags from the data of the problem page, in this tab's session.
@@ -72,6 +77,7 @@
   /**
    * Shows the panel with the upload buttons of the submission, in place of an earlier one.
    * @param {Object} submission
+   * @returns {HTMLDivElement} The panel.
    */
   const showPanel = (submission) => {
     document.querySelector('.scu-jungol-panel')?.remove();
@@ -100,6 +106,59 @@
       close,
     );
     document.body.appendChild(panel);
+    return panel;
+  };
+
+  /**
+   * Uploads an accepted submission once to the platforms with auto upload on. Only the
+   * submissions judged while the page is open are told about, so earlier ones are left alone.
+   * @param {Object} submission
+   * @param {HTMLDivElement} panel - The panel of the submission.
+   */
+  const uploadAutomatically = async (submission, panel) => {
+    const key =
+      submission.submissionId ||
+      `${submission.problemId}\n${submission.sourceCode}`;
+    if (autoUploaded.has(key)) {
+      return;
+    }
+    autoUploaded.add(key);
+
+    const platforms = await getAutoUploadPlatforms();
+    if (platforms.length === 0) {
+      return;
+    }
+
+    let payload;
+    try {
+      payload = await buildPayload(submission);
+    } catch (error) {
+      // eslint-disable-next-line no-console -- a classic content script cannot import the logger
+      console.error('[SCU]', error);
+      showToast(error.message, { type: 'error' });
+      return;
+    }
+
+    // Upload one by one so each result message is shown.
+    // eslint-disable-next-line no-restricted-syntax -- sequential uploads
+    for (const platform of platforms) {
+      const button = panel.querySelector(`[data-platform="${platform.id}"]`);
+
+      // A disabled button is already uploading after a click. A closed panel still uploads.
+      if (!button?.disabled) {
+        if (button) {
+          button.disabled = true;
+        }
+        try {
+          // eslint-disable-next-line no-await-in-loop -- sequential uploads
+          await upload(platform, payload);
+        } finally {
+          if (button) {
+            button.disabled = false;
+          }
+        }
+      }
+    }
   };
 
   // Any script of the page can post a message, so only a well-formed submission is taken.
@@ -119,6 +178,7 @@
     ) {
       return;
     }
-    showPanel(event.data.submission);
+    const { submission } = event.data;
+    uploadAutomatically(submission, showPanel(submission));
   });
 })();

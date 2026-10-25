@@ -103,6 +103,9 @@ const accept = async (
   await settle();
 };
 
+// The upload messages, without the ones that read the auto upload options.
+const uploads = (sent) =>
+  sent.filter(({ action }) => action === 'commit' || action === 'upload');
 const panelOf = (document) => document.querySelector('.scu-jungol-panel');
 const toasts = (document) =>
   [...document.querySelectorAll('.scu-content-toast')].map(
@@ -206,7 +209,7 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
           credentials: 'include',
         },
       ]);
-      assert.deepEqual(JSON.parse(JSON.stringify(sent[0])), {
+      assert.deepEqual(JSON.parse(JSON.stringify(uploads(sent)[0])), {
         platform: 'github',
         action: 'commit',
         payload: {
@@ -246,10 +249,10 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
       document.querySelector('[data-platform="notion"]').click();
       await settle();
 
-      assert.equal(sent[0].action, 'upload');
-      assert.equal(sent[0].payload.title, '1525 - 사다리(ladder)');
-      assert.equal(sent[0].payload.extension, 'py');
-      assert.equal(sent[0].payload.problemInfo.level, null);
+      assert.equal(uploads(sent)[0].action, 'upload');
+      assert.equal(uploads(sent)[0].payload.title, '1525 - 사다리(ladder)');
+      assert.equal(uploads(sent)[0].payload.extension, 'py');
+      assert.equal(uploads(sent)[0].payload.problemInfo.level, null);
     });
 
     it('still uploads with the problem ID when the problem page cannot be read', async () => {
@@ -259,11 +262,11 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
       document.querySelector('[data-platform="github"]').click();
       await settle();
 
-      assert.equal(sent[0].payload.title, '1000');
-      assert.equal(sent[0].payload.problemInfo.level, null);
-      assert.deepEqual([...sent[0].payload.problemInfo.tags], []);
+      assert.equal(uploads(sent)[0].payload.title, '1000');
+      assert.equal(uploads(sent)[0].payload.problemInfo.level, null);
+      assert.deepEqual([...uploads(sent)[0].payload.problemInfo.tags], []);
       assert.equal(
-        sent[0].payload.problemInfo.url,
+        uploads(sent)[0].payload.problemInfo.url,
         'https://jungol.co.kr/problem/1000',
       );
     });
@@ -285,6 +288,99 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
       assert.deepEqual(toasts(document), [
         'Log in to GitHub in the extension popup first.',
       ]);
+    });
+  });
+
+  describe('auto upload', () => {
+    const AUTO_GITHUB = Object.freeze({
+      'github/getAutoUpload': { ok: true, message: true },
+      'notion/getAutoUpload': { ok: true, message: false },
+      'github/commit': {
+        ok: true,
+        message: 'https://github.com/me/solutions/blob/main/x.cpp',
+      },
+    });
+
+    it('uploads an accepted submission to the platforms with auto upload on', async () => {
+      const { window, document, sent } = openPage({
+        responses: AUTO_GITHUB,
+        pages: { '/problem/1000/__data.json': PROBLEM_DATA[1000] },
+      });
+
+      await accept(window);
+
+      const done = uploads(sent);
+      assert.equal(done.length, 1);
+      assert.equal(done[0].platform, 'github');
+      assert.equal(done[0].payload.title, '1000 - 두 정수 더하기 (A+B)');
+      assert.equal(done[0].payload.sourceCode, SOURCE_CODE);
+      assert.deepEqual(toasts(document), ['Uploaded to GitHub. Open']);
+      // The buttons stay for the other platform.
+      assert.ok(panelOf(document));
+    });
+
+    it('uploads nothing when auto upload is off', async () => {
+      const { window, sent } = openPage();
+
+      await accept(window);
+
+      assert.deepEqual(uploads(sent), []);
+    });
+
+    it('uploads a submission once, even if it is told again', async () => {
+      const { window, sent } = openPage({ responses: AUTO_GITHUB });
+
+      await accept(window);
+      await accept(window);
+
+      assert.equal(uploads(sent).length, 1);
+    });
+
+    it('uploads each accepted submission of the page', async () => {
+      const { window, sent } = openPage({ responses: AUTO_GITHUB });
+
+      await accept(window);
+      await accept(window, { ...SUBMISSION, submissionId: '12345679' });
+
+      assert.equal(uploads(sent).length, 2);
+    });
+
+    it('leaves a platform that is already uploading after a click', async () => {
+      const { window, document, sent } = openPage({
+        responses: {
+          ...AUTO_GITHUB,
+          'notion/getAutoUpload': { ok: true, message: true },
+        },
+      });
+      const { sendMessage } = window.chrome.runtime;
+      // The user clicks the GitHub button as soon as the panel appears.
+      window.chrome.runtime.sendMessage = (message, callback) => {
+        if (
+          message.action === 'getAutoUpload' &&
+          message.platform === 'github'
+        ) {
+          document.querySelector('[data-platform="github"]').disabled = true;
+        }
+        sendMessage(message, callback);
+      };
+
+      await accept(window);
+
+      assert.deepEqual(
+        uploads(sent).map(({ platform }) => platform),
+        ['notion'],
+      );
+    });
+
+    it('uploads nothing for a message from another origin', async () => {
+      const { window, sent } = openPage({ responses: AUTO_GITHUB });
+
+      await accept(window, SUBMISSION, {
+        source: window,
+        origin: 'https://evil.example',
+      });
+
+      assert.deepEqual(sent, []);
     });
   });
 });

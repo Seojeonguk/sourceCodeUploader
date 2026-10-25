@@ -94,4 +94,4 @@ If you logged in with the old OAuth App (access to every repository), the extens
 - Turn on `Upload automatically when accepted` in the **GitHub** tab of the popup.
 - Programmers: when the result of `제출 후 채점하기` is `정답`, the source code is committed without clicking the button.
 - Codeforces: while your status page (`/contest/<id>/my` or `/submissions/<handle>`) is open, a submission that becomes accepted is committed once. Submissions that were already accepted when the page opened are left alone.
-- JUNGOL: not yet; use the buttons in the panel ([#279](https://github.com/Seojeonguk/sourceCodeUploader/issues/279)).
+- JUNGOL: a submission that the judge accepts on a problem page is committed once. Submissions judged before the page was opened, or on another tab, are left alone.
