@@ -176,7 +176,10 @@
         verdict?.getAttribute('submissionVerdict') === 'OK' ||
         Boolean(row.querySelector('.verdict-accepted')),
       problemPath: new URL(problemLink.getAttribute('href'), ORIGIN).pathname,
-      problemName: getProblemNameFromLink(problemLink.textContent),
+      // The link shows only the ID, such as `339B`; its title has the name.
+      problemName: getProblemNameFromLink(
+        problemLink.getAttribute('title') || problemLink.textContent,
+      ),
       sourceCode: source ? readSourceCode(source) : null,
     };
   };

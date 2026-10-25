@@ -8,14 +8,18 @@ import {
   CHALLENGE_HTML,
   createStatusHtml,
   createSubmissionHtml,
-  PROBLEM_HTML,
+  PROBLEM_339B_HTML,
+  SUBMISSION_HTML,
+  SUBMISSION_SOURCE,
 } from '../fixtures/codeforces/pages.js';
 import { chromeI18n } from '../helpers/i18n.js';
 
 const EXTENSION_ORIGIN = 'chrome-extension://mfhbpmbchemfhijjamldbkidlegfmaff';
-const SUBMISSION_URL =
-  'https://codeforces.com/contest/1850/submission/215000000';
-const STATUS_URL = 'https://codeforces.com/contest/1850/my';
+// The saved pages: the user's accepted submission of 339B and its status page.
+const SUBMISSION_PATH = '/contest/339/submission/395650158';
+const SUBMISSION_URL = `https://codeforces.com${SUBMISSION_PATH}`;
+const STATUS_URL = 'https://codeforces.com/contest/339/my';
+const PROBLEM_PATH = '/contest/339/problem/B';
 
 // The scripts that the background registers for Codeforces, in order.
 const SCRIPTS = [
@@ -116,6 +120,24 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
       );
     });
 
+    it('shows the buttons on the same submission opened from the problemset', () => {
+      const { document } = openPage({
+        url: 'https://codeforces.com/problemset/submission/339/395650158',
+        html: SUBMISSION_HTML.problemset,
+      });
+
+      assert.ok(document.querySelector('.scu-content-wrapper'));
+    });
+
+    it('shows no buttons for a rejected submission in the gym', () => {
+      const { document } = openPage({
+        url: 'https://codeforces.com/gym/106556/submission/395951285',
+        html: SUBMISSION_HTML.gym,
+      });
+
+      assert.equal(document.querySelector('.scu-content-wrapper'), null);
+    });
+
     [
       ['of another user', { author: 'tourist' }],
       ['that is not accepted', { verdict: 'WRONG_ANSWER' }],
@@ -142,27 +164,27 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
             message: 'https://github.com/me/solutions/blob/main/x.cpp',
           },
         },
-        pages: { '/contest/1850/problem/F': PROBLEM_HTML },
+        pages: { [PROBLEM_PATH]: PROBLEM_339B_HTML },
       });
 
       document.querySelector('[data-platform="github"]').click();
       await settle();
 
-      assert.deepEqual(fetched, ['/contest/1850/problem/F']);
+      assert.deepEqual(fetched, [PROBLEM_PATH]);
       assert.deepEqual(JSON.parse(JSON.stringify(sent[0])), {
         platform: 'github',
         action: 'commit',
         payload: {
           type: 'Codeforces',
-          problemId: '1850F',
-          title: '1850F - We Were Both Children',
+          problemId: '339B',
+          title: '339B - Xenia and Ringroad',
           extension: 'cpp',
-          sourceCode: 'int main() { return 0; }',
+          sourceCode: SUBMISSION_SOURCE.contest,
           problemInfo: {
-            title: '1850F - We Were Both Children',
-            level: 'Rating 1300',
-            tags: ['brute force', 'implementation', 'math', 'number theory'],
-            url: 'https://codeforces.com/contest/1850/problem/F',
+            title: '339B - Xenia and Ringroad',
+            level: 'Rating 1000',
+            tags: ['implementation'],
+            url: 'https://codeforces.com/contest/339/problem/B',
           },
         },
       });
@@ -170,16 +192,17 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
     });
 
     it('still uploads with the name of the submission when the problem page cannot be read', async () => {
+      // The link shows only `339B`; the name is in its title, `B - Xenia and Ringroad`.
       const { document, sent } = openPage({
         url: SUBMISSION_URL,
-        html: createSubmissionHtml({ problemText: '1850F - Both Children' }),
+        html: createSubmissionHtml(),
       });
 
       document.querySelector('[data-platform="notion"]').click();
       await settle();
 
       assert.equal(sent[0].action, 'upload');
-      assert.equal(sent[0].payload.title, '1850F - Both Children');
+      assert.equal(sent[0].payload.title, '339B - Xenia and Ringroad');
       assert.equal(sent[0].payload.problemInfo.level, null);
       assert.deepEqual([...sent[0].payload.problemInfo.tags], []);
     });
@@ -228,8 +251,8 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
         html: createStatusHtml(),
         responses: AUTO_GITHUB,
         pages: {
-          '/contest/1850/submission/215000000': createSubmissionHtml(),
-          '/contest/1850/problem/F': PROBLEM_HTML,
+          [SUBMISSION_PATH]: SUBMISSION_HTML.contest,
+          [PROBLEM_PATH]: PROBLEM_339B_HTML,
         },
       });
       await settle();
@@ -237,17 +260,14 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
 
       await acceptRow(document);
 
-      assert.deepEqual(fetched, [
-        '/contest/1850/submission/215000000',
-        '/contest/1850/problem/F',
-      ]);
+      assert.deepEqual(fetched, [SUBMISSION_PATH, PROBLEM_PATH]);
       assert.deepEqual(actionsOf(sent), [
         'github/getAutoUpload',
         'notion/getAutoUpload',
         'github/commit',
       ]);
-      assert.equal(sent[2].payload.problemId, '1850F');
-      assert.equal(sent[2].payload.sourceCode, 'int main() { return 0; }');
+      assert.equal(sent[2].payload.problemId, '339B');
+      assert.equal(sent[2].payload.sourceCode, SUBMISSION_SOURCE.contest);
     });
 
     it('uploads it once, even if the table changes again', async () => {
@@ -255,7 +275,7 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
         url: STATUS_URL,
         html: createStatusHtml(),
         responses: AUTO_GITHUB,
-        pages: { '/contest/1850/submission/215000000': createSubmissionHtml() },
+        pages: { [SUBMISSION_PATH]: SUBMISSION_HTML.contest },
       });
 
       await acceptRow(document);
@@ -312,7 +332,7 @@ describe('Codeforces content script', { timeout: 5000 }, () => {
         url: STATUS_URL,
         html: createStatusHtml(),
         responses: AUTO_GITHUB,
-        pages: { '/contest/1850/submission/215000000': CHALLENGE_HTML },
+        pages: { [SUBMISSION_PATH]: CHALLENGE_HTML },
       });
 
       await acceptRow(document);

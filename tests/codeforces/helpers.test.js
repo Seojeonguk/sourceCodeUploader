@@ -7,8 +7,11 @@ import { JSDOM } from 'jsdom';
 
 import {
   createSubmissionHtml,
+  PROBLEM_339B_HTML,
   PROBLEM_HTML,
   STATUS_ROW_HTML,
+  SUBMISSION_HTML,
+  SUBMISSION_SOURCE,
 } from '../fixtures/codeforces/pages.js';
 
 // helpers.js is a classic content script, so it is run in a sandbox instead of imported.
@@ -132,6 +135,14 @@ describe('parseProblemPage', () => {
     });
   });
 
+  it('reads the real page of 339B', () => {
+    assert.deepEqual(copy(parseProblemPage(documentOf(PROBLEM_339B_HTML))), {
+      name: 'Xenia and Ringroad',
+      rating: 1000,
+      tags: ['implementation'],
+    });
+  });
+
   it('has no rating for a problem without one, such as in the gym', () => {
     const page = parseProblemPage(
       documentOf(
@@ -145,9 +156,8 @@ describe('parseProblemPage', () => {
 
 describe('getLoggedInHandle', () => {
   it('reads the handle in the header, or null when no one is logged in', () => {
-    assert.equal(
-      getLoggedInHandle(documentOf(createSubmissionHtml())),
-      'seojeonguk',
+    Object.values(SUBMISSION_HTML).forEach((html) =>
+      assert.equal(getLoggedInHandle(documentOf(html)), 'seojeonguk'),
     );
     assert.equal(
       getLoggedInHandle(documentOf(createSubmissionHtml({ handle: null }))),
@@ -157,16 +167,36 @@ describe('getLoggedInHandle', () => {
 });
 
 describe('parseSubmissionPage', () => {
-  it('reads an accepted submission and its code', () => {
+  it('reads a real accepted submission and its numbered code', () => {
+    const accepted = {
+      author: 'seojeonguk',
+      language: 'C++17 (GCC 7-32)',
+      accepted: true,
+      // The link shows `339B`; the name comes from its title.
+      problemName: 'Xenia and Ringroad',
+      sourceCode: SUBMISSION_SOURCE.contest,
+    };
+
     assert.deepEqual(
-      copy(parseSubmissionPage(documentOf(createSubmissionHtml()))),
+      copy(parseSubmissionPage(documentOf(SUBMISSION_HTML.contest))),
+      { ...accepted, problemPath: '/contest/339/problem/B' },
+    );
+    assert.deepEqual(
+      copy(parseSubmissionPage(documentOf(SUBMISSION_HTML.problemset))),
+      { ...accepted, problemPath: '/problemset/problem/339/B' },
+    );
+  });
+
+  it('reads a real rejected submission in the gym', () => {
+    assert.deepEqual(
+      copy(parseSubmissionPage(documentOf(SUBMISSION_HTML.gym))),
       {
         author: 'seojeonguk',
-        language: 'GNU C++17',
-        accepted: true,
-        problemPath: '/contest/1850/problem/F',
-        problemName: 'We Were Both Children',
-        sourceCode: 'int main() { return 0; }',
+        language: 'C++17 (GCC 7-32)',
+        accepted: false,
+        problemPath: '/gym/106556/problem/A',
+        problemName: 'BFS = DFS?',
+        sourceCode: SUBMISSION_SOURCE.gym,
       },
     );
   });
