@@ -90,7 +90,7 @@ Chrome 116 이상이 필요해요.
 | Small promo tile   | 440×280                                                    | Yes        | [`docs/store/small-promo-440x280.png`](store/small-promo-440x280.png)                                                                                                                                                                                                 |
 | Marquee promo tile | 1400×560                                                   | No         | —                                                                                                                                                                                                                                                                     |
 
-The screenshots in `docs/store/` were made from browser captures for v3.5.0 (cropped onto a background with a caption, the Codeforces handle pixelated); the small promo tile comes from the demo recording. Check new screenshots for tokens, private repositories and other people's information before uploading.
+The screenshots in `docs/store/` were made from browser captures for v3.5.0 (cropped onto a background with a caption, accounts, the repository, the database and IDs pixelated); the small promo tile comes from the demo recording. Check new screenshots for tokens, private repositories and other people's information before uploading.
 
 ## Privacy practices
 
