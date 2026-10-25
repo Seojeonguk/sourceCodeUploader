@@ -1,94 +1,126 @@
 import { readFileSync } from 'node:fs';
 
+import { JSDOM } from 'jsdom';
+
 const read = (file) => readFileSync(new URL(file, import.meta.url), 'utf8');
 
 // An excerpt of a real problem page, with the title and the tags (rating *1300).
 export const PROBLEM_HTML = read('./problem.html');
 
+// An excerpt of the real page of problem 339B, the problem of the saved submissions.
+export const PROBLEM_339B_HTML = read('./problem-339B.html');
+
 // A real row of a status table: tourist's accepted submission 395033187.
 export const STATUS_ROW_HTML = read('./status-row.html');
 
 /**
- * The header of a page, with the handle of the logged-in user, as Codeforces shows it.
- * @param {?string} handle - The logged-in handle, or null when no one is logged in.
+ * Real submission pages, saved in a logged-in browser: the same accepted submission of 339B
+ * opened from the contest and from the problemset, and a rejected one in the gym.
  */
-const header = (handle) => `
-  <div class="lang-chooser">
-    <div style="text-align: right;"><a href="?locale=en"><img alt="In English"></a></div>
-    <div>${
-      handle
-        ? `<a href="/profile/${handle}">${handle}</a> | <a href="/abc/logout">Logout</a>`
-        : '<a href="/enter">Enter</a> | <a href="/register">Register</a>'
-    }</div>
-  </div>`;
+export const SUBMISSION_HTML = Object.freeze({
+  contest: read('./submission-contest.html'),
+  problemset: read('./submission-problemset.html'),
+  gym: read('./submission-gym.html'),
+});
+
+// The code of those submissions as it was sent, to compare with what the pages give.
+// Git may check the files out with CRLF on Windows, while the pages give LF.
+export const SUBMISSION_SOURCE = Object.freeze({
+  contest: read('./submission-339B.cpp').replaceAll('\r\n', '\n'),
+  gym: read('./submission-106556A.cpp').replaceAll('\r\n', '\n'),
+});
+
+const STATUS_HTML = read('./status-my.html');
 
 /**
- * A submission page, such as `/contest/1850/submission/215000000`. It is behind the Cloudflare
- * check outside a browser, so it is built from the markup that Codeforces uses and that other
- * extensions read: a `.datatable` table about the submission and `pre#program-source-text`.
+ * Changes a real page and serializes it again.
+ * @param {string} html - The page.
+ * @param {(document: Document) => void} change - Changes the page.
+ */
+const edit = (html, change) => {
+  const { document } = new JSDOM(html).window;
+  change(document);
+  return `<!doctype html>\n${document.documentElement.outerHTML}`;
+};
+
+/**
+ * Sets the handle in the header. Without a handle, the header has the links to log in, as
+ * Codeforces shows them (reconstructed: the saved pages are logged in).
+ */
+const setHeaderHandle = (document, handle) => {
+  const link = document.querySelector('.lang-chooser a[href^="/profile/"]');
+  if (handle === null) {
+    link.parentElement.innerHTML =
+      '<a href="/enter">Enter</a> | <a href="/register">Register</a>';
+    return;
+  }
+  link.href = `/profile/${handle}`;
+  link.textContent = handle;
+};
+
+const setAuthor = (row, author) => {
+  const link = row.querySelector('a[href^="/profile/"]');
+  link.href = `/profile/${author}`;
+  link.textContent = author;
+};
+
+/**
+ * The real accepted submission page of 339B from the contest, with some parts changed.
+ * @param {Object} [options]
+ * @param {?string} [options.handle] - The logged-in handle, or null when no one is logged in.
+ * @param {string} [options.author] - The author of the submission.
+ * @param {string} [options.verdict='OK'] - Anything else shows the rejected verdict of the
+ *   real gym page.
+ * @param {?string} [options.sourceCode] - The HTML of the code, or null for a page without it.
  */
 export const createSubmissionHtml = ({
   handle = 'seojeonguk',
-  author = 'seojeonguk',
+  author,
   verdict = 'OK',
-  language = 'GNU C++17',
-  problemHref = '/contest/1850/problem/F',
-  problemText = '1850F - We Were Both Children',
-  sourceCode = 'int main() { return 0; }',
-} = {}) => `<!doctype html>
-<html><head><title>Submission #215000000 - Codeforces</title></head><body>
-  ${header(handle)}
-  <div class="datatable"><table>
-    <tr>
-      <th>#</th><th>Author</th><th>Problem</th><th>Lang</th><th>Verdict</th>
-      <th>Time</th><th>Memory</th><th>Sent</th><th>Judged</th>
-    </tr>
-    <tr>
-      <td>215000000</td>
-      <td><a href="/profile/${author}" class="rated-user user-blue">${author}</a></td>
-      <td><a href="${problemHref}">${problemText}</a></td>
-      <td>${language}</td>
-      <td><span class="submissionVerdictWrapper" submissionId="215000000" submissionVerdict="${verdict}">${
-        verdict === 'OK'
-          ? "<span class='verdict-accepted'>Accepted</span>"
-          : "<span class='verdict-rejected'>Wrong answer on test 3</span>"
-      }</span></td>
-      <td>46 ms</td><td>0 KB</td><td>2026-10-22 10:00</td><td>2026-10-22 10:00</td>
-    </tr>
-  </table></div>
-  ${
-    sourceCode === null
-      ? ''
-      : `<pre id="program-source-text" class="prettyprint lang-cpp linenums program-source">${sourceCode}</pre>`
-  }
-</body></html>`;
+  sourceCode,
+} = {}) =>
+  edit(SUBMISSION_HTML.contest, (document) => {
+    setHeaderHandle(document, handle);
+    const row = document.querySelector('.datatable tr.highlighted-row');
+    if (author !== undefined) {
+      setAuthor(row, author);
+    }
+    if (verdict !== 'OK') {
+      row.querySelector('.verdict-accepted').outerHTML =
+        '<span class="verdict-rejected">Wrong answer on test <span class="verdict-format-judged">1</span></span>';
+    }
+    const source = document.querySelector('#program-source-text');
+    if (sourceCode === null) {
+      source.remove();
+    } else if (sourceCode !== undefined) {
+      source.innerHTML = sourceCode;
+    }
+  });
 
 /**
- * A status page, such as `/contest/1850/my`, with one row of the user's submission.
+ * The real status page `/contest/339/my` with the user's submission, by default while it is
+ * judged. The waiting verdict cell is reconstructed: the saved page has only judged rows.
+ * @param {Object} [options]
+ * @param {string} [options.author] - The author of the submission.
+ * @param {?string} [options.verdict] - `OK` for the real accepted row, null while judging.
+ * @param {boolean} [options.waiting=true]
  */
 export const createStatusHtml = ({
-  handle = 'seojeonguk',
-  author = 'seojeonguk',
+  author,
   verdict = null,
   waiting = true,
-} = {}) => `<!doctype html>
-<html><head><title>My submissions - Codeforces</title></head><body>
-  ${header(handle)}
-  <div class="datatable"><table class="status-frame-datatable"><tbody>
-    <tr data-submission-id="215000000" partyMemberIds=";1;">
-      <td class="id-cell"><a class="view-source" href="/contest/1850/submission/215000000" submissionId="215000000">215000000</a></td>
-      <td class="status-small"><span class="format-time">Oct/22/2026 10:00</span></td>
-      <td class="status-party-cell"><a href="/profile/${author}" class="rated-user">${author}</a></td>
-      <td class="status-small"><a href="/contest/1850/problem/F">F - We Were Both Children</a></td>
-      <td>GNU C++17</td>
-      <td class="status-cell status-small status-verdict-cell" submissionId="215000000" waiting="${waiting}">${
-        verdict
-          ? `<span class="submissionVerdictWrapper" submissionId="215000000" submissionVerdict="${verdict}"><span class='verdict-accepted'>Accepted</span></span>`
-          : '<span class="verdict-waiting">Running on test 2</span>'
-      }</td>
-    </tr>
-  </tbody></table></div>
-</body></html>`;
+} = {}) =>
+  edit(STATUS_HTML, (document) => {
+    const row = document.querySelector('tr[data-submission-id]');
+    if (author !== undefined) {
+      setAuthor(row, author);
+    }
+    const cell = row.querySelector('.status-verdict-cell');
+    cell.setAttribute('waiting', String(waiting));
+    if (verdict === null) {
+      cell.innerHTML = '<span class="verdict-waiting">Running on test 2</span>';
+    }
+  });
 
 // What Codeforces answers to a request that does not pass its Cloudflare check.
 export const CHALLENGE_HTML =

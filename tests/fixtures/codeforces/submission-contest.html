@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- An excerpt of https://codeforces.com/contest/339/submission/395650158, saved in a logged-in browser (2026-10-25) after prettify numbered the code: the header with the handle, the table about the submission and the code. The handle is replaced, the links are relative again (saving made them absolute), and the images and scripts are removed. -->
+<html>
+  <head>
+    <title>Submission #395650158 - Codeforces</title>
+  </head>
+  <body>
+    <div class="lang-chooser">
+      <div>
+        <a href="/contest/339/submission/395650158?locale=en"></a>
+        <a href="/contest/339/submission/395650158?locale=ru"></a>
+      </div>
+
+      <div>
+        <a href="/profile/seojeonguk">seojeonguk</a>
+        |
+        <a href="/abc/logout">Logout</a>
+      </div>
+    </div>
+    <div class="datatable">
+      <table class="">
+        <tbody>
+          <tr>
+            <th draggable="true" class="top left">#</th>
+            <th draggable="true" class="top">Author</th>
+            <th draggable="true" class="top">Problem</th>
+            <th draggable="true" class="top">Lang</th>
+            <th draggable="true" class="top">Verdict</th>
+            <th draggable="true" class="top">Time</th>
+            <th draggable="true" class="top">Memory</th>
+            <th draggable="true" class="top">Sent</th>
+            <th draggable="true" class="top">Judged</th>
+          </tr>
+          <tr class="highlighted-row">
+            <td class="bottom dark left">395650158</td>
+            <td class="bottom dark">
+              Practice:<br />
+              <a
+                href="/profile/seojeonguk"
+                title="Pupil seojeonguk"
+                class="rated-user user-green"
+                >seojeonguk</a
+              >
+            </td>
+            <td class="bottom dark">
+              <a title="B - Xenia and Ringroad" href="/contest/339/problem/B"
+                >339B</a
+              >
+              - <span title="problem revision">15</span>
+            </td>
+            <td class="bottom dark">C++17 (GCC 7-32)</td>
+            <td class="bottom dark">
+              <span class="verdict-accepted">Accepted</span>
+            </td>
+            <td class="bottom dark">124 ms</td>
+            <td class="bottom dark">20 KB</td>
+            <td class="bottom dark">2026-10-23 07:59:58</td>
+            <td class="bottom dark">2026-10-23 07:59:58</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <pre
+      id="program-source-text"
+      class="prettyprint lang-cpp linenums program-source prettyprinted"
+      style="
+        border-width: medium;
+        border-style: none;
+        border-color: currentcolor;
+        border-image: none;
+        padding: 0.5em;
+      "
+    ><ol class="linenums"><li class="L0"><span class="com">#ifdef</span><span class="pln"> _DEBUG</span></li><li class="L1"><span class="com">#include</span><span class="pln"> </span><span class="str">"bits_stdc++.h"</span></li><li class="L2"><span class="com">#else</span></li><li class="L3"><span class="com">#include</span><span class="pln"> </span><span class="str">"bits/stdc++.h"</span></li><li class="L4"><span class="com">#endif</span></li><li class="L5"><span class="com">#pragma</span><span class="pln"> warning</span><span class="pun">(</span><span class="pln">disable</span><span class="pun">:</span><span class="lit">4996</span><span class="pun">)</span></li><li class="L6"><span class="kwd">using</span><span class="pln"> </span><span class="kwd">namespace</span><span class="pln"> std</span><span class="pun">;</span></li><li class="L7"><span class="com">#define</span><span class="pln"> ll </span><span class="kwd">long</span><span class="pln"> </span><span class="kwd">long</span><span class="pln"> </span><span class="typ">int</span></li><li class="L8"><span class="pln">ll n</span><span class="pun">,</span><span class="pln"> m</span><span class="pun">,</span><span class="pln">x</span><span class="pun">,</span><span class="pln">ans</span><span class="pun">,</span><span class="pln">now</span><span class="pun">;</span></li><li class="L9"><span class="typ">int</span><span class="pln"> main</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span></li><li class="L0"><span class="com">#ifdef</span><span class="pln"> _CONSOLE </span></li><li class="L1"><span class="pln">	freopen</span><span class="pun">(</span><span class="str">"sample.txt"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"r"</span><span class="pun">,</span><span class="pln"> stdin</span><span class="pun">);</span></li><li class="L2"><span class="com">#endif</span></li><li class="L3"><span class="pln">	scanf</span><span class="pun">(</span><span class="str">"%I64d %I64d"</span><span class="pun">,</span><span class="pln"> </span><span class="pun">&amp;</span><span class="pln">n</span><span class="pun">,</span><span class="pln"> </span><span class="pun">&amp;</span><span class="pln">m</span><span class="pun">);</span></li><li class="L4"><span class="pln">	now </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span></li><li class="L5"><span class="pln"> </span></li><li class="L6"><span class="pln">	</span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="typ">int</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln"> i </span><span class="pun">&lt;</span><span class="pln"> m</span><span class="pun">;</span><span class="pln"> i</span><span class="pun">++)</span><span class="pln"> </span><span class="pun">{</span></li><li class="L7"><span class="pln">		scanf</span><span class="pun">(</span><span class="str">"%I64d"</span><span class="pun">,</span><span class="pln"> </span><span class="pun">&amp;</span><span class="pln">x</span><span class="pun">);</span></li><li class="L8"><span class="pln">		</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">now </span><span class="pun">&lt;</span><span class="pln"> x</span><span class="pun">)</span><span class="pln"> ans </span><span class="pun">+=</span><span class="pln"> x</span><span class="pun">-</span><span class="pln">now</span><span class="pun">;</span></li><li class="L9"><span class="pln">		</span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">now </span><span class="pun">&gt;</span><span class="pln"> x</span><span class="pun">)</span><span class="pln"> ans </span><span class="pun">+=</span><span class="pln"> n </span><span class="pun">-</span><span class="pln"> now </span><span class="pun">+</span><span class="pln"> x</span><span class="pun">;</span></li><li class="L0"><span class="pln">		now </span><span class="pun">=</span><span class="pln"> x</span><span class="pun">;</span></li><li class="L1"><span class="pln">	</span><span class="pun">}</span></li><li class="L2"><span class="pln">	printf</span><span class="pun">(</span><span class="str">"%I64d\n"</span><span class="pun">,</span><span class="pln"> ans</span><span class="pun">);</span></li><li class="L3"><span class="pun">}</span></li></ol></pre>
+  </body>
+</html>
