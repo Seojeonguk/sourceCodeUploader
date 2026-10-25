@@ -139,6 +139,7 @@ Conventions: branch from `master` and open a PR; commit messages start with an E
 | v3.x    | 2026.10           | Programmers Notion upload and auto upload, in-page messages, lint · test CI                                                                                                |
 | v3.x    | 2026.10           | Baekjoon support removed after the site shut down — snapshot: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj)               |
 | v3.x    | 2026.10           | Chrome Web Store, Korean, Notion properties added automatically, popup as setup steps, Codeforces as the first optional judge site                                         |
+| v3.x    | 2026.10           | JUNGOL as an optional judge site with auto upload, Codeforces tests from real pages, CI on Node 22 · 24                                                                    |
 
 ## Support
 

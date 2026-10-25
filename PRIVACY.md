@@ -2,7 +2,7 @@
 
 Source Code Uploader is a Chrome extension that uploads your accepted Programmers, Codeforces and JUNGOL solutions to the GitHub repository or Notion database you choose. This policy explains what it reads, where it sends it and what it keeps.
 
-Effective date: 2026-10-22
+Effective date: 2026-10-25
 
 ## What the extension reads
 
