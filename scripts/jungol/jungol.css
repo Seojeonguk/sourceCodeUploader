@@ -1,0 +1,49 @@
+/* The panel with the upload buttons after an accepted judge, at the bottom left: the toasts
+   are at the bottom right. */
+.scu-jungol-panel {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  color: #1f2328;
+  background: #ffffff;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.scu-jungol-panel .scu-content-wrapper {
+  margin: 0;
+}
+
+.scu-jungol-label {
+  font-weight: 600;
+}
+
+.scu-jungol-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: #59636e;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.scu-jungol-close:hover {
+  background: #f6f8fa;
+}
+
+.scu-jungol-close:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}

@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Uploads your accepted Programmers and Codeforces solutions to GitHub and Notion with one click."
+    "message": "Uploads your accepted Programmers, Codeforces and JUNGOL solutions to GitHub and Notion with one click."
   },
   "htmlLang": {
     "message": "en"
@@ -165,6 +165,17 @@
   },
   "codeforcesSubmissionUnreadable": {
     "message": "The accepted code could not be read. Open the submission and upload it there."
+  },
+  "jungolAccepted": {
+    "message": "JUNGOL $PROBLEM$: accepted",
+    "placeholders": {
+      "problem": {
+        "content": "$1"
+      }
+    }
+  },
+  "close": {
+    "message": "Close"
   },
   "setupLogin": {
     "message": "Log in to $PLATFORM$ in the extension popup first.",

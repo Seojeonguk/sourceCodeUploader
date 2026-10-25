@@ -1,0 +1,58 @@
+{
+  "type": "data",
+  "nodes": [
+    {
+      "type": "skip"
+    },
+    {
+      "type": "skip"
+    },
+    {
+      "type": "data",
+      "data": [
+        {
+          "pid": 1,
+          "seo": 2,
+          "$/problem/1525": 4
+        },
+        "1525",
+        {
+          "title": 3
+        },
+        "사다리(ladder) · Unranked",
+        {
+          "data": 5,
+          "url": 15
+        },
+        {
+          "title": 6,
+          "tier": 7,
+          "id": 10,
+          "category": 11,
+          "tag": 12,
+          "fTier": 13,
+          "pinnedTags": 14
+        },
+        "사다리(ladder)",
+        {
+          "score": 8,
+          "tier": 9
+        },
+        0,
+        0,
+        1525,
+        "",
+        [],
+        null,
+        [],
+        "/problem/1525"
+      ],
+      "uses": {
+        "dependencies": ["jungolapi:/problem/1525"],
+        "params": ["pid"]
+      }
+    },
+    null,
+    null
+  ]
+}

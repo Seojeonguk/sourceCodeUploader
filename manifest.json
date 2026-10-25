@@ -42,7 +42,10 @@
     "https://programmers.co.kr/*"
   ],
   "permissions": ["identity", "scripting", "storage"],
-  "optional_host_permissions": ["https://codeforces.com/*"],
+  "optional_host_permissions": [
+    "https://codeforces.com/*",
+    "https://jungol.co.kr/*"
+  ],
   "short_name": "SCU",
   "web_accessible_resources": [
     {
@@ -50,7 +53,8 @@
       "matches": [
         "https://school.programmers.co.kr/*",
         "https://programmers.co.kr/*",
-        "https://codeforces.com/*"
+        "https://codeforces.com/*",
+        "https://jungol.co.kr/*"
       ]
     },
     {

@@ -59,6 +59,23 @@ describe('the judge sites and the manifest', () => {
     assert.ok(manifest.permissions.includes('scripting'));
   });
 
+  it('keeps the chrome APIs out of the scripts in the page world, where they do not exist', () => {
+    const pageWorld = optional
+      .flatMap(({ contentScripts }) => contentScripts)
+      .filter(({ world }) => world === 'MAIN');
+    assert.ok(pageWorld.length > 0);
+    pageWorld.forEach((script) => {
+      assert.equal(script.css, undefined, script.id);
+      script.js.forEach((file) =>
+        assert.doesNotMatch(
+          readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8'),
+          /\bchrome\./,
+          `${script.id}: ${file}`,
+        ),
+      );
+    });
+  });
+
   it('gives each optional site scripts that run only on its pages', () => {
     optional.forEach((site) => {
       assert.ok(site.contentScripts?.length > 0, site.id);

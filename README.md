@@ -18,10 +18,11 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 
 ## Supported Platforms
 
-| Source                                           | Pages                    | GitHub | Notion |    Auto upload    | Status                  |
-| ------------------------------------------------ | ------------------------ | :----: | :----: | :---------------: | ----------------------- |
-| [Programmers](https://school.programmers.co.kr/) | Lesson page              |   ✅   |   ✅   | ✅ (result modal) | Supported               |
-| [Codeforces](https://codeforces.com/)            | Your accepted submission |   ✅   |   ✅   | ✅ (status page)  | Turn it on in the popup |
+| Source                                           | Pages                                 | GitHub | Notion |    Auto upload    | Status                  |
+| ------------------------------------------------ | ------------------------------------- | :----: | :----: | :---------------: | ----------------------- |
+| [Programmers](https://school.programmers.co.kr/) | Lesson page                           |   ✅   |   ✅   | ✅ (result modal) | Supported               |
+| [Codeforces](https://codeforces.com/)            | Your accepted submission              |   ✅   |   ✅   | ✅ (status page)  | Turn it on in the popup |
+| [JUNGOL](https://jungol.co.kr/)                  | Problem page, after an accepted judge |   ✅   |   ✅   |      Not yet      | Turn it on in the popup |
 
 ## Installation
 
@@ -44,12 +45,13 @@ The store version has its own extension ID, separate from the unpacked one, so e
 4. (Optional) Turn on **Upload automatically when accepted** on each tab. A tab shows ✓ when it is ready.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
 6. (Codeforces) Turn on Codeforces under **Problem sites** in the popup, and allow the access Chrome asks for. The upload buttons are above the code of your accepted submission, and with auto upload on, a submission accepted while `/contest/<id>/my` or `/submissions/<handle>` is open is uploaded.
+7. (JUNGOL) Turn on JUNGOL under **Problem sites** in the popup, and allow the access Chrome asks for. When a submission on a problem page is accepted, a panel at the bottom left shows the upload buttons for it.
 
 ## How It Works
 
 ```mermaid
 flowchart LR
-    CS["Content scripts<br/>(Programmers · Codeforces)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
+    CS["Content scripts<br/>(Programmers · Codeforces · JUNGOL)"] -->|chrome.runtime.sendMessage| BG["Background<br/>service worker"]
     POP["Popup"] -->|OAuth · settings| BG
     BG --> ST[("chrome.storage<br/>access tokens · settings")]
     BG -->|host_permissions| GH["GitHub API"]
@@ -63,6 +65,7 @@ flowchart LR
 - **Programmers** keeps the code inside the page's editor object, which the isolated content script cannot read. `scripts/programmers/sourceExtractor.js` is injected into the page context and returns the code via `window.postMessage`.
 - **Optional judge sites** — A new site is not added to `host_permissions`, because a new required permission would disable the store extension for existing users until they accept it. Sites are listed in `scripts/judgeSites.js`; an optional one, such as Codeforces, is in `optional_host_permissions`. Turning it on in the popup asks Chrome for its host, and `scripts/sitePermissions.js` then registers its content script with `chrome.scripting.registerContentScripts` (and unregisters it when the permission is removed).
 - **Codeforces** shows the code of a submission in the page, so its content script reads it directly. The problem name, rating and tags come from the problem page, and auto upload reads the submission page of a row that turns accepted on the status page; both are same-origin requests in the user's session.
+- **JUNGOL** sends the code from the problem page to its judge and reads the verdict from the answer, a stream of events. `scripts/jungol/judgeWatcher.js` runs in the page's world before the site's scripts (`world: 'MAIN'`, `document_start`), since the site keeps its own reference to `fetch`. It watches only that request, reads a copy of the answer, and when the verdict is accepted passes the code it sent to the content script with `window.postMessage`. The extension never calls the site's API, which asks for anti-bot headers. The title, tier and tags come from the problem page's data (`/problem/<id>/__data.json`), a same-origin request in the user's session.
 - **Secrets** — GitHub logs in to a GitHub App with the device flow, which needs only the client ID; its token expires after 8 hours, is refreshed without the client secret, and reaches only the repositories the App is installed on. Notion needs the client secret to exchange the code, so a small worker in `proxy/notion-oauth/` keeps it. The Notion login opens in a window from `chrome.identity.launchWebAuthFlow`, which catches the redirect to `https://<extension-id>.chromiumapp.org/`, so the code never reaches another site, and the redirect is accepted only with the `state` sent for that login.
 - **Messages and storage** — The background accepts only the upload messages (`commit`, `upload`, and reading the auto upload option) from the judge pages, and every other message only from the extension's own pages (`scripts/senders.js`). `chrome.storage.local`, which keeps the access tokens, is hidden from content scripts, and the uploaded path takes only a known platform folder and file extension.
 
@@ -74,6 +77,7 @@ flowchart LR
 | `storage`                                                 | Keep access tokens, the selected repository / database and options          |
 | `scripting`                                               | Run the scripts of an optional judge site after you turn it on in the popup |
 | Optional host: `codeforces.com`                           | Run on Codeforces, asked for only when you turn it on in the popup          |
+| Optional host: `jungol.co.kr`                             | Run on JUNGOL, asked for only when you turn it on in the popup              |
 | Host: `api.notion.com`, `github.com`, `programmers.co.kr` | Call the APIs and run on the judge pages                                    |
 
 What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md).
@@ -94,6 +98,7 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
    ├─ content/              # shared UI of the judge sites' content scripts (buttons · messages)
    ├─ programmers/          # Programmers content script + page-context extractor
    ├─ codeforces/           # Codeforces content script
+   ├─ jungol/               # JUNGOL content script + judge watcher in the page's world
    ├─ github/               # device flow login, repository list, commit
    ├─ notion/               # OAuth (through the proxy), database list, page / block builders
    └─ common/               # exceptions, chrome / fetch / encoding utils

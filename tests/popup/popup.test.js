@@ -237,10 +237,11 @@ describe('popup', () => {
       const sites = [...document.querySelectorAll('#site-list .site')];
       assert.deepEqual(
         sites.map((site) => site.querySelector('.site-name').textContent),
-        ['Programmers', 'Codeforces'],
+        ['Programmers', 'Codeforces', 'JUNGOL'],
       );
-      // Codeforces is optional, so it has a switch instead of "In use".
+      // Codeforces and JUNGOL are optional, so they have a switch instead of "In use".
       assert.equal(sites[1].querySelector('.site-switch').checked, false);
+      assert.equal(sites[2].querySelector('.site-switch').checked, false);
       assert.equal(
         sites[0].querySelector('.site-status').textContent,
         'In use',
