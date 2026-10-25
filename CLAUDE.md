@@ -6,7 +6,7 @@
 
 - **Source Code Uploader**: 알고리즘 문제 사이트에서 통과한 코드를 버튼 한 번으로 **GitHub · Notion**에 올리는 Chrome 확장 프로그램 (Manifest V3, 서버 없음).
 - 배포: [Chrome 웹 스토어](https://chromewebstore.google.com/detail/source-code-uploader/kgpilkohekdjpfpcckdlnlolddiheijn) (스토어 ID `kgpilkohekdjpfpcckdlnlolddiheijn`), 압축 해제 설치는 `manifest.json`의 `key`로 ID `mfhbpmbchemfhijjamldbkidlegfmaff` 고정.
-- 지원 사이트: **프로그래머스**(필수 사이트), **Codeforces**(선택 사이트, #267), **정올**(선택 사이트, #261, 자동 업로드는 #279). 백준은 서비스 종료로 제거됨(`before_remove_boj` 태그).
+- 지원 사이트: **프로그래머스**(필수 사이트), **Codeforces**(선택 사이트, #267), **정올**(선택 사이트, #261, 자동 업로드 #279). 백준은 서비스 종료로 제거됨(`before_remove_boj` 태그).
 - 최소 Chrome 116 (`launchWebAuthFlow`가 서비스 워커 5분 제한에서 빠지는 버전).
 
 ### 구조

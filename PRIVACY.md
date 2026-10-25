@@ -22,7 +22,7 @@ On Codeforces (`codeforces.com`), only after you turn it on in the popup and all
 On JUNGOL (`jungol.co.kr`), only after you turn it on in the popup and allow the access Chrome asks for, the extension:
 
 - watches the request that a problem page sends to the JUNGOL judge (`saet.jungol.co.kr/judge`) when you submit, and reads a copy of its answer for the verdict; it does not change the request or the answer, and reads no other request;
-- when the verdict is accepted, keeps the code you sent, its language and the problem number in the page, and shows the upload buttons;
+- when the verdict is accepted, keeps the code you sent, its language and the problem number in the page, and shows the upload buttons; with auto upload on, it also uploads that submission once;
 - reads the problem page's data (`/problem/<id>/__data.json`) for the title, tier and tags, in your browser session. It does not read or upload the problem statement.
 
 Turning Codeforces or JUNGOL off, or removing its access in `chrome://extensions`, stops all of this on that site. It reads nothing on other sites.

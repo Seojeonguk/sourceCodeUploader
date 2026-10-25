@@ -22,7 +22,7 @@ A Chrome extension that uploads your accepted solutions from algorithm judge sit
 | ------------------------------------------------ | ------------------------------------- | :----: | :----: | :---------------: | ----------------------- |
 | [Programmers](https://school.programmers.co.kr/) | Lesson page                           |   ✅   |   ✅   | ✅ (result modal) | Supported               |
 | [Codeforces](https://codeforces.com/)            | Your accepted submission              |   ✅   |   ✅   | ✅ (status page)  | Turn it on in the popup |
-| [JUNGOL](https://jungol.co.kr/)                  | Problem page, after an accepted judge |   ✅   |   ✅   |      Not yet      | Turn it on in the popup |
+| [JUNGOL](https://jungol.co.kr/)                  | Problem page, after an accepted judge |   ✅   |   ✅   |        ✅         | Turn it on in the popup |
 
 ## Installation
 
@@ -45,7 +45,7 @@ The store version has its own extension ID, separate from the unpacked one, so e
 4. (Optional) Turn on **Upload automatically when accepted** on each tab. A tab shows ✓ when it is ready.
 5. Solve a problem. On a Programmers lesson page, click the GitHub or Notion upload button, or turn on auto upload to upload when the result is accepted.
 6. (Codeforces) Turn on Codeforces under **Problem sites** in the popup, and allow the access Chrome asks for. The upload buttons are above the code of your accepted submission, and with auto upload on, a submission accepted while `/contest/<id>/my` or `/submissions/<handle>` is open is uploaded.
-7. (JUNGOL) Turn on JUNGOL under **Problem sites** in the popup, and allow the access Chrome asks for. When a submission on a problem page is accepted, a panel at the bottom left shows the upload buttons for it.
+7. (JUNGOL) Turn on JUNGOL under **Problem sites** in the popup, and allow the access Chrome asks for. When a submission on a problem page is accepted, a panel at the bottom left shows the upload buttons for it, and with auto upload on, it is uploaded once.
 
 ## How It Works
 
