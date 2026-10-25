@@ -139,6 +139,7 @@ Chrome 웹 스토어 등록 방법: [docs/chrome-web-store.md](docs/chrome-web-s
 | v3.x | 2026.10           | 프로그래머스 Notion 업로드 · 자동 업로드, 페이지 안 메시지, lint · 테스트 CI                                                                                              |
 | v3.x | 2026.10           | 사이트 종료로 백준 지원 제거 — 스냅샷: [`before_remove_boj`](https://github.com/Seojeonguk/sourceCodeUploader/tree/before_remove_boj)                                     |
 | v3.x | 2026.10           | Chrome 웹 스토어, 한국어, Notion 속성 자동 추가, 단계별 팝업, 첫 선택 문제 사이트 Codeforces                                                                              |
+| v3.x | 2026.10           | 정올 선택 문제 사이트 · 자동 업로드, 실제 페이지로 만든 Codeforces 테스트, Node 22 · 24 CI                                                                                |
 
 ## 문의
 

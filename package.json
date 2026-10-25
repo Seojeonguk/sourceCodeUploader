@@ -1,6 +1,6 @@
 {
   "name": "source-code-uploader",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "private": true,
   "description": "A Chrome extension that uploads accepted solutions from algorithm judge sites to GitHub and Notion.",
   "engines": {
