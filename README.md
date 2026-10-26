@@ -89,7 +89,7 @@ What the extension reads, sends and keeps is in the [privacy policy](PRIVACY.md)
 ├─ _locales/                # messages in English (default) and Korean
 ├─ popup/                   # popup UI and the GitHub login page (html · css · js)
 ├─ proxy/notion-oauth/      # Cloudflare Worker that keeps the Notion client secret
-├─ tools/                   # packages the zip for the Chrome Web Store
+├─ tools/                   # packages the zip for the Chrome Web Store, syncs issues · PRs to Notion
 └─ scripts/
    ├─ background.js         # service worker, message routing
    ├─ senders.js            # checks who sent a message (extension page / judge page)

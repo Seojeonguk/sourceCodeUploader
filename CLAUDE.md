@@ -28,6 +28,7 @@ scripts/notion/        # Notion OAuth(프록시 경유), data source 검색 · �
 scripts/common/        # 예외, fetch(재시도 · 타임아웃), i18n, chrome 유틸
 proxy/notion-oauth/    # Notion client secret을 보관하는 Cloudflare Worker
 tools/package-extension.js  # 스토어용 zip
+tools/notion-sync.js        # 이슈 · PR · 릴리스를 Notion DB에 동기화 (notion-sync.yml)
 docs/chrome-web-store.md    # 스토어 등록 문구 · 절차
 ```
 
@@ -52,7 +53,7 @@ npm run package       # dist/source-code-uploader-<version>.zip (key 제거, 확
 
 - 확장 확인: `chrome://extensions/` → 압축해제된 확장 프로그램 로드 → 저장소 폴더, 고친 뒤 **새로고침**.
 - Worker 배포(관리자): `cd proxy/notion-oauth && npx wrangler deploy`. `wrangler.toml`이나 `src/index.js`가 바뀌면 필요.
-- CI(`.github/workflows/ci.yml`): Node 22 · 24에서 lint · format · test · package, zip은 Node 22 잡에서 artifact로 업로드. `release.yml`은 GitHub Release 발행 시 zip을 첨부함.
+- CI(`.github/workflows/ci.yml`): Node 22 · 24에서 lint · format · test · package, zip은 Node 22 잡에서 artifact로 업로드. `release.yml`은 GitHub Release 발행 시 zip을 첨부함. `notion-sync.yml`은 이슈 · PR · 릴리스를 개발 워크스페이스의 Notion DB에 씀(GitHub synced database가 Business 플랜 전용이라 대신 씀). secret `NOTION_TOKEN` · `NOTION_DATA_SOURCE_ID`가 필요하고, 수동 실행하면 전체를 다시 씀.
 
 ## 코드 스타일 및 컨벤션
 
