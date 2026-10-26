@@ -150,6 +150,13 @@ describe('readProblemData', () => {
     );
   });
 
+  it('reads the tags from the `t:` keys, not the `tag` labels', () => {
+    assert.deepEqual(
+      copy(readProblemData(JSON.parse(PROBLEM_DATA[2000]), 2000)),
+      { title: '동전교환', tier: 'Gold V', tags: ['dp', 'bfs'] },
+    );
+  });
+
   it('reads an unranked problem without tags', () => {
     assert.deepEqual(
       copy(readProblemData(JSON.parse(PROBLEM_DATA[1525]), 1525)),

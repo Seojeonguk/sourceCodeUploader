@@ -5,7 +5,7 @@ import { afterEach, describe, it } from 'node:test';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 import { PROBLEM_DATA, SOURCE_CODE } from '../fixtures/jungol/judge.js';
-import { chromeI18n } from '../helpers/i18n.js';
+import { createChromeI18n } from '../helpers/i18n.js';
 
 const EXTENSION_ORIGIN = 'chrome-extension://mfhbpmbchemfhijjamldbkidlegfmaff';
 
@@ -13,6 +13,7 @@ const EXTENSION_ORIGIN = 'chrome-extension://mfhbpmbchemfhijjamldbkidlegfmaff';
 const SCRIPTS = [
   'scripts/content/ui.js',
   'scripts/jungol/helpers.js',
+  'scripts/jungol/tagNames.js',
   'scripts/jungol/index.js',
 ].map((file) =>
   readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8'),
@@ -41,8 +42,9 @@ const settle = async () => {
  * @param {Object} [param]
  * @param {Object} [param.responses] - The background responses, keyed by `platform/action`.
  * @param {Object} [param.pages] - The JSON that `fetch` returns, keyed by path.
+ * @param {'en'|'ko'} [param.locale='en'] - The UI language of the browser.
  */
-const openPage = ({ responses = {}, pages = {} } = {}) => {
+const openPage = ({ responses = {}, pages = {}, locale = 'en' } = {}) => {
   dom = new JSDOM('<!doctype html><html><body><main></main></body></html>', {
     url: 'https://jungol.co.kr/problem/1000',
     runScripts: 'outside-only',
@@ -53,7 +55,7 @@ const openPage = ({ responses = {}, pages = {} } = {}) => {
   const fetched = [];
 
   window.chrome = {
-    i18n: chromeI18n,
+    i18n: createChromeI18n(locale),
     runtime: {
       id: 'mfhbpmbchemfhijjamldbkidlegfmaff',
       lastError: null,
@@ -223,10 +225,9 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
             level: 'Bronze V',
             tags: [
               'arithmetic',
-              '구현',
-              'math',
-              'implement',
-              'ad_hoc',
+              'implementation',
+              'mathematics',
+              'ad-hoc',
               'precomputation',
             ],
             url: 'https://jungol.co.kr/problem/1000',
@@ -234,6 +235,22 @@ describe('JUNGOL content script', { timeout: 5000 }, () => {
         },
       });
       assert.deepEqual(toasts(document), ['Uploaded to GitHub. Open']);
+    });
+
+    it('names the tags in Korean when the browser is in Korean', async () => {
+      const { window, document, sent } = openPage({
+        pages: { '/problem/1000/__data.json': PROBLEM_DATA[1000] },
+        locale: 'ko',
+      });
+      await accept(window);
+
+      document.querySelector('[data-platform="notion"]').click();
+      await settle();
+
+      assert.deepEqual(
+        [...uploads(sent)[0].payload.problemInfo.tags],
+        ['사칙연산', '구현', '수학', '애드 혹', '런타임 전의 전처리'],
+      );
     });
 
     it('has no level for an unranked problem', async () => {

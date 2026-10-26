@@ -80,6 +80,7 @@ export const JUDGE_SITES = Object.freeze([
         js: [
           'scripts/content/ui.js',
           'scripts/jungol/helpers.js',
+          'scripts/jungol/tagNames.js',
           'scripts/jungol/index.js',
         ],
         css: ['scripts/content/ui.css', 'scripts/jungol/jungol.css'],
