@@ -1,8 +1,19 @@
 # Publishing on the Chrome Web Store
 
-What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole), and the order to do it in, so the store build can log in to Notion from its first review ([#235](https://github.com/Seojeonguk/sourceCodeUploader/issues/235)).
+What to fill in the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole), and the order to do it in: once for the first publish, so the store build can log in to Notion from its first review ([#235](https://github.com/Seojeonguk/sourceCodeUploader/issues/235)), and then for every release.
 
-## Order
+## Updating
+
+The item is published, so a release only uploads a new package to it ([#303](https://github.com/Seojeonguk/sourceCodeUploader/issues/303)). The store ID stays the same, so the Notion worker and the redirect URI need no change.
+
+1. **Release** — merge the "Release X.Y.Z" PR, tag the merge commit (`git tag -s vX.Y.Z`) and publish the GitHub Release. Its **Release zip** workflow attaches `source-code-uploader-<version>.zip`.
+2. **Listing** — compare the tabs below with what the release changes, and copy the changed parts into the dashboard. A new site or permission changes the description (English and Korean), the single purpose, the permission justifications, the data usage, the test instructions and the screenshots; those are updated in this file by the PR that adds it. The summary comes from `manifest.json` and `_locales` with the package.
+3. **Upload** — open the item → **Package** → **Upload new package**, and choose the zip from the GitHub Release.
+4. **Submit for review**.
+
+## First publish
+
+Done for v3.2.0. Kept for reference.
 
 1. **Developer account** — register once (one-time US$5 fee) with 2-Step Verification on the Google account, and verify the contact email.
 2. **Version** — merge the release PR that bumps `manifest.json` and `package.json` to the store version (`v3.2.0`). Do not tag it yet.
