@@ -227,9 +227,9 @@
   const isRendered = (element) =>
     Boolean(
       element &&
-        (element.offsetWidth ||
-          element.offsetHeight ||
-          element.getClientRects().length),
+      (element.offsetWidth ||
+        element.offsetHeight ||
+        element.getClientRects().length),
     );
 
   const uploadAutomatically = async () => {
