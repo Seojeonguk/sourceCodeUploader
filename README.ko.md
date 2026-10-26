@@ -89,7 +89,7 @@ flowchart LR
 ├─ _locales/                # 영어(기본) · 한국어 문구
 ├─ popup/                   # 팝업 UI와 GitHub 로그인 페이지 (html · css · js)
 ├─ proxy/notion-oauth/      # Notion client secret을 보관하는 Cloudflare Worker
-├─ tools/                   # Chrome 웹 스토어용 zip 만들기
+├─ tools/                   # Chrome 웹 스토어용 zip 만들기, 이슈 · PR을 Notion에 동기화
 └─ scripts/
    ├─ background.js         # service worker, 메시지 라우팅
    ├─ senders.js            # 메시지 보낸 쪽 검사 (확장 페이지 / 문제 페이지)
