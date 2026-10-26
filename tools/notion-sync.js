@@ -7,7 +7,7 @@
  * read again from the GitHub API, so a late run never writes an older state. On
  * `workflow_dispatch` it writes every item.
  *
- * Environment: NOTION_TOKEN (an internal integration shared with the database),
+ * Environment: NOTION_TOKEN (the API token of an internal connection added to the database),
  * NOTION_DATA_SOURCE_ID, and the GITHUB_* variables of GitHub Actions.
  */
 import { readFileSync } from 'node:fs';
