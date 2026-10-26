@@ -1,0 +1,65 @@
+{
+  "type": "data",
+  "nodes": [
+    {
+      "type": "skip"
+    },
+    {
+      "type": "skip"
+    },
+    {
+      "type": "data",
+      "data": [
+        {
+          "pid": 1,
+          "seo": 2,
+          "$/problem/2000": 4
+        },
+        "2000",
+        {
+          "title": 3
+        },
+        "동전교환 · Gold V",
+        {
+          "data": 5,
+          "url": 19
+        },
+        {
+          "tier": 6,
+          "id": 9,
+          "category": 10,
+          "title_en": 11,
+          "title": 12,
+          "tag": 13,
+          "fTier": 15,
+          "t:dp": 16,
+          "t:bfs": 17,
+          "pinnedTags": 18
+        },
+        {
+          "score": 7,
+          "tier": 8
+        },
+        10.529954279758046,
+        11,
+        2000,
+        "다이나믹",
+        "Coin Change",
+        "동전교환",
+        [14],
+        "서브태스크",
+        null,
+        "1",
+        "1",
+        [],
+        "/problem/2000"
+      ],
+      "uses": {
+        "dependencies": ["jungolapi:/problem/2000"],
+        "params": ["pid"]
+      }
+    },
+    null,
+    null
+  ]
+}

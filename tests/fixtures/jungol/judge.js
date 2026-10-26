@@ -5,11 +5,13 @@ const read = (file) => readFileSync(new URL(file, import.meta.url), 'utf8');
 /**
  * Real `/problem/{id}/__data.json` answers of JUNGOL (2026-10-25), trimmed: the layout nodes
  * (with a token and the account) are `skip`, and the statement fields are removed.
- * 1000 has a tier (Bronze V) and tags; 1525 is unranked and has no tags.
+ * 1000 has a tier (Bronze V) and tags, one of them twice (`구현` and `implement`); 1525 is
+ * unranked and has no tags. 2000 (2026-10-26) has the tags `dp` and `bfs`, and a `tag` label.
  */
 export const PROBLEM_DATA = Object.freeze({
   1000: read('./problem-1000.json'),
   1525: read('./problem-1525.json'),
+  2000: read('./problem-2000.json'),
 });
 
 export const JUDGE_URL = 'https://saet.jungol.co.kr/judge';

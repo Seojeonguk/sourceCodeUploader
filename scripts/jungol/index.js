@@ -16,6 +16,7 @@
     getExtensionFromLanguage,
     readProblemData,
   } = globalThis.SCU_JUNGOL;
+  const { nameTags } = globalThis.SCU_JUNGOL_TAGS;
   const { t, createUploadButtons, getAutoUploadPlatforms, showToast, upload } =
     globalThis.SCU_CONTENT;
 
@@ -68,7 +69,7 @@
       problemInfo: {
         title,
         level: formatTier(problem?.tier),
-        tags: problem?.tags ?? [],
+        tags: nameTags(problem?.tags, chrome.i18n.getUILanguage()),
         url: `${ORIGIN}/problem/${problemId}`,
       },
     };
